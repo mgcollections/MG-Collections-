@@ -112,6 +112,13 @@ form textarea{resize:vertical;min-height:90px}
 .success{text-align:center;padding:70px 20px}
 .success .tick{width:70px;height:70px;border-radius:50%;background:var(--olive);color:#fff;font-size:2.2rem;display:flex;align-items:center;justify-content:center;margin:0 auto 18px}
 .success h1{font-size:2.4rem;margin-bottom:8px}
+.success .order-box{max-width:380px;margin:20px auto;background:var(--white);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow);text-align:left}
+.success .order-box h3{font-size:1.3rem;margin-bottom:10px}
+.success .next{max-width:460px;margin:0 auto 18px;color:var(--muted)}
+.success .redirect{margin-top:18px;font-size:.85rem;color:var(--muted)}
+.success .redirect a{color:var(--clay);text-decoration:underline}
+.btn-wa{background:#2e7d4f}
+.btn-wa:hover{background:#245f3c}
 
 /* Toast */
 #toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--cocoa);color:#fff;padding:12px 22px;border-radius:30px;opacity:0;transition:all .35s;z-index:100;font-size:.92rem;pointer-events:none}
@@ -149,7 +156,9 @@ const CONFIG = {
   tagline: "Jewellery collections that you love",
   formspreeUrl: "https://formspree.io/f/mgaalndp",
   currency: "₹",
-  cartKey: "MG Collections"
+  cartKey: "MG Collections",
+  whatsappNumber: "917033612418",     // e.g. "919876543210" (country code + number, no + or spaces). Leave "" to hide the WhatsApp button
+  redirectSeconds: 20     // how long the order confirmation stays before going back to the shop
 };
 
 /* =====================================================
@@ -210,6 +219,7 @@ const imgTag = (src, alt, extra = "") =>
   `<img src="${esc(resolveSrc(src) || PLACEHOLDER)}" alt="${esc(alt)}" referrerpolicy="no-referrer" ${extra} onerror="this.onerror=null;this.src='${PLACEHOLDER}'">`;
 
 let activeCategory = "all";
+let successTimer;
 
 /* ---------- Cart (localStorage) ---------- */
 function getCart() {
@@ -409,12 +419,24 @@ function renderCheckout() {
   window.scrollTo(0, 0);
 }
 
-function renderSuccess() {
+function renderSuccess(order) {
+  const wa = String(CONFIG.whatsappNumber || "").replace(/\D/g, "");
+  const msg = `Hi ${CONFIG.storeName}, I placed order ${order.id}.\n` +
+    order.lines.map(l => `${l.name} × ${l.qty} = ${l.amount}`).join("\n") +
+    `\nTotal: ${order.total}\nName: ${order.name}`;
   app.innerHTML = `
     <div class="container success">
       <div class="tick">✓</div>
-      <h1>Thank you for your order!</h1>
-      <p>We've received it and will contact you shortly.<br>Redirecting you to the home page in 3 seconds…</p>
+      <h1>Thank you, ${esc(order.name)}!</h1>
+      <p>Your order <strong>${esc(order.id)}</strong> has been received.</p>
+      <div class="order-box">
+        <h3>Your order</h3>
+        ${order.lines.map(l => `<div class="row"><span>${esc(l.name)} × ${l.qty}</span><span>${esc(l.amount)}</span></div>`).join("")}
+        <div class="row total"><span>Total</span><span>${esc(order.total)}</span></div>
+      </div>
+      <p class="next">We'll contact you shortly on your phone or email to confirm your order and share payment details.</p>
+      ${wa ? `<a class="btn btn-wa" target="_blank" rel="noopener" href="https://wa.me/${wa}?text=${encodeURIComponent(msg)}">Message us on WhatsApp</a>` : ""}
+      <p class="redirect">Taking you back to the shop in ${CONFIG.redirectSeconds} seconds… <a href="#/">Go now</a></p>
     </div>`;
   window.scrollTo(0, 0);
 }
@@ -429,8 +451,14 @@ async function submitOrder(form) {
   }
   if (!/^\S+@\S+\.\S+$/.test(data.email)) { err.textContent = "Please enter a valid email address."; return; }
   const items = cartDetailed();
+  const orderId = "MG" + Date.now().toString(36).toUpperCase().slice(-6);
+  const order = {
+    id: orderId, name: data.name.trim(), total: money(cartTotal()),
+    lines: items.map(i => ({ name: i.product.name, qty: i.qty, amount: money(i.product.price * i.qty) }))
+  };
   const payload = {
     store: CONFIG.storeName,
+    order_id: orderId,
     name: data.name, email: data.email, phone: data.phone,
     address: data.address, notes: data.notes || "",
     order: items.map(i => `${i.product.name} (ID ${i.id}) × ${i.qty} = ${money(i.product.price * i.qty)}`).join("\n"),
@@ -446,8 +474,9 @@ async function submitOrder(form) {
     });
     if (!res.ok) throw new Error("Request failed");
     saveCart([]);
-    renderSuccess();
-    setTimeout(() => { location.hash = "#/"; }, 3000);
+    renderSuccess(order);
+    clearTimeout(successTimer);
+    successTimer = setTimeout(() => { location.hash = "#/"; }, CONFIG.redirectSeconds * 1000);
   } catch {
     err.textContent = "Sorry, something went wrong sending your order. Please try again.";
     btn.disabled = false; btn.textContent = "Place Order";
@@ -456,6 +485,7 @@ async function submitOrder(form) {
 
 /* ---------- Router ---------- */
 function route() {
+  clearTimeout(successTimer);
   const hash = location.hash || "#/";
   const parts = hash.replace(/^#\/?/, "").split("/");
   if (parts[0] === "product" && parts[1]) renderProduct(decodeURIComponent(parts[1]));
