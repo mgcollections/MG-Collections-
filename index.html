@@ -149,6 +149,14 @@ form textarea{resize:vertical;min-height:90px}
 .policy h3{font-size:1.5rem;margin-bottom:8px}
 .policy p{color:var(--muted)}
 footer a{color:#f0e6d6;text-decoration:underline}
+.sugg-wrap{position:relative}
+.sugg{position:absolute;left:0;right:0;top:100%;margin-top:4px;background:var(--white);border:1.5px solid var(--line);border-radius:10px;box-shadow:var(--shadow-lg);z-index:40;max-height:300px;overflow:auto}
+.sugg[hidden]{display:none}
+.sugg button{display:block;width:100%;text-align:left;padding:10px 14px;background:none;border:none;border-bottom:1px solid var(--line);font:inherit;color:var(--cocoa);cursor:pointer}
+.sugg button:last-child{border-bottom:none}
+.sugg button:hover,.sugg button:focus{background:var(--sand);outline:none}
+.sugg small{display:block;color:var(--muted);font-size:.8rem;margin-top:1px}
+.sugg .none{padding:12px 14px;color:var(--muted);font-size:.88rem}
 .map-box{height:290px;border-radius:12px;border:1.5px solid var(--line);margin-top:10px;isolation:isolate;z-index:0}
 .map-actions{display:flex;gap:10px;flex-wrap:wrap}
 .map-actions .btn{flex:1;padding:10px 14px;font-size:.88rem;text-align:center}
@@ -1036,6 +1044,7 @@ function placePin(lat, lng, recenter, source = "manual") {
 }
 function destroyMap() {
   clearTimeout(geoTimer); geoSeq++; lastGeoKey = "";
+  clearTimeout(suggTimer); if (suggAbort) suggAbort.abort(); suggResults = [];
   if (map) { try { map.remove(); } catch {} }
   map = null; pinMarker = null;
 }
@@ -1063,7 +1072,74 @@ async function geocode(params) {
   const j = await r.json();
   return j && j[0] ? { lat: parseFloat(j[0].lat), lng: parseFloat(j[0].lon) } : null;
 }
-function isManualPin() { return deliv.source === "manual" || deliv.source === "gps"; }
+function isManualPin() { return ["manual", "gps", "search"].includes(deliv.source); }
+/* ---------- Place suggestions while typing (Photon, free OpenStreetMap-based search) ---------- */
+const SUGG = { debounceMs: 350, minChars: 3, url: "https://photon.komoot.io/api/" };
+let suggTimer, suggAbort, suggResults = [], suggCache = {};
+function suggParts(p) {
+  const street = [p.housenumber, p.street].filter(Boolean).join(" ");
+  const parts = [p.name || street, p.name ? street : "", p.locality, p.district, p.city, p.county, p.state].filter(Boolean);
+  const seen = new Set();
+  return parts.filter(x => { const k = String(x).toLowerCase(); if (seen.has(k)) return false; seen.add(k); return true; });
+}
+async function fetchSuggestions(q) {
+  const key = q.toLowerCase();
+  if (suggCache[key]) return suggCache[key];
+  if (suggAbort) suggAbort.abort();
+  suggAbort = new AbortController();
+  const url = SUGG.url + "?" + new URLSearchParams({ q, limit: 8, lat: CONFIG.shopLat, lon: CONFIG.shopLng, zoom: 11, location_bias_scale: 0.5 });
+  const r = await fetch(url, { signal: suggAbort.signal });
+  if (!r.ok) throw new Error("search failed");
+  const j = await r.json();
+  const out = (j.features || [])
+    .filter(f => f.geometry && f.geometry.coordinates && f.properties && (!f.properties.countrycode || f.properties.countrycode.toUpperCase() === "IN"))
+    .map(f => {
+      const pr = f.properties, parts = suggParts(pr);
+      return { title: parts[0] || "", sub: parts.slice(1).join(", "), label: parts.join(", "), postcode: pr.postcode || "", lat: f.geometry.coordinates[1], lng: f.geometry.coordinates[0] };
+    })
+    .filter(s => s.title)
+    .slice(0, 6);
+  suggCache[key] = out;
+  return out;
+}
+function hideSugg() { const b = $("#sugg"); if (b) { b.hidden = true; b.innerHTML = ""; } }
+function showSugg(list, message) {
+  const b = $("#sugg"); if (!b) return;
+  suggResults = list || [];
+  if (message) b.innerHTML = `<div class="none">${esc(message)}</div>`;
+  else if (!suggResults.length) b.innerHTML = `<div class="none">No matches yet. Keep typing, or try a nearby landmark.</div>`;
+  else b.innerHTML = suggResults.map((s, i) => `<button type="button" role="option" data-sugg="${i}">${esc(s.title)}${s.sub || s.postcode ? `<small>${esc(s.sub)}${s.postcode ? (s.sub ? " · " : "") + esc(s.postcode) : ""}</small>` : ""}</button>`).join("");
+  b.hidden = false;
+}
+function onSearchInput(v) {
+  clearTimeout(suggTimer);
+  const q = v.trim();
+  if (q.length < SUGG.minChars) { if (suggAbort) suggAbort.abort(); hideSugg(); return; }
+  suggTimer = setTimeout(async () => {
+    try {
+      const list = await fetchSuggestions(q);
+      const box = $("#f-search");
+      if (!box || box.value.trim() !== q) return;          // customer kept typing
+      showSugg(list);
+    } catch (err) {
+      if (err && err.name === "AbortError") return;
+      showSugg([], "Suggestions aren't available right now. You can type your address and PIN code below instead.");
+    }
+  }, SUGG.debounceMs);
+}
+function pickSuggestion(i) {
+  const s = suggResults[i]; if (!s) return;
+  hideSugg();
+  clearTimeout(geoTimer); geoSeq++;                       // cancel any automatic address lookup
+  const search = $("#f-search"), pin = $("#f-pin"), addr = $("#f-address");
+  if (search) search.value = s.label;
+  if (pin && !pin.value.trim() && /^\d{6}$/.test(s.postcode)) pin.value = s.postcode;
+  if (addr && !addr.value.trim()) addr.value = s.label;
+  lastGeoKey = [addr ? addr.value.trim() : "", pin ? pin.value.trim() : "", ($("#f-landmark") || {}).value ? $("#f-landmark").value.trim() : ""].join("|");
+  placePin(s.lat, s.lng, true, "search");
+  const st = $("#loc-status");
+  if (st) st.textContent += " We marked this place on the map. Add your house number and details to the address, and drag the pin if it isn't exactly right.";
+}
 async function locateAddress(force) {
   const st = $("#loc-status"); if (!st) return;
   const val = (id) => { const el = $(id); return el ? el.value.trim() : ""; };
@@ -1324,6 +1400,12 @@ function renderCheckout() {
           <input id="f-email" name="email" type="email" required autocomplete="email">
           <label for="f-phone">Phone *</label>
           <input id="f-phone" name="phone" type="tel" required autocomplete="tel">
+          <label for="f-search">Search your area, road or landmark</label>
+          <div class="sugg-wrap">
+            <input id="f-search" type="search" autocomplete="off" placeholder="Start typing, e.g. Barari Ghat" aria-autocomplete="list" aria-controls="sugg">
+            <div id="sugg" class="sugg" role="listbox" hidden></div>
+          </div>
+          <p class="hint" style="margin:6px 0 0">Pick your place from the list. We'll mark it on the map and fill in your PIN code.</p>
           <label for="f-address">Address *</label>
           <textarea id="f-address" name="address" required autocomplete="street-address"></textarea>
           <label for="f-pin">PIN code *</label>
@@ -1331,7 +1413,7 @@ function renderCheckout() {
           <label for="f-landmark">Nearest landmark (optional, helps us find you)</label>
           <input id="f-landmark" name="landmark" placeholder="e.g. Near Barari Ghat, opposite SBI bank" autocomplete="off">
           <label>Delivery spot on map</label>
-          <p class="hint" style="margin:0 0 8px">Type your address, PIN code and nearest landmark and we'll find it on the map automatically. If the pin isn't exactly right, drag it (or tap the map) to your delivery spot. Delivery is ${money(CONFIG.nearFee)} inside the orange circle.</p>
+          <p class="hint" style="margin:0 0 8px">Search your place above, or type your address, PIN code and nearest landmark, and we'll find it on the map automatically. If the pin isn't exactly right, drag it (or tap the map) to your delivery spot. Delivery is ${money(CONFIG.nearFee)} inside the orange circle.</p>
           <div class="map-actions">
             <button type="button" class="btn btn-outline" id="find-btn">Find again</button>
             <button type="button" class="btn btn-outline" id="loc-btn">Use my location</button>
@@ -1448,7 +1530,7 @@ async function submitOrder(form) {
     distance_from_shop_km: deliv.km !== undefined ? deliv.km.toFixed(1) : "pin not placed",
     delivery_pin_location: deliv.lat !== undefined ? `https://www.google.com/maps?q=${deliv.lat},${deliv.lng}` : "pin not placed",
     delivery_pin_source: ({ address: "found from the typed address", landmark: "APPROXIMATE - placed at the landmark the customer gave",
-      "pin area": "APPROXIMATE - only the PIN code area was found", manual: "placed/dragged by the customer", gps: "customer's current location" })[deliv.source] || "pin not placed",
+      "pin area": "APPROXIMATE - only the PIN code area was found", manual: "placed/dragged by the customer", gps: "customer's current location", search: "picked from the map suggestions (area level - check the house number)" })[deliv.source] || "pin not placed",
     delivery_check: deliv.status === "local" && pinCodeState() !== "ok" ? "CHECK: pin is in Bhagalpur but the PIN code does not start with 812/813 - please verify the address" : "ok",
     total: order.total
   };
@@ -1493,6 +1575,9 @@ window.addEventListener("hashchange", route);
 document.addEventListener("click", (e) => {
   const t = e.target;
 
+  if (!t.closest(".sugg-wrap")) hideSugg();
+  const sg = t.closest("[data-sugg]");
+  if (sg) { pickSuggestion(Number(sg.dataset.sugg)); return; }
   const add = t.closest("[data-add]");
   if (add) {                       // Add to Cart from card — never navigates
     e.stopPropagation();
@@ -1573,7 +1658,14 @@ document.addEventListener("click", (e) => {
   if (card) location.hash = "#/product/" + encodeURIComponent(card.dataset.open);
 });
 
+document.addEventListener("keydown", (e) => {
+  if (e.target && e.target.id === "f-search") {
+    if (e.key === "Enter") { e.preventDefault(); if (suggResults.length && !$("#sugg").hidden) pickSuggestion(0); }
+    if (e.key === "Escape") hideSugg();
+  }
+});
 document.addEventListener("input", (e) => {
+  if (e.target.id === "f-search") onSearchInput(e.target.value);
   if (e.target.id === "f-pin") { updateLocStatus(); refreshTotals(); }
   if (e.target.id === "f-pin" || e.target.id === "f-address" || e.target.id === "f-landmark") scheduleLocate();
   if (e.target.id === "search") { searchTerm = e.target.value; $("#grid-wrap").innerHTML = gridHTML(); }
