@@ -1015,26 +1015,27 @@ function updateLocStatus() {
   else if (deliv.status === "local" && pinCodeState() === "mismatch") el.textContent = "That PIN code isn't a Bhagalpur PIN code, so we'll confirm the delivery charge with you on WhatsApp. Please check your PIN code and the pin on the map.";
   else if (deliv.status === "local") el.textContent = `Your delivery spot is about ${deliv.km.toFixed(1)} km from our shop. ` + (q.amount === 0 ? "Delivery is free for this order." : `Delivery: ${money(q.amount)}.`);
   else if (deliv.status === "outside") el.textContent = "That spot is outside our Bhagalpur delivery area. We'll confirm the delivery charge with you on WhatsApp.";
-  else el.textContent = "Place the pin on your delivery spot to see your delivery charge. Otherwise we'll confirm it on WhatsApp. The pin location is sent with your order so we can deliver.";
+  else el.textContent = "Enter your address, PIN code and nearest landmark and we'll find your delivery spot on the map to show your delivery charge. Otherwise we'll confirm it on WhatsApp. The pin location is sent with your order so we can deliver.";
 }
 let map = null, pinMarker = null;
-function setDeliveryPoint(lat, lng) {
+function setDeliveryPoint(lat, lng, source = "manual") {   // source: manual | gps | address | pin area
   const km = distanceKm(CONFIG.shopLat, CONFIG.shopLng, lat, lng);
-  deliv = { status: km <= CONFIG.localMaxKm ? "local" : "outside", km, lat, lng };
+  deliv = { status: km <= CONFIG.localMaxKm ? "local" : "outside", km, lat, lng, source };
   updateLocStatus(); refreshTotals();
 }
-function placePin(lat, lng, recenter) {
-  if (!map) { setDeliveryPoint(lat, lng); return; }
+function placePin(lat, lng, recenter, source = "manual") {
+  if (!map) { setDeliveryPoint(lat, lng, source); return; }
   if (!pinMarker) {
     pinMarker = L.marker([lat, lng], { draggable: true, icon: L.divIcon({ className: "pin-wrap", html: '<div class="pin"></div>', iconSize: [26, 30], iconAnchor: [13, 30] }) }).addTo(map);
-    pinMarker.on("dragend", () => { const p = pinMarker.getLatLng(); setDeliveryPoint(p.lat, p.lng); });
+    pinMarker.on("dragend", () => { const p = pinMarker.getLatLng(); setDeliveryPoint(p.lat, p.lng, "manual"); });
   } else {
     pinMarker.setLatLng([lat, lng]);
   }
   if (recenter) map.setView([lat, lng], Math.max(map.getZoom(), 15));
-  setDeliveryPoint(lat, lng);
+  setDeliveryPoint(lat, lng, source);
 }
 function destroyMap() {
+  clearTimeout(geoTimer); geoSeq++; lastGeoKey = "";
   if (map) { try { map.remove(); } catch {} }
   map = null; pinMarker = null;
 }
@@ -1048,16 +1049,67 @@ function initMap() {
   L.circle([CONFIG.shopLat, CONFIG.shopLng], { radius: CONFIG.nearKm * 1000, color: "#b5603a", weight: 2, fillOpacity: 0.1 }).addTo(map);
   L.circle([CONFIG.shopLat, CONFIG.shopLng], { radius: CONFIG.localMaxKm * 1000, color: "#6b6b3a", weight: 1, dashArray: "6 6", fillOpacity: 0 }).addTo(map);
   L.circleMarker([CONFIG.shopLat, CONFIG.shopLng], { radius: 7, color: "#3b2a20", fillColor: "#6b6b3a", fillOpacity: 1 }).addTo(map).bindTooltip("Our shop");
-  map.on("click", (e) => placePin(e.latlng.lat, e.latlng.lng, false));
-  if (deliv.lat !== undefined) placePin(deliv.lat, deliv.lng, true);
+  map.on("click", (e) => placePin(e.latlng.lat, e.latlng.lng, false, "manual"));
+  if (deliv.lat !== undefined) placePin(deliv.lat, deliv.lng, true, deliv.source);
   setTimeout(() => { if (map) map.invalidateSize(); }, 150);
 }
+const GEO = { debounceMs: 1200, gapMs: 1100 };   // wait after typing stops; pause between lookups (the free map service allows about 1 request/second)
+let geoTimer, geoSeq = 0, lastGeoKey = "";
+const sleep = (ms) => new Promise(r => setTimeout(r, ms));
 async function geocode(params) {
-  const url = "https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=in&" + new URLSearchParams(params).toString();
+  const bias = params.postalcode ? {} : { viewbox: `${CONFIG.shopLng - 0.6},${CONFIG.shopLat + 0.6},${CONFIG.shopLng + 0.6},${CONFIG.shopLat - 0.6}` };
+  const url = "https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=in&" + new URLSearchParams({ ...bias, ...params }).toString();
   const r = await fetch(url, { headers: { "Accept": "application/json" } });
   const j = await r.json();
   return j && j[0] ? { lat: parseFloat(j[0].lat), lng: parseFloat(j[0].lon) } : null;
 }
+function isManualPin() { return deliv.source === "manual" || deliv.source === "gps"; }
+async function locateAddress(force) {
+  const st = $("#loc-status"); if (!st) return;
+  const val = (id) => { const el = $(id); return el ? el.value.trim() : ""; };
+  const address = val("#f-address"), pin = val("#f-pin"), landmark = val("#f-landmark");
+  const pinOk = /^\d{6}$/.test(pin);
+  if (force) {
+    if (!address && !pin && !landmark) { st.textContent = "Please enter your address, PIN code or nearest landmark first."; return; }
+  } else {
+    if (!pinOk || (address.length < 6 && landmark.length < 3) || isManualPin()) return;   // wait for enough details; never move a pin the customer placed
+    if ([address, pin, landmark].join("|") === lastGeoKey) return;
+  }
+  lastGeoKey = [address, pin, landmark].join("|");
+  const seq = ++geoSeq;
+  st.textContent = "Finding your location on the map…";
+  try {
+    // Order of attempts: full address -> shorter address -> landmark -> PIN code area
+    const parts = address.split(/[,\n]+/).map(s => s.trim()).filter(Boolean);
+    const tries = [];
+    if (address) tries.push({ params: { q: `${parts.join(", ")}, ${pin}` }, source: "address" });
+    if (parts.length > 2) tries.push({ params: { q: `${parts.slice(-2).join(", ")}, ${pin}` }, source: "address" });
+    if (landmark) {
+      tries.push({ params: { q: `${landmark}, ${pin}` }, source: "landmark" });
+      tries.push({ params: { q: landmark }, source: "landmark" });
+    }
+    if (pinOk) tries.push({ params: { postalcode: pin }, source: "pin area" });
+    let hit = null, source = "";
+    for (let i = 0; i < tries.length && !hit; i++) {
+      if (i > 0) await sleep(GEO.gapMs);
+      if (seq !== geoSeq) return;
+      hit = await geocode(tries[i].params);
+      source = tries[i].source;
+    }
+    if (seq !== geoSeq) return;
+    const el = $("#loc-status"); if (!el) return;
+    if (!hit) { el.textContent = "We couldn't find that on the map. Try adding a nearby landmark, or tap the map to place the pin on your delivery spot."; return; }
+    placePin(hit.lat, hit.lng, true, source);
+    const note = source === "address" ? " We found your address on the map. Drag the pin if it isn't exactly right."
+      : source === "landmark" ? " We placed the pin at your nearest landmark. Please drag it to your exact delivery spot."
+      : " We could only find your PIN code area, so this pin is approximate. Please drag it to your exact delivery spot, or add a nearest landmark.";
+    const e2 = $("#loc-status"); if (e2) e2.textContent += note;
+  } catch {
+    const el = $("#loc-status");
+    if (el && seq === geoSeq) el.textContent = "Address search isn't available right now. Please tap the map to place the pin on your delivery spot.";
+  }
+}
+function scheduleLocate() { clearTimeout(geoTimer); geoTimer = setTimeout(() => locateAddress(false), GEO.debounceMs); }
 function deliveryText(o) {
   if (o.subtotal === undefined) return "";
   return o.delivery === null ? "to be confirmed on WhatsApp" : o.delivery ? money(o.delivery) : "FREE";
@@ -1276,10 +1328,12 @@ function renderCheckout() {
           <textarea id="f-address" name="address" required autocomplete="street-address"></textarea>
           <label for="f-pin">PIN code *</label>
           <input id="f-pin" name="pin" inputmode="numeric" maxlength="6" required autocomplete="postal-code">
+          <label for="f-landmark">Nearest landmark (optional, helps us find you)</label>
+          <input id="f-landmark" name="landmark" placeholder="e.g. Near Barari Ghat, opposite SBI bank" autocomplete="off">
           <label>Delivery spot on map</label>
-          <p class="hint" style="margin:0 0 8px">Tap "Find on map", then drag the pin (or tap the map) to your exact delivery spot. Delivery is ${money(CONFIG.nearFee)} inside the orange circle.</p>
+          <p class="hint" style="margin:0 0 8px">Type your address, PIN code and nearest landmark and we'll find it on the map automatically. If the pin isn't exactly right, drag it (or tap the map) to your delivery spot. Delivery is ${money(CONFIG.nearFee)} inside the orange circle.</p>
           <div class="map-actions">
-            <button type="button" class="btn btn-outline" id="find-btn">Find on map</button>
+            <button type="button" class="btn btn-outline" id="find-btn">Find again</button>
             <button type="button" class="btn btn-outline" id="loc-btn">Use my location</button>
           </div>
           <div id="map" class="map-box"></div>
@@ -1386,13 +1440,15 @@ async function submitOrder(form) {
     store: CONFIG.storeName,
     order_id: orderId,
     name: data.name, email: data.email, phone: data.phone,
-    address: data.address, pin_code: data.pin.trim(), notes: data.notes || "",
+    address: data.address, nearest_landmark: (data.landmark || "").trim() || "not given", pin_code: data.pin.trim(), notes: data.notes || "",
     order: items.map(i => `${i.product.name} (ID ${i.id}) × ${i.qty} = ${money(i.product.price * i.qty)}`).join("\n"),
     items: JSON.stringify(items.map(i => ({ id: i.id, name: i.product.name, price: i.product.price, qty: i.qty }))),
     subtotal: money(order.subtotal),
     delivery: order.delivery === null ? "To be confirmed on WhatsApp" : (order.delivery ? money(order.delivery) : "FREE"),
     distance_from_shop_km: deliv.km !== undefined ? deliv.km.toFixed(1) : "pin not placed",
     delivery_pin_location: deliv.lat !== undefined ? `https://www.google.com/maps?q=${deliv.lat},${deliv.lng}` : "pin not placed",
+    delivery_pin_source: ({ address: "found from the typed address", landmark: "APPROXIMATE - placed at the landmark the customer gave",
+      "pin area": "APPROXIMATE - only the PIN code area was found", manual: "placed/dragged by the customer", gps: "customer's current location" })[deliv.source] || "pin not placed",
     delivery_check: deliv.status === "local" && pinCodeState() !== "ok" ? "CHECK: pin is in Bhagalpur but the PIN code does not start with 812/813 - please verify the address" : "ok",
     total: order.total
   };
@@ -1459,31 +1515,13 @@ document.addEventListener("click", (e) => {
     $("#pqty").textContent = productQty;
     return;
   }
-  if (t.closest("#find-btn")) {
-    const address = $("#f-address").value.trim(), pin = $("#f-pin").value.trim();
-    const st = $("#loc-status");
-    if (!address && !pin) { st.textContent = "Please enter your address and PIN code first."; return; }
-    st.textContent = "Searching…";
-    (async () => {
-      try {
-        let hit = address ? await geocode({ q: `${address}, ${pin}` }) : null;
-        if (!hit && /^\d{6}$/.test(pin)) hit = await geocode({ postalcode: pin });
-        const el = $("#loc-status"); if (!el) return;
-        if (hit) { placePin(hit.lat, hit.lng, true); el.textContent += " Drag the pin to your exact delivery spot if needed."; }
-        else el.textContent = "We couldn't find that address. Tap the map to place the pin on your delivery spot.";
-      } catch {
-        const el = $("#loc-status");
-        if (el) el.textContent = "Search isn't available right now. Tap the map to place the pin on your delivery spot.";
-      }
-    })();
-    return;
-  }
+  if (t.closest("#find-btn")) { clearTimeout(geoTimer); locateAddress(true); return; }
   if (t.closest("#loc-btn")) {
     const st = $("#loc-status");
     if (!navigator.geolocation) { st.textContent = "Your browser can't share location. Tap the map to place the pin."; return; }
     st.textContent = "Finding your location…";
     navigator.geolocation.getCurrentPosition(
-      (pos) => placePin(pos.coords.latitude, pos.coords.longitude, true),
+      (pos) => placePin(pos.coords.latitude, pos.coords.longitude, true, "gps"),
       () => { const el = $("#loc-status"); if (el) el.textContent = "We couldn't get your location. Search your address or tap the map to place the pin."; },
       { enableHighAccuracy: true, timeout: 15000, maximumAge: 60000 }
     );
@@ -1537,6 +1575,7 @@ document.addEventListener("click", (e) => {
 
 document.addEventListener("input", (e) => {
   if (e.target.id === "f-pin") { updateLocStatus(); refreshTotals(); }
+  if (e.target.id === "f-pin" || e.target.id === "f-address" || e.target.id === "f-landmark") scheduleLocate();
   if (e.target.id === "search") { searchTerm = e.target.value; $("#grid-wrap").innerHTML = gridHTML(); }
 });
 document.addEventListener("change", (e) => {
