@@ -75,6 +75,12 @@ nav{background:var(--white);border-bottom:1px solid var(--line);position:sticky;
 .card h3{font-size:1.35rem;text-transform:capitalize}
 .price{font-weight:600;color:var(--clay-dark);font-size:1.1rem}
 .card .btn{margin-top:auto}
+.card-btns{margin-top:auto;display:flex;flex-direction:column;gap:6px}
+.card-btns .btn{margin-top:0}
+.btn-buy{background:var(--cocoa)}
+.btn-buy:not(:disabled):hover{background:#000}
+.buy-actions{display:flex;gap:12px;flex-wrap:wrap;width:100%;margin-top:4px}
+.buy-actions .btn{flex:1 1 150px;text-align:center}
 .empty{text-align:center;padding:60px 20px;color:var(--muted)}
 
 /* Product page */
@@ -213,6 +219,7 @@ const CONFIG = {
   outsideFee: 0,              // outside Bhagalpur: one flat charge, e.g. 120. Leave 0 to say "confirmed on WhatsApp before dispatch"
   freeDeliveryAbove: 999,     // free delivery inside Bhagalpur on orders of this amount or more. Set 0 for no free delivery
   bhagalpurPinPrefixes: ["812", "813"],   // PIN codes that count as Bhagalpur
+  nearAreaPins: ["812001", "812002"],     // the lower delivery fee (nearAreaFee) applies ONLY to these PIN codes
   googleAnalyticsId: ""       // e.g. "G-XXXXXXXXXX" from Google Analytics. Leave "" to keep analytics off
 };
 
@@ -359,7 +366,7 @@ function saveCart(cart) {
 }
 function inCart(sku) { return getCart().some(i => i.id === sku); }
 function designInCart(p) { return p.variants.some(v => inCart(v.sku)); }
-function addToCart(sku, qty = 1) {
+function addToCart(sku, qty = 1, quiet = false) {
   const f = findVariant(sku);
   if (!f || f.variant.stock < 1) return false;
   const cart = getCart();
@@ -367,7 +374,7 @@ function addToCart(sku, qty = 1) {
   if (item) item.qty = Math.min(item.qty + qty, f.variant.stock);
   else cart.push({ id: sku, qty: Math.min(qty, f.variant.stock) });
   saveCart(cart);
-  toast(`${variantName(f.product, f.variant)} added to cart`);
+  if (!quiet) toast(`${variantName(f.product, f.variant)} added to cart`);
   return true;
 }
 function setQty(sku, qty) {
@@ -411,19 +418,25 @@ function pinState() {                    // missing | bhagalpur | elsewhere
   if (!/^\d{6}$/.test(v)) return "missing";
   return CONFIG.bhagalpurPinPrefixes.some(x => v.startsWith(x)) ? "bhagalpur" : "elsewhere";
 }
-function deliveryQuote(sub) {            // { amount: number | null, state: choose | pincheck | confirm | ok }
+const nearPinsText = () => CONFIG.nearAreaPins.join(" and ");
+function nearPinOk() { const el = $("#f-pin"); return CONFIG.nearAreaPins.includes(el ? el.value.trim() : ""); }
+function deliveryQuote(sub) {            // { amount: number | null, state: choose | needpin | pincheck | confirm | ok }
   const zone = areaZone();
   if (sub <= 0) return { amount: 0, state: "ok" };
   if (zone === "none") return { amount: null, state: "choose" };
   if (zone === "outside") return CONFIG.outsideFee > 0 ? { amount: CONFIG.outsideFee, state: "ok" } : { amount: null, state: "confirm" };
   if (pinState() === "elsewhere") return { amount: null, state: "pincheck" };      // Bhagalpur area chosen but PIN code is not Bhagalpur
   if (CONFIG.freeDeliveryAbove && sub >= CONFIG.freeDeliveryAbove) return { amount: 0, state: "ok" };
-  return { amount: zone === "near" ? CONFIG.nearAreaFee : CONFIG.otherBhagalpurFee, state: "ok" };
+  if (zone === "near") {                 // the lower fee needs a listed chowk AND one of the near-area PIN codes
+    if (pinState() === "missing") return { amount: null, state: "needpin" };
+    return { amount: nearPinOk() ? CONFIG.nearAreaFee : CONFIG.otherBhagalpurFee, state: "ok" };
+  }
+  return { amount: CONFIG.otherBhagalpurFee, state: "ok" };
 }
 function grandTotal() { const s = cartTotal(); return s + (deliveryQuote(s).amount || 0); }
 function deliveryRangeNote() {
   const out = CONFIG.outsideFee > 0 ? `Outside Bhagalpur: ${money(CONFIG.outsideFee)}.` : "Outside Bhagalpur: we'll confirm the charge on WhatsApp before dispatch.";
-  return `Delivery in Bhagalpur: ${money(CONFIG.nearAreaFee)} for our main chowks, ${money(CONFIG.otherBhagalpurFee)} for other areas${CONFIG.freeDeliveryAbove ? `, free on orders of ${money(CONFIG.freeDeliveryAbove)} or more` : ""}. ${out}`;
+  return `Delivery in Bhagalpur: ${money(CONFIG.nearAreaFee)} for our main chowks (PIN ${nearPinsText()} only), ${money(CONFIG.otherBhagalpurFee)} for other areas and PIN codes${CONFIG.freeDeliveryAbove ? `, free on orders of ${money(CONFIG.freeDeliveryAbove)} or more` : ""}. ${out}`;
 }
 function totalsHTML(forCart) {
   const sub = cartTotal();
@@ -434,7 +447,7 @@ function totalsHTML(forCart) {
     <div class="row total"><span>Total (before delivery)</span><span>${money(sub)}</span></div>`;
   }
   const q = deliveryQuote(sub);
-  const delText = q.state === "choose" ? "Choose your area" : q.state === "pincheck" ? "Check your PIN code" : q.state === "confirm" ? "Confirmed on WhatsApp" : q.amount ? money(q.amount) : "FREE";
+  const delText = q.state === "choose" ? "Choose your area" : q.state === "needpin" ? "Enter your PIN code" : q.state === "pincheck" ? "Check your PIN code" : q.state === "confirm" ? "Confirmed on WhatsApp" : q.amount ? money(q.amount) : "FREE";
   const zone = areaZone();
   const hint = q.state === "ok" && q.amount > 0 && (zone === "near" || zone === "other") && CONFIG.freeDeliveryAbove && sub < CONFIG.freeDeliveryAbove
     ? `<div class="hint" style="margin:-2px 0 10px">Add ${money(CONFIG.freeDeliveryAbove - sub)} more for free delivery</div>` : "";
@@ -459,6 +472,8 @@ function updateAreaHint() {
   const q = deliveryQuote(cartTotal());
   el.textContent = q.state === "pincheck" ? "That PIN code isn't a Bhagalpur PIN code. Please check it, or choose \"Outside Bhagalpur\" as your area."
     : q.state === "confirm" ? "Outside Bhagalpur we'll confirm the delivery charge with you on WhatsApp before dispatching. You pay nothing until you agree."
+    : q.state === "needpin" ? `${money(CONFIG.nearAreaFee)} delivery is only for PIN codes ${nearPinsText()}. Other Bhagalpur PIN codes are ${money(CONFIG.otherBhagalpurFee)}. Enter your PIN code to see your charge.`
+    : areaZone() === "near" && q.state === "ok" && q.amount === CONFIG.otherBhagalpurFee && !nearPinOk() ? `Your PIN code is not ${CONFIG.nearAreaPins.join(" or ")}, so the ${money(CONFIG.otherBhagalpurFee)} Bhagalpur delivery charge applies.`
     : "Your delivery charge depends on this. Choose the chowk nearest to your address.";
   el.style.color = q.state === "pincheck" ? "#a33" : "";
 }
@@ -533,7 +548,7 @@ function cardHTML(p) {
   // one colour: add straight from the card. Several colours: the customer must pick one on the product page.
   const btn = out ? `<button class="btn" disabled>Sold Out</button>`
     : multi ? `<button class="btn ${added ? "in-cart" : ""}" data-open-pick="${esc(p.id)}">${added ? "In Cart ✓ (choose more)" : "Choose colour"}</button>`
-    : `<button class="btn ${added ? "in-cart" : ""}" data-add="${esc(p.variants[0].sku)}">${added ? "In Cart ✓" : "Add to Cart"}</button>`;
+    : `<div class="card-btns"><button class="btn ${added ? "in-cart" : ""}" data-add="${esc(p.variants[0].sku)}">${added ? "In Cart ✓" : "Add to Cart"}</button><button class="btn btn-buy" data-buy="${esc(p.variants[0].sku)}">Buy Now</button></div>`;
   return `
   <div class="card" data-open="${esc(p.id)}">
     <div class="card-img">
@@ -609,6 +624,7 @@ function paintVariant() {
   const add = $("#pdp-add");
   add.disabled = out;
   add.textContent = out ? "Sold Out" : (inCart(v.sku) ? "In Cart ✓ (add more)" : "Add to Cart");
+  const buy = $("#pdp-buy"); if (buy) buy.disabled = out;
   document.querySelectorAll("[data-colour]").forEach(el => el.classList.toggle("active", el.dataset.colour === v.sku));
   const lbl = $("#colour-name"); if (lbl) lbl.textContent = v.colour;
   if (v.photo) {
@@ -649,8 +665,11 @@ function renderProduct(id) {
               <span id="pqty">1</span>
               <button data-q="1" aria-label="Increase">+</button>
             </div>
-            <button class="btn" id="pdp-add" data-pdp-add="1">Add to Cart</button>
             <button class="btn btn-outline" data-share="${esc(p.id)}">Share</button>
+          </div>
+          <div class="buy-actions">
+            <button class="btn btn-outline" id="pdp-add" data-pdp-add="1">Add to Cart</button>
+            <button class="btn btn-buy" id="pdp-buy" data-pdp-buy="1">Buy Now</button>
           </div>
         </div>
       </div>
@@ -721,7 +740,7 @@ function renderCheckout() {
           <label for="f-area">Your nearest chowk / area *</label>
           <select id="f-area" name="area" required>
             <option value="">Select your area</option>
-            <optgroup label="Bhagalpur chowks and roads (${money(CONFIG.nearAreaFee)} delivery)">
+            <optgroup label="Bhagalpur chowks and roads (${money(CONFIG.nearAreaFee)} for PIN ${CONFIG.nearAreaPins.join(" / ")})">
               ${DELIVERY_AREAS.map(a => `<option value="near:${esc(a)}">${esc(a)}</option>`).join("")}
             </optgroup>
             <option value="${AREA_OTHER}">Other area in Bhagalpur (${money(CONFIG.otherBhagalpurFee)} delivery)</option>
@@ -806,7 +825,7 @@ function renderOrders() {
 
 function renderAbout() {
   const wa = String(CONFIG.whatsappNumber || "").replace(/\D/g, "");
-  const delivery = `Delivery in Bhagalpur is ${money(CONFIG.nearAreaFee)} for these chowks and roads: ${DELIVERY_AREAS.join(", ")}. For any other area in Bhagalpur it is ${money(CONFIG.otherBhagalpurFee)}${CONFIG.freeDeliveryAbove ? `, and delivery in Bhagalpur is free on orders of ${money(CONFIG.freeDeliveryAbove)} or more` : ""}. ${CONFIG.outsideFee > 0 ? `Outside Bhagalpur the delivery charge is ${money(CONFIG.outsideFee)}.` : "Outside Bhagalpur we'll confirm the delivery charge with you on WhatsApp before dispatching, and you pay nothing until you agree."} You'll see your delivery charge at checkout before you place your order. We'll also tell you the delivery time when we confirm your order.`;
+  const delivery = `Delivery in Bhagalpur is ${money(CONFIG.nearAreaFee)} for these chowks and roads when your PIN code is ${nearPinsText()}: ${DELIVERY_AREAS.join(", ")}. For any other area or PIN code in Bhagalpur it is ${money(CONFIG.otherBhagalpurFee)}${CONFIG.freeDeliveryAbove ? `, and delivery in Bhagalpur is free on orders of ${money(CONFIG.freeDeliveryAbove)} or more` : ""}. ${CONFIG.outsideFee > 0 ? `Outside Bhagalpur the delivery charge is ${money(CONFIG.outsideFee)}.` : "Outside Bhagalpur we'll confirm the delivery charge with you on WhatsApp before dispatching, and you pay nothing until you agree."} You'll see your delivery charge at checkout before you place your order. We'll also tell you the delivery time when we confirm your order.`;
   app.innerHTML = `
     <div class="container">
       <h2 class="section-title">About &amp; Policies</h2>
@@ -936,14 +955,15 @@ function applyFeed(feed) {
   CATALOG = buildCatalog(feed.products || []);
   const s = feed.settings || {};
   ["nearAreaFee", "otherBhagalpurFee", "outsideFee", "freeDeliveryAbove"].forEach(k => { if (Number.isFinite(Number(s[k])) && s[k] !== null && s[k] !== "") CONFIG[k] = Number(s[k]); });
-  if (Array.isArray(s.bhagalpurPinPrefixes) && s.bhagalpurPinPrefixes.length) CONFIG.bhagalpurPinPrefixes = s.bhagalpurPinPrefixes.map(String);
+  if (Array.isArray(s.bhagalpurPinPrefixes) && s.bhagalpurPinPrefixes.length) CONFIG.bhagalpurPinPrefixes = s.bhagalpurPinPrefixes.flatMap(x => { x = String(x).trim(); return /^\d+$/.test(x) && x.length > 3 && x.length % 3 === 0 ? x.match(/\d{3}/g) : [x]; });
+  if (Array.isArray(s.nearAreaPins) && s.nearAreaPins.length) CONFIG.nearAreaPins = s.nearAreaPins.flatMap(x => { x = String(x).trim(); return /^\d+$/.test(x) && x.length > 6 && x.length % 6 === 0 ? x.match(/\d{6}/g) : [x]; });
   if (Array.isArray(feed.areas) && feed.areas.length) DELIVERY_AREAS.splice(0, DELIVERY_AREAS.length, ...feed.areas);
   catalogLoaded = true;
 }
 function catalogAsFeed() {
   const rows = [];
   CATALOG.forEach(p => p.variants.forEach(v => rows.push({ sku: v.sku, code: p.id, name: p.name, category: p.category, colour: v.colour, price: v.price, stock: v.stock, photo: v.photo, description: p.description })));
-  return { ok: true, products: rows, settings: { nearAreaFee: CONFIG.nearAreaFee, otherBhagalpurFee: CONFIG.otherBhagalpurFee, outsideFee: CONFIG.outsideFee, freeDeliveryAbove: CONFIG.freeDeliveryAbove, bhagalpurPinPrefixes: CONFIG.bhagalpurPinPrefixes }, areas: DELIVERY_AREAS.slice() };
+  return { ok: true, products: rows, settings: { nearAreaFee: CONFIG.nearAreaFee, otherBhagalpurFee: CONFIG.otherBhagalpurFee, outsideFee: CONFIG.outsideFee, freeDeliveryAbove: CONFIG.freeDeliveryAbove, bhagalpurPinPrefixes: CONFIG.bhagalpurPinPrefixes, nearAreaPins: CONFIG.nearAreaPins }, areas: DELIVERY_AREAS.slice() };
 }
 function saveCatalogCache() {
   if (!SHEET_MODE || !CATALOG.length) return;
@@ -1004,11 +1024,22 @@ document.addEventListener("click", (e) => {
     add.textContent = "In Cart ✓"; add.classList.add("in-cart");
     return;
   }
+  const buy = t.closest("[data-buy]");
+  if (buy) {                       // Buy Now from a card: put it in the cart and go straight to checkout
+    e.stopPropagation();
+    if (addToCart(buy.dataset.buy, 1, true)) location.hash = "#/checkout";
+    return;
+  }
   const colourBtn = t.closest("[data-colour]");
   if (colourBtn) { selectedSku = colourBtn.dataset.colour; productQty = 1; paintVariant(); return; }
   const pdpAdd = t.closest("[data-pdp-add]");
   if (pdpAdd) {
     if (addToCart(selectedSku, productQty)) pdpAdd.textContent = "In Cart ✓ (add more)";
+    return;
+  }
+  const pdpBuy = t.closest("[data-pdp-buy]");
+  if (pdpBuy) {                    // Buy Now on the product page: the chosen colour and quantity, straight to checkout
+    if (addToCart(selectedSku, productQty, true)) location.hash = "#/checkout";
     return;
   }
   const q = t.closest("[data-q]");
