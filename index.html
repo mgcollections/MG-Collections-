@@ -214,6 +214,14 @@ footer .logo{color:#f0e6d6;font-size:1.5rem;display:block;margin-bottom:4px}
 .pay-opt b{display:block;font-weight:600}
 .pay-opt small{display:block;color:var(--muted);font-size:.82rem}
 .pay-big{display:block;text-align:center;font-size:1.05rem;padding:15px 22px}
+.pay-apps{display:grid;grid-template-columns:1fr;gap:9px}
+.pay-box .pay-app{display:flex;align-items:center;gap:14px;background:var(--white);color:var(--cocoa);border:1.5px solid var(--line);padding:9px 14px;font-size:1.02rem;text-align:left}
+.pay-box .pay-app:hover{background:#fff;border-color:var(--clay);box-shadow:var(--shadow)}
+.pay-app .pay-logo{flex:0 0 86px;height:36px;display:flex;align-items:center;justify-content:center}
+.pay-app .pay-logo img{max-width:100%;max-height:100%;object-fit:contain;display:block}
+.pay-app .pay-name{flex:1}
+.pay-app::after{content:"\203A";color:var(--muted);font-size:1.5rem;line-height:1}
+.pay-other{display:block;text-align:center;margin-top:10px;color:var(--clay-dark);text-decoration:underline;font-weight:600;font-size:.92rem}
 .pay-box h3{font-size:1.5rem;margin-bottom:8px}
 .pay-box .pay-sub{margin:8px 0}
 .qr{width:200px;margin:14px auto 6px}.qr svg{width:100%;height:auto;background:#fff;border-radius:10px;padding:6px}
@@ -594,6 +602,19 @@ function upiLink(o) {
   if (!CONFIG.upiId || !o.totalNum) return "";
   return `upi://pay?pa=${CONFIG.upiId}&pn=${encodeURIComponent(CONFIG.upiName || CONFIG.storeName)}&am=${Number(o.totalNum).toFixed(2)}&cu=INR&tn=${encodeURIComponent("Order " + o.id)}`;
 }
+/* Buttons that open ONE named UPI app directly. The plain upi:// link lets the phone choose, and on many Android phones that is WhatsApp. */
+const isAndroid = () => /android/i.test(navigator.userAgent || "");
+const isIOS = () => /iphone|ipad|ipod/i.test(navigator.userAgent || "") || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+function upiAppLinks(o) {
+  const base = upiLink(o); if (!base) return [];
+  const q = base.slice(base.indexOf("?") + 1);
+  if (isAndroid()) {
+    const intent = (pkg) => `intent://pay?${q}#Intent;scheme=upi;package=${pkg};end`;
+    return [["Google Pay", intent("com.google.android.apps.nbu.paisa.user")], ["PhonePe", intent("com.phonepe.app")], ["Paytm", intent("net.one97.paytm")], ["BHIM", intent("in.org.npci.upiapp")]];
+  }
+  if (isIOS()) return [["Google Pay", `gpay://upi/pay?${q}`], ["PhonePe", `phonepe://pay?${q}`], ["Paytm", `paytmmp://pay?${q}`]];
+  return [];
+}
 const isDesktop = () => !!(window.matchMedia && matchMedia("(hover: hover) and (pointer: fine)").matches);
 function qrSvg(text) {
   try { const q = qrcode(0, "M"); q.addData(text); q.make(); return q.createSvgTag({ cellSize: 4, margin: 2, scalable: true }); } catch { return ""; }
@@ -604,8 +625,16 @@ function upiActionsHTML(o) {
   const wa = String(CONFIG.whatsappNumber || "").replace(/\D/g, "");
   const msg = `Hi ${CONFIG.storeName}, I have paid ${o.total || money(o.totalNum)} for order ${o.id}. Screenshot attached.`;
   const qr = isDesktop() ? qrSvg(link) : "";
-  return `<a class="btn pay-big" href="${link}">Pay ${esc(o.total || money(o.totalNum))} with UPI</a>
-    <p class="hint pay-sub">Tap the button on your phone and your UPI app (Google Pay, PhonePe, Paytm…) opens with the amount filled in.</p>
+  const apps = isDesktop() ? [] : upiAppLinks(o);
+  const appBtns = apps.length
+    ? `<p class="hint pay-sub" style="margin-top:0"><b>Pay ${esc(o.total || money(o.totalNum))}: tap the app you use</b></p>
+       <div class="pay-apps">${apps.map(([n, u]) => `<a class="btn pay-app" href="${esc(u)}"><span class="pay-logo"><img src="pay-${n.toLowerCase().replace(/\s/g, "")}.png" alt="" onerror="this.parentNode.style.display='none'"></span><span class="pay-name">${n}</span></a>`).join("")}</div>
+       <p class="hint pay-sub">Your app opens with the amount filled in.</p>
+       <a class="pay-other" href="${link}">Other UPI app</a>
+       <p class="hint pay-sub">If WhatsApp opens, go back and tap your payment app above, or copy the UPI ID below.</p>`
+    : `<a class="btn pay-big" href="${link}">Pay ${esc(o.total || money(o.totalNum))} with UPI</a>
+       <p class="hint pay-sub">Tap the button on your phone and your UPI app (Google Pay, PhonePe, Paytm…) opens with the amount filled in.</p>`;
+  return `${appBtns}
     ${qr ? `<div class="qr">${qr}<small>On a computer? Scan this with any UPI app on your phone</small></div>` : ""}
     <p class="hint" style="margin:6px 0 0">Or pay to UPI ID <strong>${esc(CONFIG.upiId)}</strong> <button type="button" class="copy" data-copy="${esc(CONFIG.upiId)}">Copy</button><br>Please add order number ${esc(o.id)} in the payment note.</p>
     ${wa ? `<a class="paid-link" target="_blank" rel="noopener" href="https://wa.me/${wa}?text=${encodeURIComponent(msg)}">I have paid: send the screenshot on WhatsApp</a>` : ""}`;
