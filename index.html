@@ -229,6 +229,8 @@ footer .logo{color:#f0e6d6;font-size:1.5rem;display:block;margin-bottom:4px}
 .adm-btn.danger{color:#9b2c22;border-color:#e3b1ab}
 .adm-btn:disabled{opacity:.6}
 .adm-err{color:#9b2c22;font-size:.88rem;margin:6px 0}
+.adm-ok{color:#2c6b25;font-size:.9rem;margin:6px 0}
+.adm-login label{display:block;font-weight:600;font-size:.85rem;margin-bottom:4px}
 .adm-bar{display:flex;gap:10px;margin-bottom:12px}
 .adm-bar .btn{white-space:nowrap;padding:11px 14px}
 .adm-bar input{flex:1;min-width:0;padding:11px 14px;border:1.5px solid var(--line);border-radius:10px;background:var(--white);font-family:inherit}
@@ -250,6 +252,13 @@ footer .logo{color:#f0e6d6;font-size:1.5rem;display:block;margin-bottom:4px}
 .adm-two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .adm-photo{display:flex;gap:14px;align-items:center;margin:8px 0}
 .adm-upl{cursor:pointer;display:inline-block;margin-bottom:6px}
+.adm-strip{display:flex;gap:10px;flex-wrap:wrap;margin:6px 0 10px}
+.adm-ph{display:flex;flex-direction:column;gap:5px;align-items:stretch;width:92px}
+.adm-ph .adm-thumb{width:92px;height:115px}
+.adm-ph .adm-btn{padding:6px 4px;font-size:.74rem;text-align:center}
+.adm-main{font-size:.74rem;font-weight:700;text-align:center;color:var(--clay-dark);padding:6px 0}
+.adm-linkrow{display:flex;gap:8px;margin-top:10px}
+.adm-linkrow input{flex:1;min-width:0;padding:10px 12px;border:1.5px solid var(--line);border-radius:10px;font-family:inherit}
 .adm-check{display:flex!important;gap:8px;align-items:center;font-weight:600}
 .adm-check input{width:auto}
 </style>
@@ -393,7 +402,9 @@ function buildCatalog(rows) {         // sheet way: one row per colour, same cod
     if (!byCode.has(r.code)) byCode.set(r.code, { id: r.code, name: r.name, category: r.category || "Others", description: r.description || "", variants: [] });
     const p = byCode.get(r.code);
     if (!p.description && r.description) p.description = r.description;
-    p.variants.push({ sku: r.sku, colour: r.colour || "", price: Number(r.price), stock: Math.max(0, Number(r.stock) || 0), photo: r.photo || "" });
+    const pics = String(r.photo || "").split("|").map(x => x.trim()).filter(Boolean);     // several photos in one cell: first = main, the rest = gallery
+    p.extraImages = (p.extraImages || []).concat(pics.slice(1));
+    p.variants.push({ sku: r.sku, colour: r.colour || "", price: Number(r.price), stock: Math.max(0, Number(r.stock) || 0), photo: pics[0] || "" });
   });
   return [...byCode.values()].map(finishProduct);
 }
@@ -408,6 +419,8 @@ const resolveSrc = (src) => {
   if (src && src.startsWith("embedded:")) return (typeof EMBEDDED_IMAGES !== "undefined" && EMBEDDED_IMAGES[src.slice(9)]) || "";
   return src;
 };
+/* Photos saved by the Admin page live on Google Drive as ...thumbnail?id=..&sz=w1000. Google makes smaller copies on request, so lists use a small one and only the product page loads the big one. */
+const sized = (src, w) => typeof src === "string" ? src.replace(/(drive\.google\.com\/thumbnail\?[^"'\s]*?sz=w)\d+/, "$1" + w) : src;
 const imgTag = (src, alt, extra = "") =>
   `<img src="${esc(resolveSrc(src) || PLACEHOLDER)}" alt="${esc(alt)}" referrerpolicy="no-referrer" ${extra} onerror="this.onerror=null;this.src='${PLACEHOLDER}'">`;
 
@@ -614,7 +627,7 @@ function cardHTML(p) {
   return `
   <div class="card" data-open="${esc(p.id)}">
     <div class="card-img">
-      ${imgTag(pic, p.name, 'loading="lazy"')}
+      ${imgTag(sized(pic, 500), p.name, 'loading="lazy" decoding="async"')}
       ${out ? '<span class="tag">Sold out</span>' : (p.stock <= 3 ? `<span class="tag">Only ${p.stock} left</span>` : "")}
     </div>
     <div class="card-body">
@@ -648,7 +661,7 @@ function categoryTilesHTML() {
   return `<div class="cat-tiles">` + [...by].map(([c, list]) => {
     const lead = list.find(x => x.stock > 0) || list[0];
     const pic = firstAvailable(lead).photo || lead.images[0];
-    return `<button class="cat-tile" data-cat="${esc(c)}" aria-label="${esc(c)}">${imgTag(pic, c, 'loading="lazy"')}<span class="cat-name">${esc(c)}</span><span class="cat-count">${list.length} design${list.length > 1 ? "s" : ""}</span></button>`;
+    return `<button class="cat-tile" data-cat="${esc(c)}" aria-label="${esc(c)}">${imgTag(sized(pic, 500), c, 'loading="lazy" decoding="async"')}<span class="cat-name">${esc(c)}</span><span class="cat-count">${list.length} design${list.length > 1 ? "s" : ""}</span></button>`;
   }).join("") + `</div>`;
 }
 function renderHome() {
@@ -729,7 +742,7 @@ function renderProduct(id) {
       <div class="product">
         <div>
           <div class="gallery-main" id="gallery-main">${imgTag(v0.photo || p.images[0], p.name)}</div>
-          ${p.images.length > 1 ? `<div class="thumbs">${p.images.map((im, i) => imgTag(im, p.name + " " + (i + 1), `data-thumb="${i}" class="${im === v0.photo ? "active" : ""}"`)).join("")}</div>` : ""}
+          ${p.images.length > 1 ? `<div class="thumbs">${p.images.map((im, i) => imgTag(sized(im, 200), p.name + " " + (i + 1), `data-thumb="${i}" class="${im === v0.photo ? "active" : ""}"`)).join("")}</div>` : ""}
         </div>
         <div class="info">
           <span class="cat">${esc(p.category)}</span>
@@ -776,7 +789,7 @@ function renderCart() {
         <div>
           ${items.map(i => `
             <div class="cart-item">
-              <a href="#/product/${encodeURIComponent(i.product.id)}">${imgTag(i.variant.photo || i.product.images[0], variantName(i.product, i.variant))}</a>
+              <a href="#/product/${encodeURIComponent(i.product.id)}">${imgTag(sized(i.variant.photo || i.product.images[0], 300), variantName(i.product, i.variant), 'loading="lazy" decoding="async"')}</a>
               <div>
                 <h3><a href="#/product/${encodeURIComponent(i.product.id)}">${esc(i.product.name)}</a></h3>
                 ${i.variant.colour ? `<div class="sub">Colour: <strong>${esc(i.variant.colour)}</strong></div>` : ""}
@@ -1073,7 +1086,7 @@ function renderCatalogWait() {
 }
 
 /* ---------- Owner Admin page (#/admin): products, stock and orders, no need to open the sheet ---------- */
-const ADM = { pw: "", loaded: false, tab: "orders", filter: "active", q: "", products: [], orders: [], err: "", timers: {} };
+const ADM = { photos: [], pw: "", loaded: false, tab: "orders", filter: "active", q: "", products: [], orders: [], err: "", timers: {} };
 try { ADM.pw = sessionStorage.getItem("mg-admin") || ""; } catch {}
 const ADM_NEXT = { New: ["Confirmed", "Cancelled"], Confirmed: ["Paid", "Shipped", "Cancelled"], Paid: ["Shipped", "Cancelled"], Shipped: ["Delivered", "Cancelled"], Delivered: [], Cancelled: [] };
 const ADM_LABEL = { Confirmed: "Confirm order", Paid: "Mark paid", Shipped: "Mark shipped", Delivered: "Mark delivered", Cancelled: "Cancel order" };
@@ -1085,7 +1098,7 @@ async function admCall(body) {
 }
 function admError(code, msg) {
   return ({
-    disabled: "The admin page is not set up yet. In your Google Sheet, open the Settings tab and type a password (6 or more characters) in the 'Admin password' row. Then run setupSheets and deploy a New version.",
+    disabled: "The admin password is not set yet. Tap 'Forgot password?' below to set one with an emailed code, or type it in the 'Admin password' row of the Settings tab in your Google Sheet.",
     wrong: "Wrong password.",
     locked: "Too many wrong tries. Please wait 10 minutes and try again.",
     network: "Could not reach the server. Check your internet and try again.",
@@ -1093,6 +1106,47 @@ function admError(code, msg) {
   })[code] || msg || "Something went wrong. Please try again.";
 }
 function admLogout() { ADM.pw = ""; ADM.loaded = false; try { sessionStorage.removeItem("mg-admin"); } catch {} renderAdmin(); }
+/* ---- forgot password ---- */
+async function admResetCall(body) {
+  try {
+    const r = await fetch(CONFIG.sheetApiUrl, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify({ action: "adminReset", ...body }) });
+    return await r.json();
+  } catch { return { ok: false, error: "network" }; }
+}
+function renderAdminReset(st) {
+  ADM.reset = st;
+  const msg = st.msg ? `<p class="${st.ok ? "adm-ok" : "adm-err"}">${esc(st.msg)}</p>` : "";
+  app.innerHTML = st.step === 1
+    ? `<div class="container adm-login"><h2>Reset admin password</h2>${msg}<p class="hint" style="margin-bottom:14px">We will email a 6-digit code to your recovery email. It works for 15 minutes.</p>
+       <button class="btn btn-block" data-a="sendcode">Email me a reset code</button>
+       <p style="margin-top:14px;text-align:center"><a href="#" data-a="backlogin" style="color:var(--clay-dark);text-decoration:underline">Back to log in</a></p></div>`
+    : `<div class="container adm-login"><h2>Enter the code</h2>${msg}
+       <form id="adm-reset" class="form-card" novalidate>
+         <label>6-digit code from your email</label><input id="rs-code" inputmode="numeric" maxlength="6" autocomplete="one-time-code">
+         ${st.phoneRequired ? `<label style="margin-top:10px">Your recovery phone number</label><input id="rs-phone" inputmode="tel" autocomplete="tel">` : ""}
+         <label style="margin-top:10px">New password (6 or more characters)</label><input type="password" id="rs-pw" autocomplete="new-password">
+         <label style="margin-top:10px">Type the new password again</label><input type="password" id="rs-pw2" autocomplete="new-password">
+         <button class="btn btn-block" type="submit" style="margin-top:14px">Save new password</button></form>
+       <p style="margin-top:14px;text-align:center"><a href="#" data-a="sendcode" style="color:var(--clay-dark);text-decoration:underline">Send a new code</a> · <a href="#" data-a="backlogin" style="color:var(--clay-dark);text-decoration:underline">Back to log in</a></p></div>`;
+}
+async function admSendCode(btn) {
+  if (btn && btn.tagName === "BUTTON") { btn.disabled = true; btn.textContent = "Sending…"; }
+  const r = await admResetCall({ op: "request" });
+  if (!r.ok) { renderAdminReset({ step: 1, msg: r.error === "network" ? admError("network") : (r.message || "Could not send the code.") }); return; }
+  renderAdminReset({ step: 2, ok: true, msg: "We emailed a code to " + r.sentTo + ". Check your inbox (and Spam).", phoneRequired: r.phoneRequired });
+}
+async function admDoReset(form) {
+  const pw = $("#rs-pw").value, st = ADM.reset || { step: 2 };
+  const fail = (m) => renderAdminReset({ ...st, step: 2, ok: false, msg: m });
+  if (pw.length < 6) return fail("The new password needs 6 or more characters.");
+  if (pw !== $("#rs-pw2").value) return fail("The two passwords do not match.");
+  const btn = form.querySelector("button"); btn.disabled = true; btn.textContent = "Saving…";
+  const r = await admResetCall({ op: "confirm", code: $("#rs-code").value.trim(), phone: $("#rs-phone") ? $("#rs-phone").value : "", newPassword: pw });
+  if (!r.ok) return fail(r.error === "network" ? admError("network") : (r.message || "Could not reset the password."));
+  ADM.pw = ""; ADM.reset = null; ADM.err = "";
+  renderAdmin();
+  const c = document.querySelector(".adm-login h2"); if (c) c.insertAdjacentHTML("afterend", `<p class="adm-ok">Password changed. Please log in.</p>`);
+}
 async function admLoad(quiet) {
   const r = await admCall({ op: "list" });
   if (!r.ok) {
@@ -1113,7 +1167,7 @@ function renderAdmin() {
       ${ADM.err ? `<p class="adm-err">${esc(ADM.err)}</p>` : ""}
       <form id="adm-login" class="form-card" novalidate><label>Admin password</label><input type="password" id="adm-pw" autocomplete="current-password" required>
       <button class="btn btn-block" type="submit" style="margin-top:14px">Log in</button></form>
-      <p class="hint" style="margin-top:12px">Set or change this password in your Google Sheet: Settings tab, 'Admin password' row.</p></div>`;
+      <p style="margin-top:14px;text-align:center"><a href="#" data-a="forgot" style="color:var(--clay-dark);text-decoration:underline;font-weight:600">Forgot password?</a></p></div>`;
     return;
   }
   if (!ADM.loaded) { app.innerHTML = `<div class="loading"><h2>Loading your shop…</h2></div>`; admLoad(false); return; }
@@ -1174,7 +1228,7 @@ function admProductsHTML() {
 }
 function admProductRow(p) {
   return `<div class="adm-prod" data-row="${p.row}">
-    <div class="adm-thumb">${imgTag(p.photo, p.name)}</div>
+    <div class="adm-thumb">${imgTag(sized(String(p.photo || "").split("|")[0].trim(), 200), p.name, 'loading="lazy" decoding="async"')}</div>
     <div class="adm-pinfo"><b>${esc(p.name)}</b>${p.colour ? ` <span class="adm-sub">(${esc(p.colour)})</span>` : ""}
       <div class="adm-sub">${esc(p.code)} · ${esc(p.category)} · ${money(p.price)}${p.visible ? "" : ' · <span class="adm-hidden">Hidden</span>'}</div></div>
     <div class="adm-stock"><button data-a="stock" data-row="${p.row}" data-d="-1" aria-label="Less">−</button><b class="${p.stock < 1 ? "out" : ""}" id="stk-${p.row}">${p.stock}</b><button data-a="stock" data-row="${p.row}" data-d="1" aria-label="More">+</button></div>
@@ -1194,14 +1248,16 @@ function admStock(row, d) {
 function admForm(p) {
   const e = p || { code: "", name: "", category: "", colour: "", price: "", stock: 1, photo: "", description: "", visible: true };
   const cats = [...new Set(ADM.products.map(x => x.category).filter(Boolean))];
+  ADM.photos = String(e.photo || "").split("|").map(x => x.trim()).filter(Boolean);
   const m = document.createElement("div"); m.className = "adm-modal"; m.id = "adm-modal";
   m.innerHTML = `<form class="adm-form" id="adm-form" novalidate>
     <h3>${p ? "Edit product" : "Add product"}</h3>
     <input type="hidden" id="pf-row" value="${p ? p.row : ""}"><input type="hidden" id="pf-ocode" value="${esc(e.code)}"><input type="hidden" id="pf-ocolour" value="${esc(e.colour)}">
-    <div class="adm-photo"><div class="adm-thumb big" id="pf-prev">${imgTag(e.photo, "photo")}</div>
-      <div><label class="btn btn-outline adm-upl">Choose photo<input type="file" accept="image/*" id="pf-file" hidden></label>
-      <div class="adm-sub" id="pf-upmsg">Pick a photo from your phone. It is made smaller automatically.</div></div></div>
-    <label>Photo link or file name</label><input id="pf-photo" value="${esc(e.photo)}" placeholder="filled automatically after you choose a photo">
+    <label>Photos <span class="adm-sub">(the first is the main photo; add up to 6)</span></label>
+    <div class="adm-strip" id="pf-strip"></div>
+    <label class="btn btn-outline adm-upl">Add photos<input type="file" accept="image/*" multiple id="pf-file" hidden></label>
+    <div class="adm-sub" id="pf-upmsg">Pick one or more photos from your phone. They are made smaller automatically.</div>
+    <div class="adm-linkrow"><input id="pf-link" placeholder="or paste a photo link / file name"><button type="button" class="adm-btn" data-a="phadd">Add</button></div>
     <div class="adm-two"><div><label>Code *</label><input id="pf-code" value="${esc(e.code)}" placeholder="BR007"></div><div><label>Colour (optional)</label><input id="pf-colour" value="${esc(e.colour)}"></div></div>
     <label>Name *</label><input id="pf-name" value="${esc(e.name)}">
     <label>Category *</label><input id="pf-cat" value="${esc(e.category)}" list="pf-cats" placeholder="e.g. Bracelet Watches"><datalist id="pf-cats">${cats.map(c => `<option value="${esc(c)}">`).join("")}</datalist>
@@ -1213,6 +1269,13 @@ function admForm(p) {
   </form>`;
   document.body.appendChild(m);
   document.body.style.overflow = "hidden";
+  admPaintPhotos();
+}
+function admPaintPhotos() {
+  const el = $("#pf-strip"); if (!el) return;
+  el.innerHTML = ADM.photos.length ? ADM.photos.map((u, i) => `<div class="adm-ph"><div class="adm-thumb">${imgTag(sized(u, 200), "photo " + (i + 1))}</div>
+    ${i === 0 ? '<span class="adm-main">Main</span>' : `<button type="button" class="adm-btn" data-a="phmain" data-i="${i}">Make main</button>`}
+    <button type="button" class="adm-btn danger" data-a="phdel" data-i="${i}">Remove</button></div>`).join("") : '<div class="adm-sub">No photo yet.</div>';
 }
 function admCloseForm() { const m = $("#adm-modal"); if (m) m.remove(); document.body.style.overflow = ""; }
 function admCompress(file, max = 1000) {
@@ -1229,15 +1292,23 @@ function admCompress(file, max = 1000) {
     img.src = url;
   });
 }
-async function admPickPhoto(file) {
-  const msg = $("#pf-upmsg"); if (!file) return;
-  msg.textContent = "Uploading…";
-  try {
-    const data = await admCompress(file);
-    const r = await admCall({ op: "uploadPhoto", name: ($("#pf-code").value || file.name.replace(/\.\w+$/, "")), mime: "image/jpeg", data });
-    if (!r.ok) { msg.textContent = admError(r.error, r.message) + (r.error === "server" ? " (If this keeps happening: in Apps Script run setupSheets again and allow Drive access, then deploy a New version.)" : ""); return; }
-    $("#pf-photo").value = r.url; $("#pf-prev").innerHTML = imgTag(r.url, "photo"); msg.textContent = "Photo added ✓";
-  } catch { msg.textContent = "Could not read this photo. Try a JPG or PNG."; }
+async function admPickPhotos(files) {
+  const msg = $("#pf-upmsg"); if (!files || !files.length) return;
+  const room = 6 - ADM.photos.length;
+  if (room <= 0) { msg.textContent = "A product can have up to 6 photos. Remove one first."; return; }
+  const list = [...files].slice(0, room);
+  let done = 0;
+  for (const file of list) {
+    msg.textContent = "Uploading " + (done + 1) + " of " + list.length + "…";
+    try {
+      const data = await admCompress(file);
+      const r = await admCall({ op: "uploadPhoto", name: ($("#pf-code").value || file.name.replace(/\.\w+$/, "")), mime: "image/jpeg", data });
+      if (!r.ok) { msg.textContent = admError(r.error, r.message); admPaintPhotos(); return; }
+      ADM.photos.push(r.url); done++; admPaintPhotos();
+    } catch { msg.textContent = "Could not read " + file.name + ". Try a JPG or PNG."; return; }
+  }
+  msg.textContent = done + " photo" + (done > 1 ? "s" : "") + " added ✓" + (files.length > list.length ? " (the limit is 6 photos)" : "");
+  const f = $("#pf-file"); if (f) f.value = "";
 }
 async function admSaveForm() {
   const v = (id) => $("#" + id).value.trim();
@@ -1247,7 +1318,7 @@ async function admSaveForm() {
   if (!(Number(v("pf-stock")) >= 0) || v("pf-stock") === "") { err.textContent = "Enter the stock (0 or more)."; return; }
   const btn = $("#pf-save"); btn.disabled = true; btn.textContent = "Saving…";
   const product = { row: Number(v("pf-row")) || 0, origCode: v("pf-ocode"), origColour: v("pf-ocolour"), code: v("pf-code"), name: v("pf-name"), category: v("pf-cat"), colour: v("pf-colour"),
-    price: Number(v("pf-price")), stock: Math.floor(Number(v("pf-stock"))), photo: v("pf-photo"), description: $("#pf-desc").value.trim(), visible: $("#pf-vis").checked };
+    price: Number(v("pf-price")), stock: Math.floor(Number(v("pf-stock"))), photo: ADM.photos.join("|"), description: $("#pf-desc").value.trim(), visible: $("#pf-vis").checked };
   const r = await admCall({ op: "saveProduct", product });
   btn.disabled = false; btn.textContent = "Save";
   if (!r.ok) { err.textContent = admError(r.error, r.message); return; }
@@ -1274,6 +1345,17 @@ document.addEventListener("click", (e) => {
   else if (k === "edit") admForm(ADM.products.find(x => x.row === Number(a.dataset.row)));
   else if (k === "del") admDelete(Number(a.dataset.row));
   else if (k === "closeform") admCloseForm();
+  else if (k === "phdel") { ADM.photos.splice(Number(a.dataset.i), 1); admPaintPhotos(); }
+  else if (k === "phmain") { const i = Number(a.dataset.i); ADM.photos.unshift(ADM.photos.splice(i, 1)[0]); admPaintPhotos(); }
+  else if (k === "phadd") {
+    const inp = $("#pf-link"), val = inp.value.trim().replace(/\|/g, "");
+    if (!val) return;
+    if (ADM.photos.length >= 6) { $("#pf-upmsg").textContent = "A product can have up to 6 photos."; return; }
+    ADM.photos.push(val); inp.value = ""; admPaintPhotos();
+  }
+  else if (k === "forgot") { e.preventDefault(); renderAdminReset({ step: 1 }); }
+  else if (k === "sendcode") { e.preventDefault(); admSendCode(a); }
+  else if (k === "backlogin") { e.preventDefault(); ADM.reset = null; renderAdmin(); }
 });
 document.addEventListener("submit", async (e) => {
   if (e.target.id === "adm-login") {
@@ -1282,9 +1364,10 @@ document.addEventListener("submit", async (e) => {
     await admLoad(false);
   }
   if (e.target.id === "adm-form") { e.preventDefault(); admSaveForm(); }
+  if (e.target.id === "adm-reset") { e.preventDefault(); admDoReset(e.target); }
 });
 document.addEventListener("input", (e) => { if (e.target.id === "adm-q") { ADM.q = e.target.value; const p = $("#adm-body"); const pos = e.target.selectionStart; admPaint(); const q = $("#adm-q"); if (q) { q.focus(); q.setSelectionRange(pos, pos); } } });
-document.addEventListener("change", (e) => { if (e.target.id === "pf-file") admPickPhoto(e.target.files[0]); });
+document.addEventListener("change", (e) => { if (e.target.id === "pf-file") admPickPhotos(e.target.files); });
 
 /* ---------- Router ---------- */
 function route() {
