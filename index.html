@@ -251,6 +251,7 @@ footer .logo{color:#f0e6d6;font-size:1.5rem;display:block;margin-bottom:4px}
 .adm-btn.danger{color:#9b2c22;border-color:#e3b1ab}
 .adm-btn:disabled{opacity:.6}
 .adm-err{color:#9b2c22;font-size:.88rem;margin:6px 0}
+.adm-btn.pulse{box-shadow:0 0 0 3px rgba(45,134,89,.35);font-weight:700}
 .adm-ok{color:#2c6b25;font-size:.9rem;margin:6px 0}
 .adm-login label{display:block;font-weight:600;font-size:.85rem;margin-bottom:4px}
 .adm-bar{display:flex;gap:10px;margin-bottom:12px}
@@ -1183,7 +1184,7 @@ function renderCatalogWait() {
 const ADM = { photos: [], pw: "", loaded: false, tab: "orders", filter: "active", q: "", products: [], orders: [], err: "", timers: {} };
 try { ADM.pw = sessionStorage.getItem("mg-admin") || ""; } catch {}
 const ADM_NEXT = { New: ["Confirmed", "Cancelled"], Confirmed: ["Paid", "Shipped", "Cancelled"], Paid: ["Shipped", "Cancelled"], Shipped: ["Delivered", "Cancelled"], Delivered: [], Cancelled: [] };
-const ADM_LABEL = { Confirmed: "Confirm order", Paid: "Paid (prepaid)", Shipped: "Mark shipped", Delivered: "Mark delivered", Cancelled: "Cancel order" };
+const ADM_LABEL = { Confirmed: "Confirm order", Paid: "Paid + confirm", Shipped: "Mark shipped", Delivered: "Mark delivered", Cancelled: "Cancel order" };
 async function admCall(body) {
   try {
     const r = await fetch(CONFIG.sheetApiUrl, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify({ action: "admin", password: ADM.pw, ...body }) });
@@ -1249,7 +1250,7 @@ async function admLoad(quiet) {
     if (quiet) { toast(ADM.err); return false; }
     renderAdmin(); return false;
   }
-  ADM.products = r.products; ADM.orders = r.orders; ADM.loaded = true; ADM.err = "";
+  ADM.products = r.products; ADM.orders = r.orders; ADM.emailsLeft = r.emailsLeft; ADM.loaded = true; ADM.err = "";
   try { sessionStorage.setItem("mg-admin", ADM.pw); } catch {}
   if (quiet) { admPaint(); return true; }
   renderAdmin(); return true;
@@ -1285,12 +1286,14 @@ function admOrdersHTML() {
   const match = (o) => f === "all" || (f === "active" && !["Delivered", "Cancelled"].includes(o.status)) || (f === "new" && o.status === "New") || (f === "delivered" && o.status === "Delivered") || (f === "cancelled" && o.status === "Cancelled");
   const list = ADM.orders.filter(match);
   const chips = [["active", "Active"], ["new", "New"], ["delivered", "Delivered"], ["cancelled", "Cancelled"], ["all", "All"]];
-  return `<div class="filters">${chips.map(([k, l]) => `<button class="chip ${f === k ? "active" : ""}" data-a="ofilter" data-v="${k}">${l}</button>`).join("")}</div>` +
+  const left = ADM.emailsLeft; const lowMail = typeof left === "number" ? `<p class="adm-sub" style="margin:0 0 8px">Emails left today: <b>${left}</b>${left < 10 ? " · running low, customers will get WhatsApp links instead of emails" : ""}</p>` : "";
+  return lowMail + `<div class="filters">${chips.map(([k, l]) => `<button class="chip ${f === k ? "active" : ""}" data-a="ofilter" data-v="${k}">${l}</button>`).join("")}</div>` +
     (list.length ? list.map(admOrderCard).join("") : `<div class="empty">No orders here.</div>`);
 }
 function admOrderCard(o) {
   let next = ADM_NEXT[o.status] || [];
-  if (o.status === "New" && (o.payment || "UPI") !== "Cash on delivery") next = ["Confirmed", "Paid", "Cancelled"];   // already paid by UPI: one prepaid email
+  if (o.status === "New" && (o.payment || "UPI") !== "Cash on delivery") next = ["Confirmed", "Paid", "Cancelled"];   // UPI payment already received
+  if (o.payment === "Cash on delivery") next = next.filter(s => s !== "Paid");   // cash is paid at the door: no Paid step
   return `<div class="adm-card" data-oid="${esc(o.id)}">
     <div class="adm-row"><strong>${esc(o.id)}</strong><span class="adm-st st-${esc(o.status)}">${esc(o.status)}</span></div>
     <div class="adm-sub">${esc(o.when)}</div>
@@ -1300,10 +1303,11 @@ function admOrderCard(o) {
     <div class="adm-total">Subtotal ${money(o.subtotal)} · Delivery ${esc(o.delivery)} · <b>Total ${money(o.total)}${o.delivery === "To confirm" ? " + delivery" : ""}</b></div>
     <div class="adm-sub">${esc(o.address)}<br>${esc(o.area)}${o.notes ? `<br>Note: ${esc(o.notes)}` : ""}</div>
     <div class="adm-acts">
-      ${next.map(s => `<button class="adm-btn ${s === "Cancelled" ? "danger" : "main"}" data-a="status" data-id="${esc(o.id)}" data-v="${s}">${ADM_LABEL[s]}</button>`).join("")}
-      ${o.wa ? `<a class="adm-btn wa" href="${esc(o.wa)}" target="_blank" rel="noopener">WhatsApp customer</a>` : ""}
+      ${next.map(s => `<button class="adm-btn ${s === "Cancelled" ? "danger" : "main"}" data-a="status" data-id="${esc(o.id)}" data-v="${s}">${s === "Paid" && o.status !== "New" ? "Mark paid" : ADM_LABEL[s]}</button>`).join("")}
+      ${o.wa ? `<a class="adm-btn wa${/^SKIPPED/.test(o.notified || "") ? " pulse" : ""}" href="${esc(o.wa)}" target="_blank" rel="noopener">${/^SKIPPED/.test(o.notified || "") ? "Send WhatsApp confirmation" : "WhatsApp customer"}</a>` : ""}
     </div>
-    ${o.notified && o.notified !== "(no email sent)" && !/^FAILED/.test(o.notified) ? `<div class="adm-sub">Customer emailed: ${esc(o.notified)}</div>` : (/^FAILED/.test(o.notified) ? `<div class="adm-err">Customer email failed: ${esc(o.notified)}</div>` : "")}
+    ${/^SKIPPED/.test(o.notified || "") ? `<div class="adm-err">Email limit is low, so the customer was not emailed. Tap "Send WhatsApp confirmation" above.</div>` : ""}
+    ${o.notified && o.notified !== "(no email sent)" && !/^FAILED|^SKIPPED/.test(o.notified) ? `<div class="adm-sub">Customer emailed: ${esc(o.notified)}</div>` : (/^FAILED/.test(o.notified) ? `<div class="adm-err">Customer email failed: ${esc(o.notified)}</div>` : "")}
   </div>`;
 }
 async function admSetStatus(id, status, btn) {
@@ -1313,7 +1317,7 @@ async function admSetStatus(id, status, btn) {
   if (!r.ok) { toast(admError(r.error, r.message)); admPaint(); return; }
   const o = ADM.orders.find(x => x.id === id); if (o) { o.status = r.status; o.notified = r.notified; o.wa = r.wa; }
   if (status === "Cancelled") admLoad(true); else admPaint();
-  toast(status === "Cancelled" ? "Order cancelled, stock returned" : "Done. " + (r.notified && !/FAILED|no email/.test(r.notified) ? "Customer emailed." : ""));
+  toast(status === "Cancelled" ? "Order cancelled, stock returned" : /^SKIPPED/.test(r.notified || "") ? "Email limit is low. Tap Send WhatsApp confirmation." : "Done. " + (r.notified && !/FAILED|no email/.test(r.notified) ? "Customer emailed." : ""));
 }
 /* ---- products ---- */
 function admProductsHTML() {
