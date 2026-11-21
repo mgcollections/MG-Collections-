@@ -18,10 +18,10 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
-  --cream:#faf8f4; --sand:#f1ece3; --clay:#2b2623; --clay-dark:#1f1b19;
-  --olive:#68705d; --cocoa:#26211e; --muted:#7a736b; --line:#e5dfd3; --white:#fffefb;
-  --gold:#9a7a45; --gold-dark:#7d6035; --gold-soft:#d8c8a2;
-  --radius:4px; --shadow:0 1px 3px rgba(38,33,30,.06); --shadow-lg:0 18px 40px rgba(38,33,30,.12);
+  --cream:#faf5ec; --sand:#f0e6d6; --clay:#a8532f; --clay-dark:#8f4627;
+  --olive:#6b6b3a; --cocoa:#3b2a20; --muted:#7d6b5d; --line:#e2d5c1; --white:#fffdf9;
+  --gold:#a67a35; --gold-dark:#845c22; --gold-soft:#dcc592;
+  --radius:6px; --shadow:0 1px 3px rgba(59,42,32,.08); --shadow-lg:0 18px 40px rgba(59,42,32,.14);
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Inter',system-ui,sans-serif;background:var(--cream);color:var(--cocoa);line-height:1.55;min-height:100vh;display:flex;flex-direction:column}
@@ -314,7 +314,7 @@ nav{background:rgba(255,254,251,.96);backdrop-filter:blur(6px)}
 .btn.in-cart{background:var(--olive)}
 .btn-buy,.card .btn-buy{background:transparent;color:var(--cocoa);border:1px solid var(--line)}
 .btn-buy:not(:disabled):hover{background:var(--cocoa);color:#fff;border-color:var(--cocoa)}
-.hero{background:linear-gradient(180deg,#f7f2e9 0%,#efe6d6 100%);padding:104px 0 96px;border-bottom:1px solid var(--line);position:relative}
+.hero{background:linear-gradient(180deg,#f7efe2 0%,#efe2cc 100%);padding:104px 0 96px;border-bottom:1px solid var(--line);position:relative}
 .hero h1{font-weight:500;color:var(--cocoa);font-size:clamp(2.6rem,7vw,4.8rem);letter-spacing:.04em;margin-bottom:0}
 .hero .rule{display:block;width:56px;height:1px;background:var(--gold);margin:22px auto}
 .hero p{font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-size:1.5rem;color:var(--muted);margin:0 auto 34px}
@@ -388,6 +388,65 @@ footer .logo{margin-bottom:8px}
   .cat-tiles{grid-template-columns:repeat(2,1fr);gap:12px}
   .trust div{padding:18px 10px}
 }
+
+/* ===== Premium layer ===== */
+.nav-inner{display:grid;grid-template-columns:1fr auto 1fr;gap:12px}
+.nav-left{display:flex;gap:26px;font-size:.74rem;letter-spacing:.16em;text-transform:uppercase;font-weight:500}
+.nav-left a:hover{color:var(--gold)}
+.nav-links{justify-content:flex-end}
+.logo{font-size:1.45rem;letter-spacing:.26em;text-align:center}
+.hero{padding:0;background:#f3e9d9;border-bottom:0}
+.hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;align-items:stretch;max-width:none;padding:0}
+.hero-copy{display:flex;flex-direction:column;justify-content:center;align-items:flex-start;text-align:left;padding:70px 56px 70px max(40px,calc((100vw - 1150px)/2 + 20px))}
+.eyebrow{font-size:.7rem;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:20px}
+.hero h1{font-size:clamp(2.8rem,5.4vw,5rem);line-height:1.02;letter-spacing:.01em;text-align:left}
+.hero .rule{margin:26px 0;width:64px}
+.hero p{margin:0 0 36px;text-align:left;max-width:380px}
+.hero .hero-btns{justify-content:flex-start}
+.hero-pic{min-height:560px;background:var(--sand);overflow:hidden;position:relative}
+.hero-pic img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.hero-mono{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',Georgia,serif;font-size:7rem;letter-spacing:.1em;color:var(--gold-soft)}
+.trust{border-top:0}
+.section-title{margin:88px 0 36px;font-size:2.4rem}
+.cat-tiles{gap:22px}
+@media(min-width:481px){.cat-tiles{grid-template-columns:repeat(auto-fit,minmax(200px,300px))}.grid{grid-template-columns:repeat(auto-fit,minmax(230px,300px))}}
+.cat-tile{aspect-ratio:4/5}
+.card-img img.alt{position:absolute;inset:0;opacity:0;transition:opacity .5s ease}
+@media(hover:hover){.card:hover .card-img img.alt{opacity:1}}
+.card .btn-buy{border:0;background:transparent;text-decoration:underline;text-underline-offset:4px;letter-spacing:.14em;color:var(--muted);padding:8px 0 0}
+.card .btn-buy:not(:disabled):hover{background:transparent;color:var(--cocoa)}
+.card-body{padding-top:18px}
+footer{text-align:left;padding:64px 20px 28px;border-top:3px double var(--gold)}
+.foot-grid{display:grid;grid-template-columns:1.6fr 1fr 1fr 1.3fr;gap:36px;padding:0}
+.foot-brand .logo{text-align:left;display:block;margin-bottom:10px}
+.foot-brand p{color:#b9ad9b;max-width:260px;font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-size:1.2rem}
+footer h4{font-size:.68rem;letter-spacing:.24em;text-transform:uppercase;color:var(--gold-soft);font-weight:600;margin-bottom:14px;font-family:'Inter',sans-serif}
+footer .foot-grid a{display:block;text-decoration:none;color:#d9cdb9;margin-bottom:9px;font-size:.88rem}
+footer .foot-grid a:hover{color:#fff}
+.foot-pay{display:flex;flex-wrap:wrap;gap:8px}
+.foot-pay img{height:26px;width:auto;background:#fff;border-radius:3px;padding:4px 8px}
+.foot-note{color:#a89c8a;font-size:.78rem;margin-top:10px}
+.foot-base{max-width:1150px;margin:44px auto 0;padding:20px 20px 0;border-top:1px solid rgba(255,255,255,.12);text-align:center;font-size:.76rem;letter-spacing:.06em;color:#a89c8a}
+.foot-base a{color:#a89c8a}
+@media(max-width:800px){
+  .hero-grid{grid-template-columns:1fr}
+  .hero-pic{order:-1;min-height:0;aspect-ratio:4/5;max-height:480px}
+  .hero-copy{align-items:center;text-align:center;padding:44px 22px 54px}
+  .hero h1,.hero p{text-align:center}
+  .hero .hero-btns{justify-content:center}
+  .hero p{margin-left:auto;margin-right:auto}
+  .foot-grid{grid-template-columns:1fr 1fr;gap:30px}
+  .foot-brand{grid-column:1/-1}
+  .foot-brand .logo,.foot-brand p{text-align:center;margin-left:auto;margin-right:auto}
+  .section-title{margin:60px 0 28px}
+}
+@media(max-width:480px){
+  .nav-inner{grid-template-columns:auto 1fr auto;gap:8px}
+  .nav-left{gap:11px;font-size:.62rem;letter-spacing:.1em;order:0}
+  .logo{font-size:.82rem;letter-spacing:.12em;order:1}
+  .nav-links{order:2}
+  .container.nav-inner{padding:0 14px}
+}
 </style>
 </head>
 <body>
@@ -399,7 +458,7 @@ footer .logo{margin-bottom:8px}
 const CONFIG = {
   storeName: "MG Collections",
   tagline: "Jewellery collections that you love",
-  heroImage: "",                      // optional: a photo for the top of the home page, e.g. "hero.jpg" (upload the file next to index.html). Leave "" for the plain ivory top.
+  heroImage: "",                      // optional: a photo for the top of the home page, e.g. "hero.jpg" (upload the file next to index.html). Leave "" to use the photo of your first product.
   formspreeUrl: "https://formspree.io/f/mgaalndp",
   // Google Sheet system (products, colours, automatic stock, orders). Paste your Apps Script "Web app URL" here.
   // While this is "" the site works the old way: products from PRODUCTS below, orders by Formspree.
@@ -408,6 +467,7 @@ const CONFIG = {
   currency: "₹",
   cartKey: "MG Collections",
   ordersKey: "MG Collections orders",
+  contactEmail: "mgcollectionsbgp26@gmail.com",   // shown in the Contact section and the footer. Leave "" to hide it.
   whatsappNumber: "917033612418",     // e.g. "919876543210" (country code + number, no + or spaces). Leave "" to hide the WhatsApp button
   redirectSeconds: 45,    // how long the order confirmation stays before going back to the shop
   upiId: "257692953001812@cnrb",
@@ -473,10 +533,9 @@ const DELIVERY_AREAS = [
 <div class="announce" id="announce"></div>
 <nav>
   <div class="container nav-inner">
+    <div class="nav-left"><a href="#/">Shop</a><a href="#/orders">Orders</a></div>
     <a href="#/" class="logo" id="logo-text"></a>
     <div class="nav-links">
-      <a href="#/">Shop</a>
-      <a href="#/orders">Orders</a>
       <a href="#/cart" class="cart-link" aria-label="Cart">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"/></svg>
         <span class="badge" id="cart-count">0</span>
@@ -488,9 +547,33 @@ const DELIVERY_AREAS = [
 <main id="app"></main>
 
 <footer>
-  <span class="logo" id="footer-name"></span>
-  <span id="footer-tag"></span><br>
-  <a href="#/about">About, delivery &amp; returns</a> · <a href="#/admin" style="opacity:.6">Owner login</a>
+  <div class="container foot-grid">
+    <div class="foot-brand">
+      <span class="logo" id="footer-name"></span>
+      <p id="footer-tag"></p>
+    </div>
+    <div>
+      <h4>Shop</h4>
+      <a href="#/">All jewellery</a>
+      <a href="#/orders">Your orders</a>
+      <a href="#/cart">Your cart</a>
+    </div>
+    <div>
+      <h4>Help</h4>
+      <a href="#/about">Delivery &amp; returns</a>
+      <a href="#/about">About us</a>
+      <a id="foot-wa" href="#/about" target="_blank" rel="noopener">Chat on WhatsApp</a>
+      <a id="foot-mail" href="#/about" style="display:none">Email us</a>
+    </div>
+    <div>
+      <h4>We accept</h4>
+      <div class="foot-pay">
+        <img src="pay-googlepay.png" alt="Google Pay" onerror="this.remove()"><img src="pay-phonepe.png" alt="PhonePe" onerror="this.remove()"><img src="pay-paytm.png" alt="Paytm" onerror="this.remove()"><img src="pay-bhim.png" alt="BHIM UPI" onerror="this.remove()">
+      </div>
+      <p class="foot-note">UPI and cash on delivery (Bhagalpur)</p>
+    </div>
+  </div>
+  <div class="foot-base"><span id="footer-copy"></span> · <a href="#/admin" style="opacity:.6">Owner login</a></div>
 </footer>
 <a id="wa-float" class="wa-float" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-12.4 7.4L3 20.5l1.7-5.3A8.4 8.4 0 1 1 21 11.5z"/></svg>
@@ -819,6 +902,7 @@ function cardHTML(p) {
   <div class="card" data-open="${esc(p.id)}">
     <div class="card-img">
       ${imgTag(sized(pic, 500), p.name, 'loading="lazy" decoding="async"')}
+      ${(p.images[1] && p.images[1] !== pic) ? imgTag(sized(p.images[1], 500), "", 'class="alt" loading="lazy" decoding="async"') : ""}
       ${out ? '<span class="tag">Sold out</span>' : (p.stock <= 3 ? `<span class="tag">Only ${p.stock} left</span>` : "")}
     </div>
     <div class="card-body">
@@ -855,15 +939,27 @@ function categoryTilesHTML() {
     return `<button class="cat-tile" data-cat="${esc(c)}" aria-label="${esc(c)}">${imgTag(sized(pic, 500), c, 'loading="lazy" decoding="async"')}<span class="cat-name">${esc(c)}</span><span class="cat-count">${list.length} design${list.length > 1 ? "s" : ""}</span></button>`;
   }).join("") + `</div>`;
 }
+function heroPicHTML() {
+  let pic = CONFIG.heroImage || "";
+  if (!pic) {
+    const lead = CATALOG.find(x => x.stock > 0) || CATALOG[0];
+    if (lead) pic = firstAvailable(lead).photo || lead.images[0] || "";
+  }
+  return pic ? imgTag(CONFIG.heroImage ? pic : sized(pic, 1000), CONFIG.storeName, 'decoding="async"') : `<div class="hero-mono">MG</div>`;
+}
 function renderHome() {
   const cats = ["all", ...new Set(CATALOG.map(p => p.category))];
   app.innerHTML = `
-    <section class="hero${CONFIG.heroImage ? " has-img" : ""}"${CONFIG.heroImage ? ` style="background-image:url('${esc(CONFIG.heroImage)}')"` : ""}>
-      <div class="container">
-        <h1>${esc(CONFIG.storeName)}</h1>
-        <span class="rule"></span>
-        <p>${esc(CONFIG.tagline)}</p>
-        <div class="hero-btns"><a href="#shop" class="btn" data-scroll>Shop Now</a>${waDigits() ? `<a class="btn btn-outline" target="_blank" rel="noopener" href="https://wa.me/${waDigits()}?text=${encodeURIComponent("Hi " + CONFIG.storeName + ", I would like to know about your jewellery")}">Chat on WhatsApp</a>` : ""}</div>
+    <section class="hero">
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <span class="eyebrow">The collection</span>
+          <h1>${esc(CONFIG.storeName)}</h1>
+          <span class="rule"></span>
+          <p>${esc(CONFIG.tagline)}</p>
+          <div class="hero-btns"><a href="#shop" class="btn" data-scroll>Shop the collection</a>${waDigits() ? `<a class="btn btn-outline" target="_blank" rel="noopener" href="https://wa.me/${waDigits()}?text=${encodeURIComponent("Hi " + CONFIG.storeName + ", I would like to know about your jewellery")}">Chat on WhatsApp</a>` : ""}</div>
+        </div>
+        <div class="hero-pic">${heroPicHTML()}</div>
       </div>
     </section>
     <div class="container">
@@ -1139,8 +1235,10 @@ function renderAbout() {
       <div class="policy"><h3>How ordering works</h3><p>Add items to your cart and place your order on this website. We'll contact you on your phone, email or WhatsApp to confirm it.</p></div>
       <div class="policy"><h3>Delivery</h3><p>${delivery}</p></div>
       <div class="policy"><h3>Payment</h3><p>You can pay by UPI using the button on your order confirmation or on the Orders page${CONFIG.upiId ? `, or to UPI ID <strong>${esc(CONFIG.upiId)}</strong>` : ""}.</p></div>
-      <div class="policy"><h3>Returns</h3><p>If an item arrives damaged or is not what you ordered, message us within 48 hours of receiving it, with a photo, and we'll replace it.</p></div>
-      ${wa ? `<div class="policy"><h3>Contact us</h3><p><a href="https://wa.me/${wa}" target="_blank" rel="noopener" style="color:var(--clay);text-decoration:underline">Message us on WhatsApp</a> (+${wa})</p></div>` : ""}
+      <div class="policy"><h3>Returns</h3><p>If an item arrives damaged or is not what you ordered, message us within 24 hours of receiving it, with a photo, and we'll replace it.</p></div>
+      ${(wa || CONFIG.contactEmail) ? `<div class="policy"><h3>Contact us</h3>
+        ${wa ? `<p><a href="https://wa.me/${wa}" target="_blank" rel="noopener" style="color:var(--clay);text-decoration:underline">Message us on WhatsApp</a> (+${wa})</p>` : ""}
+        ${CONFIG.contactEmail ? `<p style="margin-top:6px">Email: <a href="mailto:${esc(CONFIG.contactEmail)}" style="color:var(--clay);text-decoration:underline">${esc(CONFIG.contactEmail)}</a></p>` : ""}</div>` : ""}
     </div>`;
   window.scrollTo(0, 0);
 }
@@ -1719,12 +1817,15 @@ window.addEventListener("DOMContentLoaded", () => {
   $("#logo-text").textContent = CONFIG.storeName;
   $("#announce").textContent = (CONFIG.freeDeliveryAbove ? "Free delivery in Bhagalpur above " + money(CONFIG.freeDeliveryAbove) : "Delivery across Bhagalpur") + (CONFIG.codEnabled ? "  ·  Cash on delivery available" : "");
   $("#footer-name").textContent = CONFIG.storeName;
-  $("#footer-tag").textContent = CONFIG.tagline + " · © " + new Date().getFullYear();
+  $("#footer-tag").textContent = CONFIG.tagline;
+  if (CONFIG.contactEmail) { const fm = $("#foot-mail"); fm.href = "mailto:" + CONFIG.contactEmail; fm.textContent = CONFIG.contactEmail; fm.style.display = "block"; fm.style.wordBreak = "break-all"; }
+  $("#footer-copy").textContent = "© " + new Date().getFullYear() + " " + CONFIG.storeName;
   const waNum = String(CONFIG.whatsappNumber || "").replace(/\D/g, "");
   if (waNum) {
     const fl = $("#wa-float");
     fl.href = `https://wa.me/${waNum}?text=${encodeURIComponent("Hi " + CONFIG.storeName + ", I have a question.")}`;
     fl.style.display = "flex";
+    const fw = $("#foot-wa"); if (fw) fw.href = `https://wa.me/${waNum}?text=${encodeURIComponent("Hi " + CONFIG.storeName + ", I have a question.")}`;
   }
   if (CONFIG.googleAnalyticsId) {
     const s = document.createElement("script");
