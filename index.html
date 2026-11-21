@@ -224,6 +224,14 @@ footer .logo{color:#f0e6d6;font-size:1.5rem;display:block;margin-bottom:4px}
 .pay-other{display:block;text-align:center;margin-top:10px;color:var(--clay-dark);text-decoration:underline;font-weight:600;font-size:.92rem}
 .pay-box h3{font-size:1.5rem;margin-bottom:8px}
 .pay-box .pay-sub{margin:8px 0}
+.pay-fallback{margin-top:14px;text-align:left}
+.pay-fallback summary{cursor:pointer;color:var(--clay-dark);font-weight:600;font-size:.92rem;padding:8px 0}
+.pay-fallback[open] summary{margin-bottom:6px}
+.pay-steps{text-align:left;background:var(--white);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:6px}
+.pay-amt{margin:0 0 4px;font-size:1.05rem}
+.pay-id{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:1.08rem;word-break:break-all}
+.pay-steps ol{margin:0 0 0 18px;padding:0;font-size:.93rem;line-height:1.6}
+.pay-steps li{margin:3px 0}
 .qr{width:200px;margin:14px auto 6px}.qr svg{width:100%;height:auto;background:#fff;border-radius:10px;padding:6px}
 .qr small{display:block;color:var(--muted);text-align:center;margin-top:4px}
 .paid-link{display:block;margin-top:12px;color:var(--clay-dark);text-decoration:underline;font-weight:600;font-size:.92rem}
@@ -305,8 +313,10 @@ const CONFIG = {
   ordersKey: "MG Collections orders",
   whatsappNumber: "917033612418",     // e.g. "919876543210" (country code + number, no + or spaces). Leave "" to hide the WhatsApp button
   redirectSeconds: 45,    // how long the order confirmation stays before going back to the shop
-  upiId: "2000deepakgour-1@okaxis",
+  upiId: "257692953001812@cnrb",
   upiName: "MG Collections",
+  upiHolder: "",                      // optional: the name the payer's UPI app shows for this UPI ID (leave empty if you are not sure)
+  useAppButtons: true,                // true = one-tap Google Pay / PhonePe / Paytm / BHIM buttons with the amount filled in. If a bank refuses them ("limit exceeded") for a personal UPI ID, customers use the "Pay with the UPI ID instead" backup under the buttons. false = UPI ID + QR only.
   codEnabled: true,                   // Cash on delivery option (Bhagalpur only). The Settings tab of the sheet can switch it off.
   // Delivery charges. The customer picks their area at checkout and sees the charge BEFORE ordering.
   nearAreaFee: 49,            // for the chowks / areas listed in DELIVERY_AREAS below
@@ -624,21 +634,32 @@ function qrSvg(text) {
 function upiActionsHTML(o) {
   const link = upiLink(o); if (!link) return "";
   const wa = String(CONFIG.whatsappNumber || "").replace(/\D/g, "");
-  const msg = `Hi ${CONFIG.storeName}, I have paid ${o.total || money(o.totalNum)} for order ${o.id}. Screenshot attached.`;
-  const qr = isDesktop() ? qrSvg(link) : "";
-  const apps = isDesktop() ? [] : upiAppLinks(o);
-  const appBtns = apps.length
-    ? `<p class="hint pay-sub" style="margin-top:0"><b>Pay ${esc(o.total || money(o.totalNum))}: tap the app you use</b></p>
-       <div class="pay-apps">${apps.map(([n, u]) => `<a class="btn pay-app" href="${esc(u)}"><span class="pay-logo"><img src="pay-${n.toLowerCase().replace(/\s/g, "")}.png" alt="" onerror="this.parentNode.style.display='none'"></span><span class="pay-name">${n}</span></a>`).join("")}</div>
-       <p class="hint pay-sub">Your app opens with the amount filled in.</p>
-       <a class="pay-other" href="${link}">Other UPI app</a>
-       <p class="hint pay-sub">If WhatsApp opens, go back and tap your payment app above, or copy the UPI ID below.</p>`
-    : `<a class="btn pay-big" href="${link}">Pay ${esc(o.total || money(o.totalNum))} with UPI</a>
-       <p class="hint pay-sub">Tap the button on your phone and your UPI app (Google Pay, PhonePe, Paytm…) opens with the amount filled in.</p>`;
-  return `${appBtns}
-    ${qr ? `<div class="qr">${qr}<small>On a computer? Scan this with any UPI app on your phone</small></div>` : ""}
-    <p class="hint" style="margin:6px 0 0">Or pay to UPI ID <strong>${esc(CONFIG.upiId)}</strong> <button type="button" class="copy" data-copy="${esc(CONFIG.upiId)}">Copy</button><br>Please add order number ${esc(o.id)} in the payment note.</p>
-    ${wa ? `<a class="paid-link" target="_blank" rel="noopener" href="https://wa.me/${wa}?text=${encodeURIComponent(msg)}">I have paid: send the screenshot on WhatsApp</a>` : ""}`;
+  const amount = o.total || money(o.totalNum);
+  const msg = `Hi ${CONFIG.storeName}, I have paid ${amount} for order ${o.id}. Screenshot attached.`;
+  const paidBtn = wa ? `<a class="paid-link" target="_blank" rel="noopener" href="https://wa.me/${wa}?text=${encodeURIComponent(msg)}">I have paid: send the screenshot on WhatsApp</a>` : "";
+  const apps = (CONFIG.useAppButtons && !isDesktop()) ? upiAppLinks(o) : [];
+  // Pay-by-UPI-ID block: used as the backup under the app buttons, and as the main way on computers
+  const qr = qrSvg(link);
+  const manual = `<div class="pay-steps">
+      <p class="pay-amt">Pay <b>${esc(amount)}</b> to</p>
+      <div class="pay-id"><strong>${esc(CONFIG.upiId)}</strong> <button type="button" class="copy" data-copy="${esc(CONFIG.upiId)}">Copy ID</button></div>
+      ${CONFIG.upiHolder ? `<p class="hint" style="margin:4px 0 10px">Your app will show the name <b>${esc(CONFIG.upiHolder)}</b>. That is correct.</p>` : ""}
+      <ol>
+        <li>Tap <b>Copy ID</b>, open your UPI app and choose <b>Pay to UPI ID</b> (or "Send money") and paste the ID.</li>
+        <li>Enter exactly <b>${esc(amount)}</b> and add the note <b>Order ${esc(o.id)}</b>.</li>
+        <li>After paying, tap the button at the bottom and send us the screenshot.</li>
+      </ol>
+    </div>
+    ${qr ? `<div class="qr">${qr}<small>${isDesktop() ? "Scan this with any UPI app on your phone" : "Or scan this: take a screenshot, open your UPI app, tap Scan and choose it from your gallery. The amount is filled in."}</small></div>` : ""}`;
+  if (apps.length) {          // one-tap buttons: the app opens with the amount and order note already filled in
+    return `<p class="hint pay-sub" style="margin-top:0"><b>Pay ${esc(amount)}: tap the app you use</b></p>
+      <div class="pay-apps">${apps.map(([n, u]) => `<a class="btn pay-app" href="${esc(u)}"><span class="pay-logo"><img src="pay-${n.toLowerCase().replace(/\s/g, "")}.png" alt="" onerror="this.parentNode.style.display='none'"></span><span class="pay-name">${n}</span></a>`).join("")}</div>
+      <p class="hint pay-sub">Your app opens with the amount filled in.</p>
+      <a class="pay-other" href="${link}">Other UPI app</a>
+      <details class="pay-fallback"><summary>App shows an error or does not open? Pay with the UPI ID instead</summary>${manual}</details>
+      ${paidBtn}`;
+  }
+  return manual + paidBtn;
 }
 function payBoxHTML(o) {
   if (o.payment === "cod") {
