@@ -15,7 +15,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@400;500;600&family=Jost:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{
   --cream:#faf5ec; --sand:#f0e6d6; --clay:#a8532f; --clay-dark:#8f4627;
@@ -417,9 +417,9 @@ footer .logo{margin-bottom:8px}
 .card .btn-buy:not(:disabled):hover{background:transparent;color:var(--cocoa)}
 .card-body{padding-top:18px}
 footer{text-align:left;padding:64px 20px 28px;border-top:3px double var(--gold)}
-.foot-grid{display:grid;grid-template-columns:1.6fr 1fr 1fr 1.3fr;gap:36px;padding:0}
+.foot-grid{display:grid;grid-template-columns:1.4fr .9fr 1.35fr 1.3fr;gap:30px;padding:0}
 .foot-brand .logo{text-align:left;display:block;margin-bottom:10px}
-.foot-brand p{color:#b9ad9b;max-width:260px;font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-size:1.2rem}
+.foot-brand p{color:#b9ad9b;max-width:320px;font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-size:1.2rem}
 footer h4{font-size:.68rem;letter-spacing:.24em;text-transform:uppercase;color:var(--gold-soft);font-weight:600;margin-bottom:14px;font-family:'Inter',sans-serif}
 footer .foot-grid a{display:block;text-decoration:none;color:#d9cdb9;margin-bottom:9px;font-size:.88rem}
 footer .foot-grid a:hover{color:#fff}
@@ -430,7 +430,7 @@ footer .foot-grid a:hover{color:#fff}
 .foot-base a{color:#a89c8a}
 @media(max-width:800px){
   .hero-grid{grid-template-columns:1fr}
-  .hero-pic{order:-1;min-height:0;aspect-ratio:4/5;max-height:480px}
+  .hero-pic{order:-1;min-height:0;aspect-ratio:4/5;max-height:480px;width:100%}
   .hero-copy{align-items:center;text-align:center;padding:44px 22px 54px}
   .hero h1,.hero p{text-align:center}
   .hero .hero-btns{justify-content:center}
@@ -443,13 +443,52 @@ footer .foot-grid a:hover{color:#fff}
 @media(max-width:480px){
   .nav-inner{grid-template-columns:auto 1fr auto;gap:8px}
   .nav-left{gap:11px;font-size:.62rem;letter-spacing:.1em;order:0}
-  .logo{font-size:.82rem;letter-spacing:.12em;order:1}
+  .logo{font-size:.78rem;letter-spacing:.1em}
   .nav-links{order:2}
   .container.nav-inner{padding:0 14px}
 }
+
+/* ===== Logo (M | G monogram) ===== */
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.brand{display:flex;align-items:center;justify-content:center;gap:14px;color:var(--cocoa)}
+.mark{height:30px;width:auto;aspect-ratio:459.6/208.8;flex:0 0 auto;display:block;--lg-ink:var(--cocoa);--lg-gold:var(--gold)}
+.brand .logo{font-family:'Jost','Inter',sans-serif;font-weight:500;font-size:.8rem;letter-spacing:.36em;text-transform:uppercase;color:var(--gold-dark);line-height:1;white-space:nowrap}
+.foot-logo{display:block;width:200px;height:auto;aspect-ratio:454.5/279.5;margin:0 0 18px;--lg-ink:#f2e8d5;--lg-gold:#d9b873;--lg-sub:#d9b873}
+@media(max-width:800px){.foot-logo{margin-left:auto;margin-right:auto}}
+@media(max-width:480px){
+  .brand{order:1;gap:9px}
+  .mark{height:22px}
+  .brand .logo{font-size:.68rem;letter-spacing:.26em}
+}
+@media(max-width:360px){
+  .brand{gap:6px}
+  .mark{height:18px}
+  .brand .logo{font-size:.56rem;letter-spacing:.18em}
+}
+
+/* ===== Hero logo panel ===== */
+.hero-logo{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;overflow:hidden;
+  background:radial-gradient(ellipse at 50% 40%,#53382a 0%,#3b2a20 58%,#2a1d15 100%);
+  --lg-ink:#f2e8d5;--lg-gold:#d9b873;--lg-sub:#d9b873}
+.hero-logo::after{content:"";position:absolute;inset:18px;border:1px solid rgba(217,184,115,.32);pointer-events:none}
+.hl-lockup{position:relative;width:min(68%,400px);height:auto;aspect-ratio:454.5/279.5}
+@media(max-width:800px){.hl-lockup{width:min(72%,330px)}}
+
+/* ===== Back link (cart, checkout, payment, orders) ===== */
+.back-link{display:inline-flex;align-items:center;gap:10px;margin:22px 0 0;padding:12px 0;min-height:44px;font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;font-weight:600;color:var(--muted);text-decoration:none;transition:color .2s}
+.back-link svg{width:17px;height:17px;flex:0 0 auto;transition:transform .2s}
+.back-link:hover{color:var(--cocoa)}
+.back-link:hover svg{transform:translateX(-3px)}
+.back-link:focus-visible{outline:2px solid var(--gold);outline-offset:3px;border-radius:2px}
+.back-link + .section-title{margin-top:6px}
+.success .back-link{display:flex;width:fit-content;margin:-44px auto 26px 0}
+@media(max-width:480px){.success .back-link{margin-top:-52px}}
 </style>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' rx='40' fill='%233b2a20'/%3E%3Cg transform='translate(0.52 22.70) scale(0.3568)'%3E%3Cpath d='M73.3 267.33 75.73 151.23Q66.28 134.49 51.7 134.49Q50.89 134.49 50.89 132.87Q50.89 131.25 51.7 131.25Q56.83 131.25 62.63 131.52Q68.44 131.79 72.49 131.79Q78.43 131.79 83.16 131.52Q87.88 131.25 90.58 131.25Q94.36 131.25 96.38 133.81Q98.41 136.38 103 145.29L162.4 261.66L216.13 138Q217.75 134.49 219.64 132.87Q221.53 131.25 224.23 131.25Q226.66 131.25 229.5 131.52Q232.33 131.79 236.38 131.79Q244.48 131.79 250.15 131.52Q255.82 131.25 261.22 131.25Q262.03 131.25 262.03 132.87Q262.03 134.49 261.22 134.49Q248.8 134.49 242.86 139.08Q236.92 143.67 237.46 154.74L243.4 278.13Q243.94 285.96 245.43 290.01Q246.91 294.06 251.37 295.41Q255.82 296.76 264.46 296.76Q265 296.76 265 298.38Q265 300 264.46 300Q257.44 300 248.8 299.73Q240.16 299.46 230.71 299.46Q221.26 299.46 213.03 299.73Q204.79 300 198.04 300Q197.5 300 197.5 298.38Q197.5 296.76 198.04 296.76Q211 296.76 214.78 293.25Q218.56 289.74 217.75 278.13L212.35 163.11L154.84 298.11Q154.57 299.19 152.68 299.19Q150.79 299.19 150.25 298.11L82.75 164.73L80.32 267.33Q80.05 281.64 85.85 289.2Q91.66 296.76 103.27 296.76Q104.08 296.76 104.08 298.38Q104.08 300 103.27 300Q97.33 300 91.12 299.73Q84.91 299.46 77.08 299.46Q68.98 299.46 62.37 299.73Q55.75 300 49.81 300Q49 300 49 298.38Q49 296.76 49.81 296.76Q60.88 296.76 66.95 289.2Q73.03 281.64 73.3 267.33Z M434.36 303.24Q410.87 303.24 392.38 296.36Q373.88 289.47 361.05 277.46Q348.23 265.44 341.62 249.78Q335 234.12 335 216.03Q335 196.32 342.83 180.25Q350.66 164.19 364.7 152.58Q378.74 140.97 397.64 134.62Q416.54 128.28 438.95 128.28Q452.18 128.28 465 130.44Q477.83 132.6 485.93 136.65Q488.63 137.73 489.03 138.4Q489.44 139.08 489.71 142.86L493.22 178.23Q493.22 179.04 491.87 179.31Q490.52 179.58 489.98 178.77Q487.82 172.02 483.1 164.19Q478.37 156.36 471.08 149.47Q463.79 142.59 453.66 138Q443.54 133.41 430.31 133.41Q411.68 133.41 396.56 142.86Q381.44 152.31 372.53 169.59Q363.62 186.87 363.62 210.9Q363.62 229.53 369.02 245.32Q374.42 261.12 384.54 273.27Q394.67 285.42 408.98 292.17Q423.29 298.92 441.11 298.92Q452.18 298.92 458.93 296.22Q465.68 293.52 468.65 286.37Q471.62 279.21 471.62 265.98Q471.62 253.02 470.13 246.94Q468.65 240.87 462.71 238.98Q456.77 237.09 443.54 237.09Q441.92 237.09 441.92 234.93Q441.92 232.77 443.27 232.77Q461.63 233.85 476.35 233.99Q491.06 234.12 507.26 233.31Q508.34 233.31 508.61 235.2Q508.61 236.55 508.07 236.82Q507.8 237.09 507.26 237.09Q502.13 236.82 499.7 238.84Q497.27 240.87 496.59 247.62Q495.92 254.37 495.92 268.68Q495.92 277.59 496.46 281.91Q497 286.23 497.4 288.25Q497.81 290.28 497.81 292.44Q497.81 294.06 497.27 294.6Q496.73 295.14 494.84 295.68Q480.53 298.92 464.6 301.08Q448.67 303.24 434.36 303.24Z' fill='%23f2e8d5'/%3E%3Cpath d='M300.0,115.2 L300.0,318.0' stroke='%23d9b873' stroke-width='8.97' fill='none'/%3E%3C/g%3E%3C/svg%3E">
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><symbol id="mg-lockup" viewBox="52.2 112.2 454.5 279.5"><path d="M78.46 269.22 80.89 147.99Q71.98 134.49 57.67 134.49Q57.13 134.49 57.13 132.87Q57.13 131.25 57.67 131.25Q62.53 131.25 67.8 131.52Q73.06 131.79 76.84 131.79Q81.97 131.79 86.16 131.52Q90.34 131.25 92.5 131.25Q96.28 131.25 98.44 133.81Q100.6 136.38 104.92 145.29L164.86 267.06L221.29 138Q222.64 134.76 224.66 133Q226.69 131.25 229.39 131.25Q231.28 131.25 234.12 131.52Q236.95 131.79 240.73 131.79Q248.29 131.79 253.42 131.52Q258.55 131.25 263.95 131.25Q264.49 131.25 264.49 132.87Q264.49 134.49 263.95 134.49Q250.99 134.49 245.05 138.67Q239.11 142.86 239.38 153.93L245.05 278.13Q245.59 285.96 247.21 290.01Q248.83 294.06 253.42 295.41Q258.01 296.76 267.46 296.76Q268 296.76 268 298.38Q268 300 267.46 300Q260.71 300 252.34 299.73Q243.97 299.46 234.52 299.46Q225.61 299.46 217.78 299.73Q209.95 300 203.74 300Q202.93 300 202.93 298.38Q202.93 296.76 203.74 296.76Q216.97 296.76 220.75 293.25Q224.53 289.74 223.72 278.13L218.59 159.33L158.92 298.11Q158.65 299.19 156.89 299.19Q155.14 299.19 154.6 298.11L87.37 160.41L85.21 269.22Q84.94 283.26 90.2 290.01Q95.47 296.76 107.89 296.76Q108.7 296.76 108.7 298.38Q108.7 300 107.89 300Q101.95 300 95.74 299.73Q89.53 299.46 81.7 299.46Q74.41 299.46 67.93 299.73Q61.45 300 55.78 300Q55.24 300 55.24 298.38Q55.24 296.76 55.78 296.76Q67.12 296.76 72.66 290.01Q78.19 283.26 78.46 269.22Z M430.01 303.24Q406.79 303.24 388.56 296.36Q370.34 289.47 357.78 277.32Q345.23 265.17 338.62 249.24Q332 233.31 332 215.49Q332 195.24 339.69 179.31Q347.39 163.38 361.43 151.9Q375.47 140.43 394.1 134.35Q412.73 128.28 434.6 128.28Q448.64 128.28 461.19 130.71Q473.75 133.14 482.12 137.73Q484.55 138.81 484.82 139.62Q485.09 140.43 485.36 143.94L488.87 177.42Q488.87 178.23 487.52 178.5Q486.17 178.77 485.63 177.69Q482.93 169.32 478.34 161.35Q473.75 153.39 466.73 147.04Q459.71 140.7 450.12 136.92Q440.54 133.14 427.85 133.14Q407.87 133.14 391.67 142.45Q375.47 151.77 366.02 169.19Q356.57 186.6 356.57 210.9Q356.57 228.18 361.83 244.11Q367.1 260.04 377.36 272.46Q387.62 284.88 402.61 292.03Q417.59 299.19 437.03 299.19Q449.18 299.19 456.33 296.09Q463.49 292.98 466.73 285.83Q469.97 278.67 469.97 266.25Q469.97 253.29 468.35 247.21Q466.73 241.14 460.52 239.25Q454.31 237.36 440.27 237.36Q438.65 237.36 438.65 235.2Q438.65 233.04 440 233.04Q457.82 234.12 472.26 234.25Q486.71 234.39 502.37 233.58Q503.72 233.58 503.72 235.47Q503.72 237.36 502.37 237.36Q496.7 237.09 494 239.12Q491.3 241.14 490.62 247.89Q489.95 254.64 489.95 268.95Q489.95 277.86 490.49 282.18Q491.03 286.5 491.44 288.52Q491.84 290.55 491.84 292.71Q491.84 294.33 491.3 294.87Q490.76 295.41 488.87 295.95Q474.83 298.92 459.3 301.08Q443.78 303.24 430.01 303.24Z" style="fill:var(--lg-ink,#3b2a20)"/><path d="M300.0,115.2 L300.0,318.0" style="stroke:var(--lg-gold,#a67a35)" stroke-width="2.4" fill="none"/><path d="M88.88 376.85Q88.88 374.31 90.01 372.4Q91.14 370.5 92.97 369.41Q94.8 368.32 96.94 368.32Q98.49 368.32 99.77 368.73Q101.06 369.13 102.11 369.86Q103.17 370.59 103.91 371.55V368.08Q102.55 366.87 100.93 366.28Q99.32 365.69 96.94 365.69Q94.67 365.69 92.7 366.51Q90.74 367.33 89.25 368.84Q87.76 370.34 86.92 372.39Q86.09 374.43 86.09 376.85Q86.09 379.27 86.92 381.31Q87.76 383.36 89.25 384.86Q90.74 386.37 92.7 387.19Q94.67 388.01 96.94 388.01Q99.32 388.01 100.93 387.42Q102.55 386.83 103.91 385.62V382.15Q103.17 383.11 102.11 383.84Q101.06 384.57 99.77 384.97Q98.49 385.38 96.94 385.38Q94.8 385.38 92.97 384.29Q91.14 383.2 90.01 381.28Q88.88 379.36 88.88 376.85Z M129.11 376.85Q129.11 374.4 130.18 372.48Q131.25 370.56 133.11 369.44Q134.97 368.32 137.33 368.32Q139.71 368.32 141.56 369.44Q143.4 370.56 144.47 372.48Q145.54 374.4 145.54 376.85Q145.54 379.3 144.47 381.22Q143.4 383.14 141.56 384.26Q139.71 385.38 137.33 385.38Q134.97 385.38 133.11 384.26Q131.25 383.14 130.18 381.22Q129.11 379.3 129.11 376.85ZM126.32 376.85Q126.32 379.21 127.14 381.25Q127.96 383.3 129.45 384.8Q130.94 386.31 132.95 387.16Q134.97 388.01 137.33 388.01Q139.71 388.01 141.71 387.16Q143.71 386.31 145.2 384.8Q146.69 383.3 147.51 381.25Q148.33 379.21 148.33 376.85Q148.33 374.46 147.51 372.43Q146.69 370.4 145.2 368.9Q143.71 367.39 141.71 366.54Q139.71 365.69 137.33 365.69Q134.97 365.69 132.95 366.54Q130.94 367.39 129.45 368.9Q127.96 370.4 127.14 372.43Q126.32 374.46 126.32 376.85Z M171.05 366V387.7H182.21V385.22H173.69V366Z M204 366V387.7H215.16V385.22H206.64V366Z M236.95 366V387.7H249.35V385.22H239.59V377.16H248.73V374.68H239.59V368.48H249.35V366Z M274.55 376.85Q274.55 374.31 275.68 372.4Q276.81 370.5 278.64 369.41Q280.47 368.32 282.61 368.32Q284.16 368.32 285.45 368.73Q286.73 369.13 287.79 369.86Q288.84 370.59 289.59 371.55V368.08Q288.22 366.87 286.61 366.28Q285 365.69 282.61 365.69Q280.35 365.69 278.38 366.51Q276.41 367.33 274.92 368.84Q273.43 370.34 272.6 372.39Q271.76 374.43 271.76 376.85Q271.76 379.27 272.6 381.31Q273.43 383.36 274.92 384.86Q276.41 386.37 278.38 387.19Q280.35 388.01 282.61 388.01Q285 388.01 286.61 387.42Q288.22 386.83 289.59 385.62V382.15Q288.84 383.11 287.79 383.84Q286.73 384.57 285.45 384.97Q284.16 385.38 282.61 385.38Q280.47 385.38 278.64 384.29Q276.81 383.2 275.68 381.28Q274.55 379.36 274.55 376.85Z M311.07 368.48H316.65V387.7H319.28V368.48H324.86V366H311.07Z M346.65 366V387.7H349.29V366Z M374.8 376.85Q374.8 374.4 375.87 372.48Q376.94 370.56 378.8 369.44Q380.66 368.32 383.01 368.32Q385.4 368.32 387.24 369.44Q389.09 370.56 390.16 372.48Q391.23 374.4 391.23 376.85Q391.23 379.3 390.16 381.22Q389.09 383.14 387.24 384.26Q385.4 385.38 383.01 385.38Q380.66 385.38 378.8 384.26Q376.94 383.14 375.87 381.22Q374.8 379.3 374.8 376.85ZM372.01 376.85Q372.01 379.21 372.83 381.25Q373.65 383.3 375.14 384.8Q376.63 386.31 378.64 387.16Q380.66 388.01 383.01 388.01Q385.4 388.01 387.4 387.16Q389.4 386.31 390.89 384.8Q392.37 383.3 393.19 381.25Q394.02 379.21 394.02 376.85Q394.02 374.46 393.19 372.43Q392.37 370.4 390.89 368.9Q389.4 367.39 387.4 366.54Q385.4 365.69 383.01 365.69Q380.66 365.69 378.64 366.54Q376.63 367.39 375.14 368.9Q373.65 370.4 372.83 372.43Q372.01 374.46 372.01 376.85Z M433.17 366V382.15L416.74 364.91V387.7H419.37V371.55L435.8 388.78V366Z M460.57 381.13 458.46 382.55Q459.17 383.98 460.3 385.24Q461.44 386.49 462.94 387.25Q464.44 388.01 466.21 388.01Q467.51 388.01 468.7 387.58Q469.9 387.14 470.84 386.34Q471.79 385.53 472.33 384.38Q472.87 383.24 472.87 381.81Q472.87 380.32 472.35 379.25Q471.82 378.18 471 377.42Q470.18 376.66 469.22 376.17Q468.26 375.67 467.39 375.36Q465.5 374.71 464.4 374.04Q463.3 373.38 462.83 372.62Q462.37 371.86 462.37 370.96Q462.37 369.91 463.17 369.05Q463.98 368.2 465.74 368.2Q467.02 368.2 467.9 368.7Q468.78 369.19 469.4 369.97Q470.02 370.74 470.43 371.55L472.69 370.25Q472.16 369.1 471.23 368.06Q470.3 367.02 468.98 366.36Q467.67 365.69 465.9 365.69Q464.07 365.69 462.64 366.42Q461.22 367.15 460.41 368.42Q459.61 369.69 459.61 371.3Q459.61 372.79 460.18 373.81Q460.75 374.83 461.65 375.53Q462.55 376.23 463.54 376.68Q464.54 377.13 465.34 377.41Q466.58 377.84 467.68 378.38Q468.78 378.93 469.46 379.79Q470.15 380.66 470.15 382.12Q470.15 383.61 469.09 384.57Q468.04 385.53 466.3 385.53Q465 385.53 463.98 384.97Q462.95 384.41 462.13 383.42Q461.31 382.43 460.57 381.13Z" style="fill:var(--lg-sub,#8a6226)"/></symbol>
+<symbol id="mg-mono" viewBox="49.0 112.2 459.6 208.8"><path d="M76.3 267.33 78.73 151.23Q69.28 134.49 54.7 134.49Q53.89 134.49 53.89 132.87Q53.89 131.25 54.7 131.25Q59.83 131.25 65.63 131.52Q71.44 131.79 75.49 131.79Q81.43 131.79 86.16 131.52Q90.88 131.25 93.58 131.25Q97.36 131.25 99.38 133.81Q101.41 136.38 106 145.29L165.4 261.66L219.13 138Q220.75 134.49 222.64 132.87Q224.53 131.25 227.23 131.25Q229.66 131.25 232.5 131.52Q235.33 131.79 239.38 131.79Q247.48 131.79 253.15 131.52Q258.82 131.25 264.22 131.25Q265.03 131.25 265.03 132.87Q265.03 134.49 264.22 134.49Q251.8 134.49 245.86 139.08Q239.92 143.67 240.46 154.74L246.4 278.13Q246.94 285.96 248.43 290.01Q249.91 294.06 254.37 295.41Q258.82 296.76 267.46 296.76Q268 296.76 268 298.38Q268 300 267.46 300Q260.44 300 251.8 299.73Q243.16 299.46 233.71 299.46Q224.26 299.46 216.03 299.73Q207.79 300 201.04 300Q200.5 300 200.5 298.38Q200.5 296.76 201.04 296.76Q214 296.76 217.78 293.25Q221.56 289.74 220.75 278.13L215.35 163.11L157.84 298.11Q157.57 299.19 155.68 299.19Q153.79 299.19 153.25 298.11L85.75 164.73L83.32 267.33Q83.05 281.64 88.85 289.2Q94.66 296.76 106.27 296.76Q107.08 296.76 107.08 298.38Q107.08 300 106.27 300Q100.33 300 94.12 299.73Q87.91 299.46 80.08 299.46Q71.98 299.46 65.37 299.73Q58.75 300 52.81 300Q52 300 52 298.38Q52 296.76 52.81 296.76Q63.88 296.76 69.95 289.2Q76.03 281.64 76.3 267.33Z M431.36 303.24Q407.87 303.24 389.38 296.36Q370.88 289.47 358.05 277.46Q345.23 265.44 338.62 249.78Q332 234.12 332 216.03Q332 196.32 339.83 180.25Q347.66 164.19 361.7 152.58Q375.74 140.97 394.64 134.62Q413.54 128.28 435.95 128.28Q449.18 128.28 462 130.44Q474.83 132.6 482.93 136.65Q485.63 137.73 486.03 138.4Q486.44 139.08 486.71 142.86L490.22 178.23Q490.22 179.04 488.87 179.31Q487.52 179.58 486.98 178.77Q484.82 172.02 480.1 164.19Q475.37 156.36 468.08 149.47Q460.79 142.59 450.66 138Q440.54 133.41 427.31 133.41Q408.68 133.41 393.56 142.86Q378.44 152.31 369.53 169.59Q360.62 186.87 360.62 210.9Q360.62 229.53 366.02 245.32Q371.42 261.12 381.54 273.27Q391.67 285.42 405.98 292.17Q420.29 298.92 438.11 298.92Q449.18 298.92 455.93 296.22Q462.68 293.52 465.65 286.37Q468.62 279.21 468.62 265.98Q468.62 253.02 467.13 246.94Q465.65 240.87 459.71 238.98Q453.77 237.09 440.54 237.09Q438.92 237.09 438.92 234.93Q438.92 232.77 440.27 232.77Q458.63 233.85 473.35 233.99Q488.06 234.12 504.26 233.31Q505.34 233.31 505.61 235.2Q505.61 236.55 505.07 236.82Q504.8 237.09 504.26 237.09Q499.13 236.82 496.7 238.84Q494.27 240.87 493.59 247.62Q492.92 254.37 492.92 268.68Q492.92 277.59 493.46 281.91Q494 286.23 494.4 288.25Q494.81 290.28 494.81 292.44Q494.81 294.06 494.27 294.6Q493.73 295.14 491.84 295.68Q477.53 298.92 461.6 301.08Q445.67 303.24 431.36 303.24Z" style="fill:var(--lg-ink,#3b2a20)"/><path d="M300.0,115.2 L300.0,318.0" style="stroke:var(--lg-gold,#a67a35)" stroke-width="2.4" fill="none"/></symbol></defs></svg>
 
 <script>
 /* =====================================================
@@ -534,7 +573,7 @@ const DELIVERY_AREAS = [
 <nav>
   <div class="container nav-inner">
     <div class="nav-left"><a href="#/">Shop</a><a href="#/orders">Orders</a></div>
-    <a href="#/" class="logo" id="logo-text"></a>
+    <a href="#/" class="brand" aria-label="MG Collections home"><svg class="mark" viewBox="0 0 459.6 208.8" aria-hidden="true"><use href="#mg-mono"/></svg><span class="logo" id="logo-text"></span></a>
     <div class="nav-links">
       <a href="#/cart" class="cart-link" aria-label="Cart">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"/></svg>
@@ -549,7 +588,8 @@ const DELIVERY_AREAS = [
 <footer>
   <div class="container foot-grid">
     <div class="foot-brand">
-      <span class="logo" id="footer-name"></span>
+      <svg class="foot-logo" viewBox="0 0 454.5 279.5" aria-hidden="true"><use href="#mg-lockup"/></svg>
+      <span class="sr-only" id="footer-name"></span>
       <p id="footer-tag"></p>
     </div>
     <div>
@@ -940,12 +980,8 @@ function categoryTilesHTML() {
   }).join("") + `</div>`;
 }
 function heroPicHTML() {
-  let pic = CONFIG.heroImage || "";
-  if (!pic) {
-    const lead = CATALOG.find(x => x.stock > 0) || CATALOG[0];
-    if (lead) pic = firstAvailable(lead).photo || lead.images[0] || "";
-  }
-  return pic ? imgTag(CONFIG.heroImage ? pic : sized(pic, 1000), CONFIG.storeName, 'decoding="async"') : `<div class="hero-mono">MG</div>`;
+  if (CONFIG.heroImage) return imgTag(CONFIG.heroImage, CONFIG.storeName, 'decoding="async"');
+  return `<div class="hero-logo" role="img" aria-label="${esc(CONFIG.storeName)} logo"><svg class="hl-lockup" viewBox="0 0 454.5 279.5" aria-hidden="true"><use href="#mg-lockup"/></svg></div>`;
 }
 function renderHome() {
   const cats = ["all", ...new Set(CATALOG.map(p => p.category))];
@@ -1061,6 +1097,12 @@ function renderProduct(id) {
   window.scrollTo(0, 0);
 }
 
+/* "Back" links: the cart goes back to wherever the customer was last browsing (home or a product) */
+let lastShopHash = "#/";
+function backLink(href, label) {
+  return `<a class="back-link" href="${esc(href)}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>${label}</a>`;
+}
+
 function renderCart() {
   const items = cartDetailed();
   const note = cartNotice ? `<div class="notice" role="alert">${esc(cartNotice)}</div>` : "";
@@ -1071,6 +1113,7 @@ function renderCart() {
   }
   app.innerHTML = `
     <div class="container">
+      ${backLink(lastShopHash, "Continue shopping")}
       <h2 class="section-title">Your Cart</h2>
       ${note}
       <div class="cart-wrap">
@@ -1110,6 +1153,7 @@ function renderCheckout() {
   if (!items.length) { location.hash = "#/cart"; return; }
   app.innerHTML = `
     <div class="container">
+      ${backLink("#/cart", "Back to cart")}
       <h2 class="section-title">Checkout</h2>
       <div class="cart-wrap">
         <form id="checkout-form" class="form-card" novalidate>
@@ -1168,7 +1212,7 @@ function renderPay(id, amt) {
   if (!/^MG\d{3,9}$/.test(id) || !Number.isInteger(n) || n < 1 || n > 500000) { app.innerHTML = `<div class="container empty"><h2>This payment link is not valid</h2><p>Please message us on WhatsApp and we will help.</p><br><a class="btn" href="#/">Back to shop</a></div>`; return; }
   const o = { id, totalNum: n, total: money(n) };
   const actions = upiActionsHTML(o);
-  app.innerHTML = `<div class="container success"><h1>Pay for order ${esc(id)}</h1>
+  app.innerHTML = `<div class="container success">${backLink("#/", "Back to shop")}<h1>Pay for order ${esc(id)}</h1>
     <div class="order-box"><div class="row total"><span>Amount to pay</span><span>${money(n)}</span></div></div>
     ${actions ? `<div class="pay-box">${actions}</div>` : `<p class="hint">We will share the payment details with you on WhatsApp.</p>`}
     <p class="next">After paying, please send us the payment screenshot so we can mark your order as paid.</p>
@@ -1181,6 +1225,7 @@ function renderSuccess(order) {
   const pendingPay = !cod && order.delivery !== null && !!upiLink(order);
   app.innerHTML = `
     <div class="container success">
+      ${backLink("#/", "Back to shop")}
       <div class="tick">✓</div>
       <h1>Thank you, ${esc(order.name)}!</h1>
       <p>Your order <strong>${esc(order.id)}</strong> has been received.</p>
@@ -1207,6 +1252,7 @@ function renderOrders() {
   }
   app.innerHTML = `
     <div class="container">
+      ${backLink("#/", "Back to shop")}
       <h2 class="section-title">My Orders</h2>
       <p class="hint">Orders are saved on this phone/browser only. Clearing your browser data removes them.</p>
       ${orders.map(o => {
@@ -1691,6 +1737,7 @@ document.addEventListener("change", (e) => { if (e.target.id === "pf-file") admP
 function route() {
   clearTimeout(successTimer);
   const hash = location.hash || "#/";
+  if (hash === "#/" || /^#\/product\//.test(hash)) lastShopHash = hash;
   const parts = hash.replace(/^#\/?/, "").split("/");
   if (SHEET_MODE && !catalogLoaded && parts[0] !== "about" && parts[0] !== "orders" && parts[0] !== "admin") { renderCatalogWait(); updateBadge(); return; }
   if (parts[0] === "product" && parts[1]) renderProduct(decodeURIComponent(parts[1]));
@@ -1814,11 +1861,11 @@ document.addEventListener("submit", (e) => {
 /* ---------- Init ---------- */
 window.addEventListener("DOMContentLoaded", () => {
   document.title = CONFIG.storeName + " — " + CONFIG.tagline;
-  $("#logo-text").textContent = CONFIG.storeName;
+  $("#logo-text").textContent = CONFIG.storeName.replace(/^\s*MG\s+/i, "");
   $("#announce").textContent = (CONFIG.freeDeliveryAbove ? "Free delivery in Bhagalpur above " + money(CONFIG.freeDeliveryAbove) : "Delivery across Bhagalpur") + (CONFIG.codEnabled ? "  ·  Cash on delivery available" : "");
   $("#footer-name").textContent = CONFIG.storeName;
   $("#footer-tag").textContent = CONFIG.tagline;
-  if (CONFIG.contactEmail) { const fm = $("#foot-mail"); fm.href = "mailto:" + CONFIG.contactEmail; fm.textContent = CONFIG.contactEmail; fm.style.display = "block"; fm.style.wordBreak = "break-all"; }
+  if (CONFIG.contactEmail) { const fm = $("#foot-mail"); fm.href = "mailto:" + CONFIG.contactEmail; fm.textContent = CONFIG.contactEmail; fm.style.display = "block"; fm.style.fontSize = ".8rem"; fm.style.overflowWrap = "anywhere"; }
   $("#footer-copy").textContent = "© " + new Date().getFullYear() + " " + CONFIG.storeName;
   const waNum = String(CONFIG.whatsappNumber || "").replace(/\D/g, "");
   if (waNum) {
