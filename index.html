@@ -267,6 +267,14 @@ footer .logo{color:#f0e6d6;font-size:1.5rem;display:block;margin-bottom:4px}
 .adm-tools{display:flex;align-items:center;gap:10px;margin:0 0 12px;flex-wrap:wrap}
 .adm-tools .adm-sub{margin:0}
 #app{min-height:85vh;min-height:85svh}   /* keeps the footer from flashing at the top, then jumping down, while a page is still loading */
+.cancel-box{margin:12px 0 0}
+.cancel-box .btn{margin-top:0}
+.cancel-box.ask{padding:14px;border:1.5px solid var(--clay);border-radius:var(--radius);background:var(--sand)}
+.cancel-actions{display:flex;flex-wrap:wrap;gap:8px}
+.cancel-actions .btn{flex:1 1 150px}
+.btn-danger{background:#9b2c2c;border-color:#9b2c2c;color:#fff}
+.btn-danger:hover{background:#7d2121;border-color:#7d2121}
+.cancel-note{color:#9b2c2c;font-weight:600}
 .on-admin .wa-float{display:none!important}
 .on-admin #toast{bottom:96px}
 .adm-bulk{position:sticky;bottom:12px;z-index:40;margin-top:14px}
@@ -600,6 +608,8 @@ const CONFIG = {
   freeDeliveryAbove: 999,     // free delivery inside Bhagalpur on orders of this amount or more. Set 0 for no free delivery
   bhagalpurPinPrefixes: ["812", "813"],   // PIN codes that count as Bhagalpur
   nearAreaPins: ["812001", "812002"],     // the lower delivery fee (nearAreaFee) applies ONLY to these PIN codes
+  cancelLocalHrs: 2,                      // a customer can cancel their own order for this many hours (Bhagalpur). The Settings tab of the sheet can change it. 0 = not allowed
+  cancelOutsideHrs: 4,                    // the same, for orders outside Bhagalpur
   googleAnalyticsId: ""       // e.g. "G-XXXXXXXXXX" from Google Analytics. Leave "" to keep analytics off
 };
 
@@ -1006,11 +1016,11 @@ function waLink(order) {
   return `https://wa.me/${wa}?text=${encodeURIComponent(orderWaText(order, "about my order"))}`;
 }
 let toastTimer;
-function toast(msg) {
+function toast(msg, ms) {
   const t = $("#toast");
   t.textContent = msg; t.classList.add("show");
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => t.classList.remove("show"), 1800);
+  toastTimer = setTimeout(() => t.classList.remove("show"), ms || 1800);
 }
 
 /* ---------- Components ---------- */
@@ -1334,7 +1344,7 @@ function renderSuccess(order) {
         : cod ? "We'll contact you shortly to confirm your order."
         : "After you pay, we'll confirm your order. You can also pay later from the Orders page."}</p>
       ${order.zone === "outside" ? "" : `<p class="hint" style="margin:0 0 14px">${esc(deliveryTimeText())}</p>`}
-      ${SHEET_MODE ? `<p class="hint" style="margin:0 0 14px"><a href="#/orders" style="color:var(--clay-dark);text-decoration:underline">Follow your order's progress in My Orders</a></p>` : ""}
+      ${SHEET_MODE ? `<p class="hint" style="margin:0 0 14px"><a href="#/orders" style="color:var(--clay-dark);text-decoration:underline">Follow your order's progress in My Orders</a>${cancelHours(order.zone) ? `<br>Changed your mind? You can cancel it there within ${hoursText(cancelHours(order.zone))}.` : ""}</p>` : ""}
       ${wa ? `<a class="btn btn-wa" target="_blank" rel="noopener" href="https://wa.me/${wa}?text=${encodeURIComponent(msg)}">Message us on WhatsApp</a>` : ""}
       ${pendingPay ? `<p class="redirect"><a href="#/">Back to the shop</a></p>` : `<p class="redirect">Taking you back to the shop in ${CONFIG.redirectSeconds} seconds… <a href="#/">Go now</a></p>`}
     </div>`;
@@ -1492,13 +1502,14 @@ function applyFeed(feed, fromCache) {
   if (Array.isArray(s.bhagalpurPinPrefixes) && s.bhagalpurPinPrefixes.length) CONFIG.bhagalpurPinPrefixes = s.bhagalpurPinPrefixes.flatMap(x => { x = String(x).trim(); return /^\d+$/.test(x) && x.length > 3 && x.length % 3 === 0 ? x.match(/\d{3}/g) : [x]; });
   if (Array.isArray(s.nearAreaPins) && s.nearAreaPins.length) CONFIG.nearAreaPins = s.nearAreaPins.flatMap(x => { x = String(x).trim(); return /^\d+$/.test(x) && x.length > 6 && x.length % 6 === 0 ? x.match(/\d{6}/g) : [x]; });
   if (typeof s.cod === "boolean") CONFIG.codEnabled = s.cod;
+  ["cancelLocalHrs", "cancelOutsideHrs"].forEach(k => { if (s[k] !== undefined && s[k] !== null && s[k] !== "" && Number.isFinite(Number(s[k])) && Number(s[k]) >= 0) CONFIG[k] = Number(s[k]); });
   if (Array.isArray(feed.areas) && feed.areas.length) DELIVERY_AREAS.splice(0, DELIVERY_AREAS.length, ...feed.areas);
   catalogLoaded = true;
 }
 function catalogAsFeed() {
   const rows = [];
   CATALOG.forEach(p => p.variants.forEach(v => rows.push({ sku: v.sku, code: p.id, name: p.name, category: p.category, colour: v.colour, price: v.price, stock: v.stock, photo: v.photo, description: p.description })));
-  return { ok: true, products: rows, settings: { nearAreaFee: CONFIG.nearAreaFee, otherBhagalpurFee: CONFIG.otherBhagalpurFee, outsideFee: CONFIG.outsideFee, freeDeliveryAbove: CONFIG.freeDeliveryAbove, bhagalpurPinPrefixes: CONFIG.bhagalpurPinPrefixes, nearAreaPins: CONFIG.nearAreaPins, cod: CONFIG.codEnabled }, areas: DELIVERY_AREAS.slice(), reviews: REVIEWS };
+  return { ok: true, products: rows, settings: { nearAreaFee: CONFIG.nearAreaFee, otherBhagalpurFee: CONFIG.otherBhagalpurFee, outsideFee: CONFIG.outsideFee, freeDeliveryAbove: CONFIG.freeDeliveryAbove, bhagalpurPinPrefixes: CONFIG.bhagalpurPinPrefixes, nearAreaPins: CONFIG.nearAreaPins, cod: CONFIG.codEnabled, cancelLocalHrs: CONFIG.cancelLocalHrs, cancelOutsideHrs: CONFIG.cancelOutsideHrs }, areas: DELIVERY_AREAS.slice(), reviews: REVIEWS };
 }
 function saveCatalogCache() {
   if (!SHEET_MODE || !CATALOG.length) return;
@@ -1724,7 +1735,7 @@ async function admBulk(status) {
     }
   }
   ADM.busy = ""; admPaint();
-  toast(stop || `${ok} order${ok === 1 ? "" : "s"} marked ${status.toLowerCase()}.` + (mailed ? ` ${mailed} customer${mailed === 1 ? "" : "s"} emailed.` : "") + (lowMail ? ` Email limit is low for ${lowMail}: open them and tap Send WhatsApp.` : "") + (skipped ? ` ${skipped} skipped (already moved on).` : "") + (failed ? ` ${failed} failed, please refresh.` : ""));
+  toast(stop || `${ok} order${ok === 1 ? "" : "s"} marked ${status.toLowerCase()}.` + (mailed ? ` ${mailed} customer${mailed === 1 ? "" : "s"} emailed.` : "") + (lowMail ? ` Email limit is low for ${lowMail}: open them and tap Send WhatsApp.` : "") + (skipped ? ` ${skipped} skipped (already moved on).` : "") + (failed ? ` ${failed} failed, please refresh.` : ""), 7000);
   if (skipped || failed || stop) admLoad(true);
 }
 function admOrderCard(o) {
@@ -1737,6 +1748,7 @@ function admOrderCard(o) {
     <div class="adm-cust"><b>${esc(o.name)}</b> · <a href="tel:${esc(o.phone.replace(/[^\d+]/g, ""))}">${esc(o.phone)}</a>${o.email ? ` · <a href="mailto:${esc(o.email)}">${esc(o.email)}</a>` : ""}</div>
     <pre class="adm-items">${esc(o.items)}</pre>
     <div class="adm-sub">Payment: <b>${esc(o.payment || "UPI")}</b></div>
+    ${o.by === "customer" ? `<div class="adm-err" style="margin:6px 0">Cancelled by the customer.${o.payment === "UPI - Paid" ? ` You marked this order as paid: please refund ${money(o.total)}.` : o.payment === "Cash on delivery" ? " Cash on delivery: nothing to refund." : " Check your UPI app in case they paid, and refund if so."}</div>` : ""}
     <div class="adm-total">Subtotal ${money(o.subtotal)}${o.discount ? ` · Discount ${esc(o.code)} −${money(o.discount)}` : ""} · Delivery ${esc(o.delivery)} · <b>Total ${money(o.total)}${o.delivery === "To confirm" ? " + delivery" : ""}</b></div>
     <div class="adm-sub">${esc(o.address)}<br>${esc(o.area)}${o.notes ? `<br>Note: ${esc(o.notes)}` : ""}</div>
     <div class="adm-acts">
@@ -1996,6 +2008,11 @@ function refreshOfferUI() {
 
 /* ---------- Delivery time and the free-delivery nudge ---------- */
 const deliveryTimeText = () => `Delivery in Bhagalpur takes ${CONFIG.deliveryDays}.`;
+const hoursText = (h) => { h = Number(h); return (h === 1 ? "1 hour" : h + " hours"); };
+const cancelHours = (zone) => Number(zone === "outside" ? CONFIG.cancelOutsideHrs : CONFIG.cancelLocalHrs) || 0;
+const leftText = (min) => { min = Math.max(1, Math.ceil(min)); const h = Math.floor(min / 60), m = min % 60; return h ? (m ? `${h} h ${m} min` : `${h} h`) : `${m} min`; };
+/** The sentence about cancelling, used on the FAQ and Returns pages. */
+const cancelRuleText = () => { const a = cancelHours("local"), b = cancelHours("outside"); return a || b ? `In <b>My Orders</b> you can cancel your own order ${a ? `within ${hoursText(a)} of ordering (Bhagalpur)` : ""}${a && b ? " or " : ""}${b ? `within ${hoursText(b)} (outside Bhagalpur)` : ""}, as long as it has not been shipped yet.` : ""; };
 function deliveryTimeNote() { return areaZone() === "outside" ? "Outside Bhagalpur we'll confirm the delivery time with you on WhatsApp." : deliveryTimeText(); }
 function freeNudgeHTML(sub) {
   const t = CONFIG.freeDeliveryAbove; if (!t) return "";
@@ -2022,6 +2039,39 @@ function saveLive() { try { localStorage.setItem(LIVE_KEY, JSON.stringify(LIVE))
 function updateOrder(id, patch) {
   try { const list = getOrders(); const o = list.find(x => x.id === id); if (o) { Object.assign(o, patch); localStorage.setItem(CONFIG.ordersKey, JSON.stringify(list)); } } catch {}
 }
+/** What the shop told us about one order. cancelLeft = minutes the customer can still cancel it (counted from "at", the moment we asked). */
+const liveFrom = (x) => ({ status: x.status, payment: x.payment, reviewed: !!x.reviewed, cancelLeft: Number(x.cancelLeft) > 0 ? Number(x.cancelLeft) : 0, at: Date.now() });
+const cancelMinutesLeft = (live) => (live && live.cancelLeft > 0 && live.at) ? live.cancelLeft - (Date.now() - live.at) / 60000 : 0;
+let CANCEL_ASK = "", CANCELLING = "", CANCEL_NOTE = {};
+function cancelBoxHTML(o, live) {
+  const note = CANCEL_NOTE[o.id] ? `<p class="hint cancel-note" role="status">${esc(CANCEL_NOTE[o.id])}</p>` : "";
+  if (!live || !["New", "Confirmed", "Paid"].includes(live.status)) return note;       // e.g. "already on its way": the customer sees why
+  const left = cancelMinutesLeft(live);
+  if (left <= 0) return note;
+  const id = esc(o.id), paid = /Paid/.test(live.payment || "") || live.status === "Paid";
+  if (CANCELLING === o.id) return `<div class="cancel-box"><button class="btn btn-outline" type="button" disabled>Cancelling…</button></div>`;
+  if (CANCEL_ASK === o.id) return `<div class="cancel-box ask"><p style="margin:0 0 4px"><b>Cancel order ${id}?</b></p><p class="hint" style="margin:0 0 10px">${paid ? "You have paid for this order. We will refund the full amount, and we will message you about it." : o.payment === "cod" ? "You have not paid anything yet." : "If you have already paid, we will refund the full amount."}</p>
+    <div class="cancel-actions"><button class="btn btn-danger" type="button" data-cancel-yes="${id}">Yes, cancel my order</button><button class="btn btn-outline" type="button" data-cancel-no>Keep my order</button></div></div>`;
+  return `<div class="cancel-box"><button class="btn btn-outline" type="button" data-cancel-ask="${id}">Cancel this order</button>
+    <p class="hint" style="margin:6px 0 0">You can cancel for another ${leftText(left)}. After that, please message us on WhatsApp.</p>${note}</div>`;
+}
+async function doCancel(id) {
+  const o = getOrders().find(x => x.id === id); if (!o || !o.phone || CANCELLING) return;
+  CANCEL_ASK = ""; CANCELLING = id; delete CANCEL_NOTE[id]; paintOrders();
+  try {
+    const r = await fetch(CONFIG.sheetApiUrl, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify({ action: "cancel", orderId: id, phone: o.phone }) });
+    const j = await r.json();
+    if (j && j.ok) {
+      LIVE[id] = { status: "Cancelled", payment: (LIVE[id] || {}).payment, reviewed: false, cancelLeft: 0, at: Date.now() }; saveLive();
+      toast("Your order " + id + " is cancelled.", 5000);
+    } else {
+      CANCEL_NOTE[id] = (j && j.message) || "Sorry, we could not cancel this order. Please message us on WhatsApp.";
+      if (LIVE[id]) { LIVE[id].cancelLeft = 0; saveLive(); }
+      refreshStatuses();
+    }
+  } catch { CANCEL_NOTE[id] = "Couldn't reach the shop. Please check your internet and try again."; if (LIVE[id]) LIVE[id].at = Date.now() - 1; }
+  CANCELLING = ""; paintOrders();
+}
 async function trackCall(list) {
   const r = await fetch(CONFIG.sheetApiUrl, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify({ action: "track", orders: list }) });
   return await r.json();
@@ -2033,7 +2083,7 @@ async function refreshStatuses() {
   try {
     const res = await trackCall(list);
     if (!res || !res.ok) throw new Error("bad");
-    res.orders.forEach(x => { LIVE[x.id] = { status: x.status, payment: x.payment, reviewed: !!x.reviewed }; });
+    res.orders.forEach(x => { LIVE[x.id] = liveFrom(x); });
     saveLive(); liveAt = Date.now(); liveFailed = false;
   } catch { liveFailed = true; }
   if (location.hash === "#/orders") paintOrders();
@@ -2060,7 +2110,7 @@ function statusBlockHTML(o, live) {
         <p class="hint vp-msg" role="status" style="margin:6px 0 0"></p></form>`;
     return `<span class="status">Order received</span><p class="hint" style="margin:0 0 10px">${liveFailed ? "Couldn't check the latest status. Please try again in a moment." : "Checking the latest status…"}</p>`;
   }
-  if (live.status === "Cancelled") return `<span class="status bad">Cancelled</span><p class="hint" style="margin:0 0 10px">We're sorry, this order was cancelled. If you had paid, we will refund the full amount. Please message us on WhatsApp and we'll take care of it.</p>`;
+  if (live.status === "Cancelled") return `<span class="status bad">Cancelled</span><p class="hint" style="margin:0 0 10px">This order is cancelled. If you had paid, we will refund the full amount. Please message us on WhatsApp with your payment screenshot and we'll take care of it.</p>`;
   const step = STEP_OF[live.status] || 1;
   const chip = live.status === "Paid" ? "Paid · Confirmed" : live.status === "New" ? "Order received" : live.status === "Shipped" ? "On its way" : live.status;
   return `<span class="status${live.status === "Delivered" ? " good" : ""}">${esc(chip)}</span>
@@ -2077,6 +2127,7 @@ function orderCardHTML(o) {
   if (live && (st === "Cancelled" || st === "Delivered")) pay = "";
   else if (live && paid && o.payment !== "cod") pay = `<div class="pay-done">Payment received ✓</div>`;
   else pay = payBoxHTML(o);
+  const cancelBox = cancelBoxHTML(o, live);
   const review = live && st === "Delivered" ? (live.reviewed ? `<p class="hint" style="margin:10px 0 0">Thank you for your review ✓</p>` : `<a class="btn" href="#/review/${esc(o.id)}">Write a review</a>`) : "";
   return `<div class="order-card" data-oc="${esc(o.id)}">
     <div class="order-head"><strong>${esc(o.id)}</strong><span>${esc(when)}</span></div>
@@ -2084,6 +2135,7 @@ function orderCardHTML(o) {
     ${o.lines.map(l => `<div class="row"><span>${esc(l.name)} × ${l.qty}</span><span>${esc(l.amount)}</span></div>`).join("")}
     ${orderTotalsHTML(o)}
     ${pay}
+    ${cancelBox}
     ${review}
     ${link ? `<a class="btn btn-wa" target="_blank" rel="noopener" href="${link}">Ask about this order on WhatsApp</a>` : ""}
   </div>`;
@@ -2096,6 +2148,7 @@ function paintOrders() {
   const u = $("#orders-updated");
   if (u) u.textContent = liveFailed ? "Couldn't refresh. Showing the last known status." : liveAt ? "Updated just now" : "";
 }
+setInterval(() => { if (location.hash === "#/orders" && !document.hidden && !CANCELLING) paintOrders(); }, 30000);     // keeps the "time left to cancel" honest
 function renderOrders() {
   const orders = getOrders();
   if (!orders.length) {
@@ -2123,7 +2176,7 @@ async function verifyPhone(form) {
     const x = res && res.ok && res.orders && res.orders[0];
     if (!x) { msg.textContent = "That phone number doesn't match this order. Please check it."; btn.disabled = false; return; }
     updateOrder(id, { phone });
-    LIVE[id] = { status: x.status, payment: x.payment, reviewed: !!x.reviewed }; saveLive(); liveAt = Date.now();
+    LIVE[id] = liveFrom(x); saveLive(); liveAt = Date.now();
     document.activeElement && document.activeElement.blur && document.activeElement.blur();
     paintOrders();
   } catch { msg.textContent = "Couldn't reach the shop. Please try again."; btn.disabled = false; }
@@ -2214,7 +2267,7 @@ function faqData() {
       ["How do I place an order?", "Add what you like to your cart, press Checkout, fill in your details and place your order. We confirm every order personally on WhatsApp or email."],
       ["How can I pay?", `By UPI: after we confirm your order, pay with Google Pay, PhonePe, Paytm or BHIM from your order page, or send the amount to our UPI ID.${CONFIG.codEnabled ? " In Bhagalpur you can also choose cash on delivery." : ""}`],
       ["Is paying by UPI safe?", "Yes. You pay from your own UPI app, so we never see your bank details or your UPI PIN."],
-      ["Can I change or cancel my order?", `Message us on WhatsApp as soon as you can, with your order number. If it has not been shipped yet we will help. If we cancel an order, the stock goes back and, if you had paid, we refund the full amount.`],
+      ["Can I change or cancel my order?", `${cancelRuleText() ? cancelRuleText() + " If you had already paid, we refund the full amount. After that time, or to change something in your order, " : ""}${cancelRuleText() ? "m" : "M"}essage us on WhatsApp as soon as you can, with your order number. If it has not been shipped yet we will help.`],
       ["I paid, but my order still says 'Order received'.", "Please send us the payment screenshot on WhatsApp (there is a button on your order). We mark payments by hand, so the status changes once we have seen it."]
     ]],
     ["Delivery", [
@@ -2259,7 +2312,7 @@ function renderReturns() {
     ["Damaged or wrong item", `<p>If your jewellery arrives damaged, or it is not what you ordered, message us within <b>24 hours</b> of receiving it, with a photo. We will replace it.</p>`],
     ["How to ask", `<p>1. Take a clear photo of the item and the packing.<br>2. Message us${wa ? ` on ${aLink("https://wa.me/" + wa, "WhatsApp", true)}` : ""} with your order number and the photo.<br>3. Please keep the item and its packing until we reply.</p>`],
     ["Refunds", `<p>If we cancel your order, or we cannot replace an item, we refund the full amount you paid for it. Message us and we will take care of it. Cash on delivery orders have nothing to refund until you have paid.</p>`],
-    ["Cancelling an order", `<p>Message us on WhatsApp with your order number as soon as you can. If your order has not been shipped yet, we will cancel it for you.</p>`],
+    ["Cancelling an order", `<p>${cancelRuleText() ? cancelRuleText() + " If you had paid, we refund the full amount. " : ""}Otherwise, message us on WhatsApp with your order number as soon as you can. If your order has not been shipped yet, we will cancel it for you.</p>`],
     ["Contact", contactBlockHTML()]
   ], "returns");
 }
@@ -2327,6 +2380,9 @@ document.addEventListener("click", (e) => {
   if (useCode) { const i = $("#f-code"); if (i) i.value = useCode.dataset.codeUse; applyCodeFromInput(useCode.dataset.codeUse); return; }
   const copyCode = t.closest("[data-copycode]");
   if (copyCode) { const c = copyCode.dataset.copycode; (navigator.clipboard ? navigator.clipboard.writeText(c) : Promise.reject()).then(() => toast("Code " + c + " copied. Use it at checkout.")).catch(() => toast("Your code is " + c)); return; }
+  const cAsk = t.closest("[data-cancel-ask]"); if (cAsk) { CANCEL_ASK = cAsk.dataset.cancelAsk; paintOrders(); return; }
+  if (t.closest("[data-cancel-no]")) { CANCEL_ASK = ""; paintOrders(); return; }
+  const cYes = t.closest("[data-cancel-yes]"); if (cYes) { doCancel(cYes.dataset.cancelYes); return; }
   if (t.closest("[data-refresh-status]")) { liveFailed = false; refreshStatuses().then(() => toast("Status updated")); return; }
   if (t.closest("[data-more-reviews]")) { showAllReviews = true; const h = $("#reviews"); if (h) { h.outerHTML = homeReviewsHTML(); } return; }
   const star = t.closest("[data-star]");
