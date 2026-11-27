@@ -260,6 +260,20 @@ footer .logo{color:#f0e6d6;font-size:1.5rem;display:block;margin-bottom:4px}
 .adm-btn.danger{color:#9b2c22;border-color:#e3b1ab}
 .adm-btn:disabled{opacity:.6}
 .adm-err{color:#9b2c22;font-size:.88rem;margin:6px 0}
+.adm-cust,.adm-sub,.adm-items{overflow-wrap:anywhere}
+.adm-row label.adm-pick{display:flex;align-items:center;gap:10px;cursor:pointer;min-height:32px}
+.adm-pick input{width:20px;height:20px;accent-color:var(--clay);flex:none;margin:0}
+.adm-card.picked{outline:2px solid var(--clay);outline-offset:-2px}
+.adm-tools{display:flex;align-items:center;gap:10px;margin:0 0 12px;flex-wrap:wrap}
+.adm-tools .adm-sub{margin:0}
+#app{min-height:85vh;min-height:85svh}   /* keeps the footer from flashing at the top, then jumping down, while a page is still loading */
+.on-admin .wa-float{display:none!important}
+.on-admin #toast{bottom:96px}
+.adm-bulk{position:sticky;bottom:12px;z-index:40;margin-top:14px}
+.adm-bulk-in{background:var(--white);border:2px solid var(--clay);border-radius:14px;padding:12px 14px;box-shadow:0 10px 30px rgba(59,42,32,.25);display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px}
+.adm-bulk-in b{margin-right:auto}
+.adm-bulk-in .adm-btn{padding:10px 14px}
+.adm-bulk-in .adm-btn:disabled{opacity:.55}
 .adm-btn.pulse{box-shadow:0 0 0 3px rgba(45,134,89,.35);font-weight:700}
 .adm-ok{color:#2c6b25;font-size:.9rem;margin:6px 0}
 .adm-login label{display:block;font-weight:600;font-size:.85rem;margin-bottom:4px}
@@ -483,6 +497,69 @@ footer .foot-grid a:hover{color:#fff}
 .back-link + .section-title{margin-top:6px}
 .success .back-link{display:flex;width:fit-content;margin:-44px auto 26px 0}
 @media(max-width:480px){.success .back-link{margin-top:-52px}}
+
+/* ---- v2: offer, live status, reviews, FAQ ---- */
+[hidden]{display:none!important}
+.linkbtn{background:none;border:0;padding:0;color:var(--clay-dark);text-decoration:underline;text-underline-offset:3px;font-size:inherit;font-weight:600;font-family:inherit;cursor:pointer}
+.container.narrow{max-width:760px}
+.offer-pill{display:inline-flex;flex-direction:column;align-items:flex-start;gap:3px;background:transparent;border:1px solid var(--gold);padding:11px 18px;margin:0 0 28px;text-align:left;cursor:pointer;border-radius:2px;font-family:inherit;max-width:100%}
+.offer-pill .op-main{font-size:.82rem;font-weight:600;letter-spacing:.03em;color:var(--cocoa)}
+.offer-pill .op-sub{font-size:.68rem;color:var(--gold-dark);letter-spacing:.12em;text-transform:uppercase;font-weight:600}
+.offer-pill .op-tap{font-size:.68rem;color:var(--muted)}
+.offer-pill:hover{background:rgba(166,122,53,.09)}
+@media(max-width:800px){.offer-pill{align-items:center;text-align:center;margin-bottom:24px}}
+.offer-box{margin-top:6px}
+.code-row{display:flex;gap:8px;align-items:stretch}
+.code-row input{flex:1;min-width:0;text-transform:uppercase;letter-spacing:.08em}
+.code-row .btn{padding:10px 18px;white-space:nowrap;margin:0}
+.row.disc{color:var(--olive)}
+.offer-hint{color:var(--gold-dark)!important;font-weight:500}
+.nudge{margin:0 0 16px}.nudge p{font-size:.88rem;margin-bottom:7px}
+.nudge-bar{height:6px;background:var(--sand);border-radius:3px;overflow:hidden}
+.nudge-bar i{display:block;height:100%;background:var(--gold);border-radius:3px;transition:width .4s}
+.nudge.done p{color:var(--olive);margin:0}
+.ig-ico{width:15px;height:15px;vertical-align:-2px;margin-right:7px}
+.status.bad{background:#f6dcd6;color:#8a2b1c}
+.status.good{background:#e1ead2;color:#3f5a1d}
+.steps{display:flex;list-style:none;margin:2px 0 14px;padding:0}
+.steps li{flex:1;text-align:center;font-size:.62rem;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);position:relative;padding-top:22px;line-height:1.3}
+.steps li::before{content:"";position:absolute;top:3px;left:50%;width:12px;height:12px;margin-left:-6px;border-radius:50%;background:var(--line);z-index:1}
+.steps li::after{content:"";position:absolute;top:8px;left:-50%;width:100%;height:2px;background:var(--line)}
+.steps li:first-child::after{display:none}
+.steps li.done::before,.steps li.done::after{background:var(--gold)}
+.steps li.done{color:var(--cocoa)}
+.steps li.now::before{box-shadow:0 0 0 4px rgba(166,122,53,.25)}
+.steps li.now{font-weight:700}
+.pay-done{margin:12px 0 0;padding:10px 14px;background:var(--sand);color:var(--olive);font-weight:600;font-size:.9rem;border-radius:var(--radius)}
+.vp{margin:0 0 12px}
+.stars{color:var(--gold);letter-spacing:.06em;font-size:1rem;white-space:nowrap}
+.stars i{font-style:normal;color:var(--line)}
+.rv-sum{text-align:center;margin:-10px 0 24px;color:var(--muted)}
+.rv-sum .stars{font-size:1.2rem;margin-right:6px}
+.rv-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,400px));justify-content:center;gap:16px}
+.rv-card{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);padding:20px;margin:0}
+.rv-card blockquote{margin:10px 0 14px;white-space:pre-line;color:var(--cocoa);font-family:'Cormorant Garamond',Georgia,serif;font-size:1.18rem;line-height:1.4;overflow-wrap:anywhere}
+.rv-card figcaption{font-size:.8rem;color:var(--muted);display:flex;flex-direction:column;gap:2px;margin-top:10px}
+.rv-card figcaption b{color:var(--cocoa);font-size:.86rem}
+.rv-page{max-width:540px}
+.star-pick{display:flex;gap:0;margin:4px 0 8px}
+.star-pick button{background:none;border:0;font-size:2.4rem;line-height:1;color:var(--line);min-width:48px;min-height:48px;padding:0}
+.star-pick button.on{color:var(--gold)}
+.faq-group{font-size:1.65rem;margin:34px 0 12px;color:var(--gold-dark)}
+.faq{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);margin-bottom:8px}
+.faq summary{cursor:pointer;padding:15px 18px;font-weight:600;font-size:.95rem;list-style:none;display:flex;justify-content:space-between;gap:14px;align-items:center}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";font-size:1.4rem;color:var(--gold);line-height:1;flex:none}
+.faq[open] summary::after{content:"\2013"}
+.faq-a{padding:0 18px 16px;color:var(--muted);font-size:.93rem;overflow-wrap:anywhere}
+.help-links{text-align:center;margin:30px 0 10px;font-size:.88rem;color:var(--muted)}
+.help-links a{color:var(--clay-dark);text-decoration:underline;text-underline-offset:3px}
+.policy p+p{margin-top:8px}
+.notify-wrap{margin:-4px 0 18px}
+.notify-wrap p{font-size:.84rem;color:var(--muted);margin-top:8px}
+.order-card .btn{white-space:normal;text-align:center;max-width:100%}
+.adm-offer{background:var(--sand);border:1px solid var(--line);padding:11px 14px;border-radius:var(--radius);font-size:.86rem;margin:0 0 12px;line-height:1.5}
+.adm-offer.off{background:#f6dcd6;border-color:#e6b9ae}
 </style>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' rx='40' fill='%233b2a20'/%3E%3Cg transform='translate(0.52 22.70) scale(0.3568)'%3E%3Cpath d='M73.3 267.33 75.73 151.23Q66.28 134.49 51.7 134.49Q50.89 134.49 50.89 132.87Q50.89 131.25 51.7 131.25Q56.83 131.25 62.63 131.52Q68.44 131.79 72.49 131.79Q78.43 131.79 83.16 131.52Q87.88 131.25 90.58 131.25Q94.36 131.25 96.38 133.81Q98.41 136.38 103 145.29L162.4 261.66L216.13 138Q217.75 134.49 219.64 132.87Q221.53 131.25 224.23 131.25Q226.66 131.25 229.5 131.52Q232.33 131.79 236.38 131.79Q244.48 131.79 250.15 131.52Q255.82 131.25 261.22 131.25Q262.03 131.25 262.03 132.87Q262.03 134.49 261.22 134.49Q248.8 134.49 242.86 139.08Q236.92 143.67 237.46 154.74L243.4 278.13Q243.94 285.96 245.43 290.01Q246.91 294.06 251.37 295.41Q255.82 296.76 264.46 296.76Q265 296.76 265 298.38Q265 300 264.46 300Q257.44 300 248.8 299.73Q240.16 299.46 230.71 299.46Q221.26 299.46 213.03 299.73Q204.79 300 198.04 300Q197.5 300 197.5 298.38Q197.5 296.76 198.04 296.76Q211 296.76 214.78 293.25Q218.56 289.74 217.75 278.13L212.35 163.11L154.84 298.11Q154.57 299.19 152.68 299.19Q150.79 299.19 150.25 298.11L82.75 164.73L80.32 267.33Q80.05 281.64 85.85 289.2Q91.66 296.76 103.27 296.76Q104.08 296.76 104.08 298.38Q104.08 300 103.27 300Q97.33 300 91.12 299.73Q84.91 299.46 77.08 299.46Q68.98 299.46 62.37 299.73Q55.75 300 49.81 300Q49 300 49 298.38Q49 296.76 49.81 296.76Q60.88 296.76 66.95 289.2Q73.03 281.64 73.3 267.33Z M434.36 303.24Q410.87 303.24 392.38 296.36Q373.88 289.47 361.05 277.46Q348.23 265.44 341.62 249.78Q335 234.12 335 216.03Q335 196.32 342.83 180.25Q350.66 164.19 364.7 152.58Q378.74 140.97 397.64 134.62Q416.54 128.28 438.95 128.28Q452.18 128.28 465 130.44Q477.83 132.6 485.93 136.65Q488.63 137.73 489.03 138.4Q489.44 139.08 489.71 142.86L493.22 178.23Q493.22 179.04 491.87 179.31Q490.52 179.58 489.98 178.77Q487.82 172.02 483.1 164.19Q478.37 156.36 471.08 149.47Q463.79 142.59 453.66 138Q443.54 133.41 430.31 133.41Q411.68 133.41 396.56 142.86Q381.44 152.31 372.53 169.59Q363.62 186.87 363.62 210.9Q363.62 229.53 369.02 245.32Q374.42 261.12 384.54 273.27Q394.67 285.42 408.98 292.17Q423.29 298.92 441.11 298.92Q452.18 298.92 458.93 296.22Q465.68 293.52 468.65 286.37Q471.62 279.21 471.62 265.98Q471.62 253.02 470.13 246.94Q468.65 240.87 462.71 238.98Q456.77 237.09 443.54 237.09Q441.92 237.09 441.92 234.93Q441.92 232.77 443.27 232.77Q461.63 233.85 476.35 233.99Q491.06 234.12 507.26 233.31Q508.34 233.31 508.61 235.2Q508.61 236.55 508.07 236.82Q507.8 237.09 507.26 237.09Q502.13 236.82 499.7 238.84Q497.27 240.87 496.59 247.62Q495.92 254.37 495.92 268.68Q495.92 277.59 496.46 281.91Q497 286.23 497.4 288.25Q497.81 290.28 497.81 292.44Q497.81 294.06 497.27 294.6Q496.73 295.14 494.84 295.68Q480.53 298.92 464.6 301.08Q448.67 303.24 434.36 303.24Z' fill='%23f2e8d5'/%3E%3Cpath d='M300.0,115.2 L300.0,318.0' stroke='%23d9b873' stroke-width='8.97' fill='none'/%3E%3C/g%3E%3C/svg%3E">
 </head>
@@ -507,6 +584,8 @@ const CONFIG = {
   cartKey: "MG Collections",
   ordersKey: "MG Collections orders",
   contactEmail: "mgcollectionsbgp26@gmail.com",   // shown in the Contact section and the footer. Leave "" to hide it.
+  instagram: "mg_collection_bhagalpur",   // your Instagram name, no @. Leave "" to hide it.
+  deliveryDays: "1 to 2 days",        // shown as "Delivery in Bhagalpur takes 1 to 2 days"
   whatsappNumber: "917033612418",     // e.g. "919876543210" (country code + number, no + or spaces). Leave "" to hide the WhatsApp button
   redirectSeconds: 45,    // how long the order confirmation stays before going back to the shop
   upiId: "257692953001812@cnrb",
@@ -600,9 +679,11 @@ const DELIVERY_AREAS = [
     </div>
     <div>
       <h4>Help</h4>
+      <a href="#/faq">FAQs</a>
       <a href="#/about">Delivery &amp; returns</a>
       <a href="#/about">About us</a>
       <a id="foot-wa" href="#/about" target="_blank" rel="noopener">Chat on WhatsApp</a>
+      <a id="foot-ig" href="#/about" target="_blank" rel="noopener" style="display:none"></a>
       <a id="foot-mail" href="#/about" style="display:none">Email us</a>
     </div>
     <div>
@@ -613,7 +694,7 @@ const DELIVERY_AREAS = [
       <p class="foot-note">UPI and cash on delivery (Bhagalpur)</p>
     </div>
   </div>
-  <div class="foot-base"><span id="footer-copy"></span> · <a href="#/admin" style="opacity:.6">Owner login</a></div>
+  <div class="foot-base"><span id="footer-copy"></span> · <a href="#/privacy">Privacy</a> · <a href="#/terms">Terms</a> · <a href="#/returns">Returns</a> · <a href="#/admin" style="opacity:.6">Owner login</a></div>
 </footer>
 <a id="wa-float" class="wa-float" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-12.4 7.4L3 20.5l1.7-5.3A8.4 8.4 0 1 1 21 11.5z"/></svg>
@@ -766,18 +847,20 @@ function deliveryQuote(sub) {            // { amount: number | null, state: choo
   }
   return { amount: CONFIG.otherBhagalpurFee, state: "ok" };
 }
-function grandTotal() { const s = cartTotal(); return s + (deliveryQuote(s).amount || 0); }
+function grandTotal() { const s = cartTotal(); return s - offerDiscount(s) + (deliveryQuote(s).amount || 0); }
 function deliveryRangeNote() {
   const out = CONFIG.outsideFee > 0 ? `Outside Bhagalpur: ${money(CONFIG.outsideFee)}.` : "Outside Bhagalpur: we'll confirm the charge on WhatsApp before dispatch.";
   return `Delivery in Bhagalpur: ${money(CONFIG.nearAreaFee)} for our main chowks (PIN ${nearPinsText()} only), ${money(CONFIG.otherBhagalpurFee)} for other areas and PIN codes${CONFIG.freeDeliveryAbove ? `, free on orders of ${money(CONFIG.freeDeliveryAbove)} or more` : ""}. ${out}`;
 }
 function totalsHTML(forCart) {
-  const sub = cartTotal();
+  const sub = cartTotal(), disc = offerDiscount(sub);
+  const discRow = disc ? `<div class="row disc"><span>Discount (${esc(APPLIED)})</span><span>−${money(disc)}</span></div>` : "";
+  const offerHint = OFFER.live && !APPLIED ? `<div class="hint offer-hint" style="margin:-2px 0 10px">${esc(offerShortLine())}, at checkout.</div>` : "";
   if (forCart) {
-    return `<div class="row"><span>Subtotal</span><span>${money(sub)}</span></div>
+    return `${freeNudgeHTML(sub)}<div class="row"><span>Subtotal</span><span>${money(sub)}</span></div>${discRow}
     <div class="row"><span>Delivery</span><span>Calculated at checkout</span></div>
-    <div class="hint" style="margin:-2px 0 10px">${esc(deliveryRangeNote())}</div>
-    <div class="row total"><span>Total (before delivery)</span><span>${money(sub)}</span></div>`;
+    <div class="hint" style="margin:-2px 0 10px">${esc(deliveryRangeNote())} ${esc(deliveryTimeText())}</div>${offerHint}
+    <div class="row total"><span>Total (before delivery)</span><span>${money(sub - disc)}</span></div>`;
   }
   const q = deliveryQuote(sub);
   const delText = q.state === "choose" ? "Choose your area" : q.state === "needpin" ? "Enter your PIN code" : q.state === "pincheck" ? "Check your PIN code" : q.state === "confirm" ? "Confirmed on WhatsApp" : q.amount ? money(q.amount) : "FREE";
@@ -785,9 +868,10 @@ function totalsHTML(forCart) {
   const hint = q.state === "ok" && q.amount > 0 && (zone === "near" || zone === "other") && CONFIG.freeDeliveryAbove && sub < CONFIG.freeDeliveryAbove
     ? `<div class="hint" style="margin:-2px 0 10px">Add ${money(CONFIG.freeDeliveryAbove - sub)} more for free delivery</div>` : "";
   const complete = q.state === "ok";
-  return `<div class="row"><span>Subtotal</span><span>${money(sub)}</span></div>
+  return `<div class="row"><span>Subtotal</span><span>${money(sub)}</span></div>${discRow}
     <div class="row"><span>Delivery</span><span>${delText}</span></div>${hint}
-    <div class="row total"><span>${complete ? "Total" : "Total (before delivery)"}</span><span>${money(sub + (q.amount || 0))}</span></div>`;
+    <div class="row total"><span>${complete ? "Total" : "Total (before delivery)"}</span><span>${money(sub - disc + (q.amount || 0))}</span></div>
+    <div class="hint" style="margin:10px 0 0">${esc(deliveryTimeNote())}</div>`;
 }
 function refreshTotals() { const b = $("#totals-box"); if (b) b.innerHTML = totalsHTML(); refreshCod(); }
 /* Cash on delivery only for Bhagalpur: switch it off (and fall back to UPI) when the area or PIN is outside Bhagalpur */
@@ -827,6 +911,7 @@ function orderTotalsHTML(o) {
   if (o.subtotal === undefined) return `<div class="row total"><span>Total</span><span>${esc(o.total)}</span></div>`;
   const tbc = o.delivery === null;
   return `<div class="row"><span>Subtotal</span><span>${money(o.subtotal)}</span></div>
+    ${o.discount > 0 ? `<div class="row disc"><span>Discount${o.code ? " (" + esc(o.code) + ")" : ""}</span><span>−${money(o.discount)}</span></div>` : ""}
     <div class="row"><span>Delivery</span><span>${tbc ? "To be confirmed" : o.delivery ? money(o.delivery) : "FREE"}</span></div>
     <div class="row total"><span>${tbc ? "Total (before delivery)" : "Total"}</span><span>${esc(o.total)}</span></div>`;
 }
@@ -911,6 +996,7 @@ function saveOrder(order) {
 function orderWaText(order, intro) {
   return `Hi ${CONFIG.storeName}, ${intro} ${order.id}.\n` +
     order.lines.map(l => `${l.name} × ${l.qty} = ${l.amount}`).join("\n") +
+    (order.discount > 0 ? `\nDiscount (${order.code || "offer"}): -${money(order.discount)}` : "") +
     `\nDelivery: ${deliveryText(order)}\nTotal: ${order.total}\nName: ${order.name}` +
     (order.address ? `\nAddress: ${order.address}` : "") + (order.delivery === null ? "\nPlease confirm my delivery charge." : "");
 }
@@ -993,6 +1079,7 @@ function renderHome() {
           <h1>${esc(CONFIG.storeName)}</h1>
           <span class="rule"></span>
           <p>${esc(CONFIG.tagline)}</p>
+          ${offerPillHTML()}
           <div class="hero-btns"><a href="#shop" class="btn" data-scroll>Shop the collection</a>${waDigits() ? `<a class="btn btn-outline" target="_blank" rel="noopener" href="https://wa.me/${waDigits()}?text=${encodeURIComponent("Hi " + CONFIG.storeName + ", I would like to know about your jewellery")}">Chat on WhatsApp</a>` : ""}</div>
         </div>
         <div class="hero-pic">${heroPicHTML()}</div>
@@ -1000,7 +1087,7 @@ function renderHome() {
     </section>
     <div class="container">
       <div class="trust">
-        <div><svg viewBox="0 0 24 24"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7z"/><circle cx="7" cy="18" r="1.6"/><circle cx="17" cy="18" r="1.6"/></svg><span><b>Delivery in Bhagalpur</b>From ${money(CONFIG.nearAreaFee)}${CONFIG.freeDeliveryAbove ? `, free above ${money(CONFIG.freeDeliveryAbove)}` : ""}</span></div>
+        <div><svg viewBox="0 0 24 24"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7z"/><circle cx="7" cy="18" r="1.6"/><circle cx="17" cy="18" r="1.6"/></svg><span><b>Delivery in Bhagalpur</b>${esc(CONFIG.deliveryDays)} · from ${money(CONFIG.nearAreaFee)}${CONFIG.freeDeliveryAbove ? `, free above ${money(CONFIG.freeDeliveryAbove)}` : ""}</span></div>
         <div><svg viewBox="0 0 24 24"><path d="M4 5h16v14H4z"/><path d="M4 7l8 6 8-6"/></svg><span><b>Confirmed personally</b>On email and WhatsApp, every order</span></div>
         <div><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="1"/><path d="M3 10h18M7 15h3"/></svg><span><b>Pay your way</b>UPI (Google Pay, PhonePe, Paytm)${CONFIG.codEnabled ? " or cash on delivery in Bhagalpur" : ""}</span></div>
       </div>
@@ -1021,7 +1108,8 @@ function renderHome() {
         ${cats.map(c => `<button class="chip ${c === activeCategory ? "active" : ""}" data-cat="${esc(c)}">${c === "all" ? "All" : esc(c)}</button>`).join("")}
       </div>
       <div id="grid-wrap">${gridHTML()}</div>
-    </div>`;
+    </div>
+    ${homeReviewsHTML()}`;
 }
 
 let galleryIndex = 0, productQty = 1, selectedSku = "";
@@ -1043,6 +1131,8 @@ function paintVariant() {
   add.disabled = out;
   add.textContent = out ? "Sold Out" : (inCart(v.sku) ? "In Cart ✓ (add more)" : "Add to Cart");
   const buy = $("#pdp-buy"); if (buy) buy.disabled = out;
+  const nw = $("#notify-wrap"), nl = $("#pdp-notify");
+  if (nw && nl) { const h = out ? notifyHref(p, v) : ""; nw.hidden = !h; if (h) nl.href = h; }
   document.querySelectorAll("[data-colour]").forEach(el => el.classList.toggle("active", el.dataset.colour === v.sku));
   const lbl = $("#colour-name"); if (lbl) lbl.textContent = v.colour;
   if (v.photo) {
@@ -1076,7 +1166,8 @@ function renderProduct(id) {
           ${hasColours ? `<div class="colour-label">Colour: <strong id="colour-name">${esc(v0.colour)}</strong></div>
           <div class="colours">${p.variants.map(v => `<button type="button" class="colour ${v.stock < 1 ? "gone" : ""}" data-colour="${esc(v.sku)}" title="${v.stock < 1 ? "Out of stock" : ""}">${esc(v.colour || "Standard")}</button>`).join("")}</div>` : ""}
           <div class="stock" id="pdp-stock"></div>
-          <p class="hint" style="margin:-8px 0 16px">${esc(deliveryRangeNote())}</p>
+          <div class="notify-wrap" id="notify-wrap" hidden><a class="btn btn-outline btn-block" id="pdp-notify" target="_blank" rel="noopener" href="#" style="text-align:center">Notify me when it's back</a><p>Tap it and WhatsApp opens with the message ready. We'll tell you when it is back.</p></div>
+          <p class="hint" style="margin:-8px 0 16px">${esc(deliveryTimeText())} ${esc(deliveryRangeNote())}</p>
           <div class="buy-row">
             <div class="qty">
               <button data-q="-1" aria-label="Decrease">−</button>
@@ -1091,6 +1182,7 @@ function renderProduct(id) {
           </div>
         </div>
       </div>
+      ${productReviewsHTML(p)}
       ${relList.length ? `<h2 class="section-title">You may also like</h2><div class="grid">${relList.slice(0, 4).map(cardHTML).join("")}</div>` : ""}
     </div>`;
   paintVariant();
@@ -1184,6 +1276,7 @@ function renderCheckout() {
           <input id="f-landmark" name="landmark" autocomplete="off" placeholder="e.g. Near Barari Ghat, opposite SBI bank">
           <label for="f-pin">PIN code *</label>
           <input id="f-pin" name="pin" inputmode="numeric" maxlength="6" required autocomplete="postal-code" placeholder="6 digits">
+          ${offerBoxHTML()}
           <label>Payment *</label>
           <div class="pay-options" id="pay-options">
             <label class="pay-opt"><input type="radio" name="payment" value="upi" checked><span><b>Pay online with UPI</b><small>Pay right after you place the order, in any UPI app</small></span></label>
@@ -1202,6 +1295,7 @@ function renderCheckout() {
       </div>
     </div>`;
   updateAreaWa();
+  paintCodeState();
   window.scrollTo(0, 0);
 }
 
@@ -1239,41 +1333,16 @@ function renderSuccess(order) {
         ? "We'll contact you shortly on WhatsApp or your phone to confirm your delivery charge and the final amount. Tap the button below to message us now with your order and address."
         : cod ? "We'll contact you shortly to confirm your order."
         : "After you pay, we'll confirm your order. You can also pay later from the Orders page."}</p>
+      ${order.zone === "outside" ? "" : `<p class="hint" style="margin:0 0 14px">${esc(deliveryTimeText())}</p>`}
+      ${SHEET_MODE ? `<p class="hint" style="margin:0 0 14px"><a href="#/orders" style="color:var(--clay-dark);text-decoration:underline">Follow your order's progress in My Orders</a></p>` : ""}
       ${wa ? `<a class="btn btn-wa" target="_blank" rel="noopener" href="https://wa.me/${wa}?text=${encodeURIComponent(msg)}">Message us on WhatsApp</a>` : ""}
       ${pendingPay ? `<p class="redirect"><a href="#/">Back to the shop</a></p>` : `<p class="redirect">Taking you back to the shop in ${CONFIG.redirectSeconds} seconds… <a href="#/">Go now</a></p>`}
     </div>`;
   window.scrollTo(0, 0);
 }
-function renderOrders() {
-  const orders = getOrders();
-  if (!orders.length) {
-    app.innerHTML = `<div class="container empty" style="padding-top:80px"><h2 style="font-size:2.2rem">No orders yet</h2><p style="margin:10px 0 22px">Orders you place on this device will show up here.</p><a class="btn" href="#/">Start Shopping</a></div>`;
-    return;
-  }
-  app.innerHTML = `
-    <div class="container">
-      ${backLink("#/", "Back to shop")}
-      <h2 class="section-title">My Orders</h2>
-      <p class="hint">Orders are saved on this phone/browser only. Clearing your browser data removes them.</p>
-      ${orders.map(o => {
-        const when = o.date ? new Date(o.date).toLocaleString("en-IN", { day: "numeric", month: "short", year: "numeric", hour: "numeric", minute: "2-digit" }) : "";
-        const link = waLink(o);
-        return `
-        <div class="order-card">
-          <div class="order-head"><strong>${esc(o.id)}</strong><span>${esc(when)}</span></div>
-          <span class="status">Order received</span>
-          ${o.lines.map(l => `<div class="row"><span>${esc(l.name)} × ${l.qty}</span><span>${esc(l.amount)}</span></div>`).join("")}
-          ${orderTotalsHTML(o)}
-          ${payBoxHTML(o)}
-          ${link ? `<a class="btn btn-wa" target="_blank" rel="noopener" href="${link}">Ask about this order on WhatsApp</a>` : ""}
-        </div>`;
-      }).join("")}
-    </div>`;
-}
-
 function renderAbout() {
   const wa = String(CONFIG.whatsappNumber || "").replace(/\D/g, "");
-  const delivery = `Delivery in Bhagalpur is ${money(CONFIG.nearAreaFee)} for these chowks and roads when your PIN code is ${nearPinsText()}: ${DELIVERY_AREAS.join(", ")}. For any other area or PIN code in Bhagalpur it is ${money(CONFIG.otherBhagalpurFee)}${CONFIG.freeDeliveryAbove ? `, and delivery in Bhagalpur is free on orders of ${money(CONFIG.freeDeliveryAbove)} or more` : ""}. ${CONFIG.outsideFee > 0 ? `Outside Bhagalpur the delivery charge is ${money(CONFIG.outsideFee)}.` : "Outside Bhagalpur we'll confirm the delivery charge with you on WhatsApp before dispatching, and you pay nothing until you agree."} You'll see your delivery charge at checkout before you place your order. We'll also tell you the delivery time when we confirm your order.`;
+  const delivery = `${deliveryTimeText()} The delivery charge in Bhagalpur is ${money(CONFIG.nearAreaFee)} for these chowks and roads when your PIN code is ${nearPinsText()}: ${DELIVERY_AREAS.join(", ")}. For any other area or PIN code in Bhagalpur it is ${money(CONFIG.otherBhagalpurFee)}${CONFIG.freeDeliveryAbove ? `, and delivery in Bhagalpur is free on orders of ${money(CONFIG.freeDeliveryAbove)} or more` : ""}. ${CONFIG.outsideFee > 0 ? `Outside Bhagalpur the delivery charge is ${money(CONFIG.outsideFee)}.` : "Outside Bhagalpur we'll confirm the delivery charge with you on WhatsApp before dispatching, and you pay nothing until you agree."} You'll see your delivery charge at checkout before you place your order.`;
   app.innerHTML = `
     <div class="container">
       <h2 class="section-title">About &amp; Policies</h2>
@@ -1281,10 +1350,9 @@ function renderAbout() {
       <div class="policy"><h3>How ordering works</h3><p>Add items to your cart and place your order on this website. We'll contact you on your phone, email or WhatsApp to confirm it.</p></div>
       <div class="policy"><h3>Delivery</h3><p>${delivery}</p></div>
       <div class="policy"><h3>Payment</h3><p>You can pay by UPI using the button on your order confirmation or on the Orders page${CONFIG.upiId ? `, or to UPI ID <strong>${esc(CONFIG.upiId)}</strong>` : ""}.</p></div>
-      <div class="policy"><h3>Returns</h3><p>If an item arrives damaged or is not what you ordered, message us within 24 hours of receiving it, with a photo, and we'll replace it.</p></div>
-      ${(wa || CONFIG.contactEmail) ? `<div class="policy"><h3>Contact us</h3>
-        ${wa ? `<p><a href="https://wa.me/${wa}" target="_blank" rel="noopener" style="color:var(--clay);text-decoration:underline">Message us on WhatsApp</a> (+${wa})</p>` : ""}
-        ${CONFIG.contactEmail ? `<p style="margin-top:6px">Email: <a href="mailto:${esc(CONFIG.contactEmail)}" style="color:var(--clay);text-decoration:underline">${esc(CONFIG.contactEmail)}</a></p>` : ""}</div>` : ""}
+      <div class="policy"><h3>Returns</h3><p>If an item arrives damaged or is not what you ordered, message us within 24 hours of receiving it, with a photo, and we'll replace it. <a href="#/returns" style="color:var(--clay);text-decoration:underline">More about returns and refunds</a></p></div>
+      ${(wa || CONFIG.contactEmail || CONFIG.instagram) ? `<div class="policy"><h3>Contact us</h3>${contactBlockHTML()}</div>` : ""}
+      ${helpLinksHTML("about")}
     </div>`;
   window.scrollTo(0, 0);
 }
@@ -1334,15 +1402,17 @@ async function submitOrder(form) {
 
   /* ----- With the Google Sheet: the sheet checks stock + prices, reduces stock, saves the order and sends the emails ----- */
   if (SHEET_MODE) {
-    const sig = JSON.stringify([items.map(i => [i.id, i.qty]), v("email"), v("phone"), areaValue(), v("pin")]);
+    const sig = JSON.stringify([items.map(i => [i.id, i.qty]), v("email"), v("phone"), areaValue(), v("pin"), APPLIED]);
     if (!lastAttempt || lastAttempt.sig !== sig) lastAttempt = { sig, id: "r" + Date.now().toString(36) + Math.random().toString(36).slice(2, 8) };   // same id on a retry = never a double order
     const body = {
       action: "order", requestId: lastAttempt.id,
       customer: { name: v("name"), email: v("email"), phone: v("phone"), building: v("building"), street: v("street"), city: v("city"), landmark: v("landmark"), pin: v("pin"), notes: v("notes") },
       area: areaValue(), payment,
       items: items.map(i => ({ sku: i.id, qty: i.qty })),
-      expectedSubtotal: cartTotal(), expectedDelivery: quote.amount
+      expectedSubtotal: cartTotal(), expectedDelivery: quote.amount, deviceId: deviceId()
     };
+    const wantDisc = offerDiscount(cartTotal());
+    if (APPLIED && wantDisc > 0) { body.offerCode = APPLIED; body.expectedDiscount = wantDisc; }
     let res;
     try {
       const r = await fetch(CONFIG.sheetApiUrl, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(body) });
@@ -1362,14 +1432,21 @@ async function submitOrder(form) {
         if (location.hash === "#/cart") route(); else location.hash = "#/cart";     // the hash change draws the cart (once)
         return;
       }
+      if (res && res.error === "offer") {                        // the code was refused: take it off so the order can go through at the normal price
+        lastAttempt = null; APPLIED = ""; saveApplied(); paintCodeState(); refreshTotals();
+        failReset((res.message || "The discount code could not be used.") + " We have taken the code off. Please check your new total and press Place Order again, or press Cancel and shop on.");
+        return;
+      }
       failReset((res && res.message) || "Sorry, something went wrong placing your order. Please try again.");
       return;
     }
     lastAttempt = null;
+    APPLIED = ""; saveApplied();
     (res.stock || []).forEach(s => { const f = findVariant(s.sku); if (f) { f.variant.stock = s.stock; finishProduct(f.product); } });
     saveCatalogCache();
     const order = {
       id: res.orderId, date: new Date().toISOString(), name: v("name"), address: res.address,
+      phone: v("phone"), zone: areaZone(), discount: res.discount || 0, code: res.offerCode || "",
       subtotal: res.subtotal, delivery: res.delivery, totalNum: res.total, total: money(res.total), payment: res.payment === "Cash on delivery" ? "cod" : "upi",
       lines: res.lines.map(l => ({ name: l.name + (l.colour ? " – " + l.colour : ""), qty: l.qty, amount: money(l.amount) }))
     };
@@ -1403,8 +1480,13 @@ let lastAttempt = null, cartNotice = "";
 
 /* ---------- Catalogue from the Google Sheet ---------- */
 let catalogLoaded = false, catalogLoading = false;
-function applyFeed(feed) {
+function applyFeed(feed, fromCache) {
   CATALOG = buildCatalog(feed.products || []);
+  REVIEWS = feed.reviews && Array.isArray(feed.reviews.list) ? feed.reviews : { count: 0, avg: 0, list: [] };
+  if (!fromCache) {                       // the offer is only trusted when it arrives live from the sheet
+    OFFER = feed.offer && feed.offer.live ? feed.offer : { live: false };
+    if (APPLIED && !(OFFER.live && APPLIED === OFFER.code)) { APPLIED = ""; saveApplied(); }
+  }
   const s = feed.settings || {};
   ["nearAreaFee", "otherBhagalpurFee", "outsideFee", "freeDeliveryAbove"].forEach(k => { if (Number.isFinite(Number(s[k])) && s[k] !== null && s[k] !== "") CONFIG[k] = Number(s[k]); });
   if (Array.isArray(s.bhagalpurPinPrefixes) && s.bhagalpurPinPrefixes.length) CONFIG.bhagalpurPinPrefixes = s.bhagalpurPinPrefixes.flatMap(x => { x = String(x).trim(); return /^\d+$/.test(x) && x.length > 3 && x.length % 3 === 0 ? x.match(/\d{3}/g) : [x]; });
@@ -1416,7 +1498,7 @@ function applyFeed(feed) {
 function catalogAsFeed() {
   const rows = [];
   CATALOG.forEach(p => p.variants.forEach(v => rows.push({ sku: v.sku, code: p.id, name: p.name, category: p.category, colour: v.colour, price: v.price, stock: v.stock, photo: v.photo, description: p.description })));
-  return { ok: true, products: rows, settings: { nearAreaFee: CONFIG.nearAreaFee, otherBhagalpurFee: CONFIG.otherBhagalpurFee, outsideFee: CONFIG.outsideFee, freeDeliveryAbove: CONFIG.freeDeliveryAbove, bhagalpurPinPrefixes: CONFIG.bhagalpurPinPrefixes, nearAreaPins: CONFIG.nearAreaPins, cod: CONFIG.codEnabled }, areas: DELIVERY_AREAS.slice() };
+  return { ok: true, products: rows, settings: { nearAreaFee: CONFIG.nearAreaFee, otherBhagalpurFee: CONFIG.otherBhagalpurFee, outsideFee: CONFIG.outsideFee, freeDeliveryAbove: CONFIG.freeDeliveryAbove, bhagalpurPinPrefixes: CONFIG.bhagalpurPinPrefixes, nearAreaPins: CONFIG.nearAreaPins, cod: CONFIG.codEnabled }, areas: DELIVERY_AREAS.slice(), reviews: REVIEWS };
 }
 function saveCatalogCache() {
   if (!SHEET_MODE || !CATALOG.length) return;
@@ -1445,9 +1527,12 @@ function renderCatalogWait() {
 }
 
 /* ---------- Owner Admin page (#/admin): products, stock and orders, no need to open the sheet ---------- */
-const ADM = { photos: [], pw: "", loaded: false, tab: "orders", filter: "active", q: "", products: [], orders: [], err: "", timers: {} };
+const ADM = { photos: [], pw: "", loaded: false, tab: "orders", filter: "active", q: "", products: [], orders: [], err: "", timers: {}, sel: new Set(), busy: "" };
 try { ADM.pw = sessionStorage.getItem("mg-admin") || ""; } catch {}
 const ADM_NEXT = { New: ["Confirmed", "Cancelled"], Confirmed: ["Paid", "Shipped", "Cancelled"], Paid: ["Shipped", "Cancelled"], Shipped: ["Delivered", "Cancelled"], Delivered: [], Cancelled: [] };
+const ADM_BULK = { Confirmed: ["New"], Shipped: ["Confirmed", "Paid"], Delivered: ["Shipped"] };      // which orders each bulk button can move (same rule as the server)
+const ADM_BULK_BTN = { Confirmed: "Confirm", Shipped: "Mark shipped", Delivered: "Mark delivered" };
+const ADM_PICKABLE = ["New", "Confirmed", "Paid", "Shipped"];
 const ADM_LABEL = { Confirmed: "Confirm order", Paid: "Paid + confirm", Shipped: "Mark shipped", Delivered: "Mark delivered", Cancelled: "Cancel order" };
 async function admCall(body) {
   try {
@@ -1514,7 +1599,7 @@ async function admLoad(quiet) {
     if (quiet) { toast(ADM.err); return false; }
     renderAdmin(); return false;
   }
-  ADM.products = r.products; ADM.orders = r.orders; ADM.emailsLeft = r.emailsLeft; ADM.loaded = true; ADM.err = "";
+  ADM.products = r.products; ADM.orders = r.orders; ADM.emailsLeft = r.emailsLeft; ADM.reviews = r.reviews || []; ADM.offer = r.offer || null; ADM.loaded = true; ADM.err = "";
   try { sessionStorage.setItem("mg-admin", ADM.pw); } catch {}
   if (quiet) { admPaint(); return true; }
   renderAdmin(); return true;
@@ -1532,8 +1617,10 @@ function renderAdmin() {
   if (!ADM.loaded) { app.innerHTML = `<div class="loading"><h2>Loading your shop…</h2></div>`; admLoad(false); return; }
   app.innerHTML = `<div class="container adm">
     <div class="adm-top"><h2>Owner admin</h2><div><button class="adm-btn" data-a="refresh">Refresh</button> <button class="adm-btn" data-a="logout">Log out</button></div></div>
+    <div id="adm-offer"></div>
     <div class="adm-tabs"><button class="${ADM.tab === "orders" ? "on" : ""}" data-a="tab" data-v="orders">Orders${admNewCount() ? ` <span class="adm-dot">${admNewCount()}</span>` : ""}</button>
-    <button class="${ADM.tab === "products" ? "on" : ""}" data-a="tab" data-v="products">Products</button></div>
+    <button class="${ADM.tab === "products" ? "on" : ""}" data-a="tab" data-v="products">Products</button>
+    <button class="${ADM.tab === "reviews" ? "on" : ""}" data-a="tab" data-v="reviews">Reviews${admPendingReviews() ? ` <span class="adm-dot">${admPendingReviews()}</span>` : ""}</button></div>
     <div id="adm-body"></div></div>`;
   admPaint();
 }
@@ -1542,29 +1629,115 @@ function admPaint() {
   const body = $("#adm-body"); if (!body) return;
   document.querySelectorAll(".adm-tabs button").forEach(b => b.classList.toggle("on", b.dataset.v === ADM.tab));
   const nc = admNewCount(); const ob = document.querySelector('.adm-tabs [data-v="orders"]'); if (ob) ob.innerHTML = "Orders" + (nc ? ` <span class="adm-dot">${nc}</span>` : "");
-  body.innerHTML = ADM.tab === "orders" ? admOrdersHTML() : admProductsHTML();
+  const pr = admPendingReviews(); const rb = document.querySelector('.adm-tabs [data-v="reviews"]'); if (rb) rb.innerHTML = "Reviews" + (pr ? ` <span class="adm-dot">${pr}</span>` : "");
+  const of = $("#adm-offer"); if (of) of.innerHTML = admOfferHTML();
+  body.innerHTML = ADM.tab === "orders" ? admOrdersHTML() : ADM.tab === "reviews" ? admReviewsHTML() : admProductsHTML();
+  if (ADM.tab === "orders") admBulkBar();
+}
+const admPendingReviews = () => (ADM.reviews || []).filter(r => r.status === "Pending").length;
+function admOfferHTML() {
+  const o = ADM.offer; if (!o) return "";
+  if (!o.live) return `<div class="adm-offer off"><b>First-order offer is OFF</b> (${esc(o.why || "off")}). To change it, open your Google Sheet, Settings tab, and look at the rows that start with "First-order offer".</div>`;
+  return `<div class="adm-offer"><b>First-order offer is LIVE:</b> code <b>${esc(o.code)}</b> · ${o.pct}% off${o.maxOff ? `, up to ${money(o.maxOff)}` : ""}${o.minOrder ? `, minimum ${money(o.minOrder)}` : ""}${o.endsText ? ` · ends ${esc(o.endsText)}` : ""} · used by <b>${o.used}</b>${o.limit ? ` of ${o.limit}` : ""} customer${o.used === 1 ? "" : "s"}. <span class="adm-sub">Change it in the Settings tab of your Google Sheet.</span></div>`;
+}
+function admReviewsHTML() {
+  const list = (ADM.reviews || []).slice().sort((a, b) => (a.status === "Pending" ? 0 : 1) - (b.status === "Pending" ? 0 : 1));
+  if (!list.length) return `<div class="empty">No reviews yet. Customers can write one after their order is delivered.</div>`;
+  return `<p class="adm-sub" style="margin:0 0 10px">A review shows on your website only after you press Publish. Hide takes it off again.</p>` + list.map(r => `<div class="adm-card">
+    <div class="adm-row"><strong>${esc(r.name)}</strong><span class="adm-st st-${r.status === "Published" ? "Delivered" : r.status === "Hidden" ? "Cancelled" : "New"}">${esc(r.status)}</span></div>
+    <div class="adm-sub">${esc(r.date)} · order ${esc(r.id)}</div>
+    <div>${starsHTML(r.rating)}</div>
+    ${r.text ? `<p style="margin:6px 0;white-space:pre-line">${esc(r.text)}</p>` : `<p class="adm-sub">(no comment)</p>`}
+    <div class="adm-sub">${esc(r.products)}</div>
+    <div class="adm-acts">
+      ${r.status !== "Published" ? `<button class="adm-btn main" data-a="rv" data-row="${r.row}" data-id="${esc(r.id)}" data-v="Published">Publish</button>` : ""}
+      ${r.status !== "Hidden" ? `<button class="adm-btn ${r.status === "Published" ? "danger" : ""}" data-a="rv" data-row="${r.row}" data-id="${esc(r.id)}" data-v="Hidden">Hide</button>` : ""}
+    </div></div>`).join("");
+}
+async function admReviewStatus(a) {
+  a.disabled = true; a.textContent = "Please wait…";
+  const r = await admCall({ op: "reviewStatus", row: Number(a.dataset.row), id: a.dataset.id, status: a.dataset.v });
+  if (!r.ok) { toast(admError(r.error, r.message)); admPaint(); return; }
+  const x = (ADM.reviews || []).find(y => y.row === Number(a.dataset.row)); if (x) x.status = r.status;
+  admPaint(); toast(r.status === "Published" ? "Review is now on your website" : "Review hidden");
 }
 /* ---- orders ---- */
+function admMatch(o, f) {
+  return f === "all" || (f === "active" && !["Delivered", "Cancelled"].includes(o.status)) || (f === "new" && o.status === "New") ||
+    (f === "toship" && ["Confirmed", "Paid"].includes(o.status)) || (f === "way" && o.status === "Shipped") ||
+    (f === "delivered" && o.status === "Delivered") || (f === "cancelled" && o.status === "Cancelled");
+}
 function admOrdersHTML() {
   const f = ADM.filter;
-  const match = (o) => f === "all" || (f === "active" && !["Delivered", "Cancelled"].includes(o.status)) || (f === "new" && o.status === "New") || (f === "delivered" && o.status === "Delivered") || (f === "cancelled" && o.status === "Cancelled");
-  const list = ADM.orders.filter(match);
-  const chips = [["active", "Active"], ["new", "New"], ["delivered", "Delivered"], ["cancelled", "Cancelled"], ["all", "All"]];
+  const list = ADM.orders.filter(o => admMatch(o, f));
+  const chips = [["active", "Active"], ["new", "New"], ["toship", "To ship"], ["way", "On the way"], ["delivered", "Delivered"], ["cancelled", "Cancelled"], ["all", "All"]];
+  const n = (k) => ADM.orders.filter(o => admMatch(o, k)).length;
   const left = ADM.emailsLeft; const lowMail = typeof left === "number" ? `<p class="adm-sub" style="margin:0 0 8px">Emails left today: <b>${left}</b>${left < 10 ? " · running low, customers will get WhatsApp links instead of emails" : ""}</p>` : "";
-  return lowMail + `<div class="filters">${chips.map(([k, l]) => `<button class="chip ${f === k ? "active" : ""}" data-a="ofilter" data-v="${k}">${l}</button>`).join("")}</div>` +
-    (list.length ? list.map(admOrderCard).join("") : `<div class="empty">No orders here.</div>`);
+  const pick = list.filter(o => ADM_PICKABLE.includes(o.status));
+  const tools = pick.length > 1 ? `<div class="adm-tools"><button class="adm-btn" data-a="selall">Select all ${pick.length}</button><span class="adm-sub">Tick orders to update many at once.</span></div>` : "";
+  return lowMail + `<div class="filters">${chips.map(([k, l]) => `<button class="chip ${f === k ? "active" : ""}" data-a="ofilter" data-v="${k}">${l}${["new", "toship", "way"].includes(k) && n(k) ? " (" + n(k) + ")" : ""}</button>`).join("")}</div>` + tools +
+    (list.length ? list.map(admOrderCard).join("") : `<div class="empty">No orders here.</div>`) + `<div id="adm-bulk" class="adm-bulk"></div>`;
+}
+/* ---- update many orders at once ---- */
+function admBulkCounts() {
+  const c = { Confirmed: 0, Shipped: 0, Delivered: 0 };
+  for (const id of ADM.sel) { const o = ADM.orders.find(x => x.id === id); if (!o) continue; for (const k in ADM_BULK) if (ADM_BULK[k].includes(o.status)) c[k]++; }
+  return c;
+}
+function admBulkBar() {
+  const box = $("#adm-bulk"); if (!box) return;
+  for (const id of [...ADM.sel]) { const o = ADM.orders.find(x => x.id === id); if (!o || !ADM_PICKABLE.includes(o.status)) ADM.sel.delete(id); }
+  if (!ADM.sel.size) { box.innerHTML = ""; return; }
+  const c = admBulkCounts(), dis = ADM.busy ? " disabled" : "";
+  box.innerHTML = `<div class="adm-bulk-in"><b>${ADM.busy ? esc(ADM.busy) : ADM.sel.size + " selected"}</b>` +
+    ["Confirmed", "Shipped", "Delivered"].filter(k => c[k] > 0).map(k => `<button class="adm-btn main" data-a="bulk" data-v="${k}"${dis}>${ADM_BULK_BTN[k]} (${c[k]})</button>`).join("") +
+    `<button class="adm-btn" data-a="selnone"${dis}>Clear</button></div>`;
+}
+function admSelToggle(id, on, card) {
+  if (on) ADM.sel.add(id); else ADM.sel.delete(id);
+  if (card) card.classList.toggle("picked", on);
+  admBulkBar();
+}
+function admSelAll() {
+  const list = ADM.orders.filter(o => admMatch(o, ADM.filter) && ADM_PICKABLE.includes(o.status));
+  const all = list.every(o => ADM.sel.has(o.id));
+  list.forEach(o => all ? ADM.sel.delete(o.id) : ADM.sel.add(o.id));
+  admPaint();
+}
+async function admBulk(status) {
+  if (ADM.busy) return;
+  const ids = [...ADM.sel].filter(id => { const o = ADM.orders.find(x => x.id === id); return o && ADM_BULK[status].includes(o.status); });
+  if (!ids.length) return;
+  const verb = { Confirmed: "Confirm", Shipped: "Mark as shipped", Delivered: "Mark as delivered" }[status];
+  if (!confirm(`${verb}: ${ids.length} order${ids.length > 1 ? "s" : ""}?\nEach customer gets an email.`)) return;
+  let ok = 0, skipped = 0, failed = 0, mailed = 0, lowMail = 0, stop = "";
+  for (let i = 0; i < ids.length; i += 6) {
+    ADM.busy = `Updating ${Math.min(i + 6, ids.length)} of ${ids.length}…`; admBulkBar();
+    const chunk = ids.slice(i, i + 6);
+    const r = await admCall({ op: "bulkStatus", ids: chunk, status });
+    if (!r.ok) { stop = admError(r.error, r.message); failed += ids.length - i; break; }
+    for (const x of r.results || []) {
+      const o = ADM.orders.find(y => y.id === x.id);
+      if (x.ok) { ok++; ADM.sel.delete(x.id); if (o) { o.status = x.status; o.notified = x.notified; o.wa = x.wa; } if (/^SKIPPED/.test(x.notified || "")) lowMail++; else if (x.notified && !/FAILED|no email/i.test(x.notified)) mailed++; }
+      else if (x.error === "skipped") { skipped++; ADM.sel.delete(x.id); if (o && x.status) o.status = x.status; }
+      else failed++;
+    }
+  }
+  ADM.busy = ""; admPaint();
+  toast(stop || `${ok} order${ok === 1 ? "" : "s"} marked ${status.toLowerCase()}.` + (mailed ? ` ${mailed} customer${mailed === 1 ? "" : "s"} emailed.` : "") + (lowMail ? ` Email limit is low for ${lowMail}: open them and tap Send WhatsApp.` : "") + (skipped ? ` ${skipped} skipped (already moved on).` : "") + (failed ? ` ${failed} failed, please refresh.` : ""));
+  if (skipped || failed || stop) admLoad(true);
 }
 function admOrderCard(o) {
   let next = ADM_NEXT[o.status] || [];
   if (o.status === "New" && (o.payment || "UPI") !== "Cash on delivery") next = ["Confirmed", "Paid", "Cancelled"];   // UPI payment already received
   if (o.payment === "Cash on delivery") next = next.filter(s => s !== "Paid");   // cash is paid at the door: no Paid step
-  return `<div class="adm-card" data-oid="${esc(o.id)}">
-    <div class="adm-row"><strong>${esc(o.id)}</strong><span class="adm-st st-${esc(o.status)}">${esc(o.status)}</span></div>
+  return `<div class="adm-card${ADM.sel.has(o.id) ? " picked" : ""}" data-oid="${esc(o.id)}">
+    <div class="adm-row">${ADM_PICKABLE.includes(o.status) ? `<label class="adm-pick"><input type="checkbox" data-a="sel" data-id="${esc(o.id)}"${ADM.sel.has(o.id) ? " checked" : ""} aria-label="Select order ${esc(o.id)}"><strong>${esc(o.id)}</strong></label>` : `<strong>${esc(o.id)}</strong>`}<span class="adm-st st-${esc(o.status)}">${esc(o.status)}</span></div>
     <div class="adm-sub">${esc(o.when)}</div>
     <div class="adm-cust"><b>${esc(o.name)}</b> · <a href="tel:${esc(o.phone.replace(/[^\d+]/g, ""))}">${esc(o.phone)}</a>${o.email ? ` · <a href="mailto:${esc(o.email)}">${esc(o.email)}</a>` : ""}</div>
     <pre class="adm-items">${esc(o.items)}</pre>
     <div class="adm-sub">Payment: <b>${esc(o.payment || "UPI")}</b></div>
-    <div class="adm-total">Subtotal ${money(o.subtotal)} · Delivery ${esc(o.delivery)} · <b>Total ${money(o.total)}${o.delivery === "To confirm" ? " + delivery" : ""}</b></div>
+    <div class="adm-total">Subtotal ${money(o.subtotal)}${o.discount ? ` · Discount ${esc(o.code)} −${money(o.discount)}` : ""} · Delivery ${esc(o.delivery)} · <b>Total ${money(o.total)}${o.delivery === "To confirm" ? " + delivery" : ""}</b></div>
     <div class="adm-sub">${esc(o.address)}<br>${esc(o.area)}${o.notes ? `<br>Note: ${esc(o.notes)}` : ""}</div>
     <div class="adm-acts">
       ${next.map(s => `<button class="adm-btn ${s === "Cancelled" ? "danger" : "main"}" data-a="status" data-id="${esc(o.id)}" data-v="${s}">${s === "Paid" && o.status !== "New" ? "Mark paid" : ADM_LABEL[s]}</button>`).join("")}
@@ -1699,10 +1872,15 @@ async function admDelete(row) {
 document.addEventListener("click", (e) => {
   const a = e.target.closest("[data-a]"); if (!a) return;
   const k = a.dataset.a;
-  if (k === "tab") { ADM.tab = a.dataset.v; admPaint(); }
-  else if (k === "ofilter") { ADM.filter = a.dataset.v; admPaint(); }
+  if (k === "tab") { ADM.tab = a.dataset.v; ADM.sel.clear(); admPaint(); }
+  else if (k === "sel") admSelToggle(a.dataset.id, a.checked, a.closest(".adm-card"));
+  else if (k === "selall") admSelAll();
+  else if (k === "selnone") { ADM.sel.clear(); admPaint(); }
+  else if (k === "bulk") admBulk(a.dataset.v);
+  else if (k === "rv") admReviewStatus(a);
+  else if (k === "ofilter") { ADM.filter = a.dataset.v; ADM.sel.clear(); admPaint(); }
   else if (k === "status") admSetStatus(a.dataset.id, a.dataset.v, a);
-  else if (k === "refresh") { toast("Refreshing…"); admLoad(true); }
+  else if (k === "refresh") { toast("Refreshing…"); ADM.sel.clear(); admLoad(true); }
   else if (k === "logout") admLogout();
   else if (k === "stock") admStock(Number(a.dataset.row), Number(a.dataset.d));
   else if (k === "add") admForm(null);
@@ -1733,17 +1911,399 @@ document.addEventListener("submit", async (e) => {
 document.addEventListener("input", (e) => { if (e.target.id === "adm-q") { ADM.q = e.target.value; const p = $("#adm-body"); const pos = e.target.selectionStart; admPaint(); const q = $("#adm-q"); if (q) { q.focus(); q.setSelectionRange(pos, pos); } } });
 document.addEventListener("change", (e) => { if (e.target.id === "pf-file") admPickPhotos(e.target.files); });
 
+/* =====================================================
+   v2 features: first-order offer, live order status, reviews, FAQ and policy pages, sold-out alerts
+   ===================================================== */
+
+/* ---------- First-order offer (shown live from the sheet; the server checks it again when the order is placed) ---------- */
+let OFFER = { live: false };
+let REVIEWS = { count: 0, avg: 0, list: [] };
+let APPLIED = "";
+try { APPLIED = sessionStorage.getItem("mg-code") || ""; } catch {}
+function saveApplied() { try { if (APPLIED) sessionStorage.setItem("mg-code", APPLIED); else sessionStorage.removeItem("mg-code"); } catch {} }
+const cleanCode = (s) => String(s || "").toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 20);
+/* A random number kept on this phone. It only helps us give the first-order offer once per customer. */
+function deviceId() {
+  try {
+    let d = localStorage.getItem("mg-device");
+    if (!/^[A-Za-z0-9]{12,64}$/.test(d || "")) {
+      const bytes = new Uint8Array(12);
+      if (window.crypto && crypto.getRandomValues) crypto.getRandomValues(bytes); else for (let i = 0; i < 12; i++) bytes[i] = Math.floor(Math.random() * 256);
+      d = Array.from(bytes).map(b => b.toString(16).padStart(2, "0")).join("");
+      localStorage.setItem("mg-device", d);
+    }
+    return d;
+  } catch { return ""; }
+}
+function offerDiscount(sub) {              // same rule as the server
+  if (!OFFER.live || !APPLIED || APPLIED !== OFFER.code) return 0;
+  if (OFFER.minOrder > 0 && sub < OFFER.minOrder) return 0;
+  let off = Math.floor(sub * OFFER.pct / 100);
+  if (OFFER.maxOff > 0) off = Math.min(off, OFFER.maxOff);
+  return Math.max(0, Math.min(off, sub));
+}
+const offerShortLine = () => OFFER.live ? `First order? Use code ${OFFER.code} for ${OFFER.pct}% off${OFFER.maxOff ? ` (up to ${money(OFFER.maxOff)})` : ""}` : "";
+const offerTerms = () => !OFFER.live ? "" : `${OFFER.pct}% off your first order${OFFER.maxOff ? `, up to ${money(OFFER.maxOff)}` : ""}${OFFER.minOrder ? `, on orders of ${money(OFFER.minOrder)} or more` : ""}. One use per customer${OFFER.endsText ? `. Ends ${OFFER.endsText}` : ""}.`;
+const offerScarcity = () => OFFER.live && typeof OFFER.left === "number" && OFFER.left <= 10 ? `Only ${OFFER.left} left` : "";
+function paintAnnounce() {
+  const el = $("#announce"); if (!el) return;
+  if (OFFER.live) el.textContent = [offerShortLine(), offerScarcity(), OFFER.endsText ? "Ends " + OFFER.endsText : ""].filter(Boolean).join("  ·  ");
+  else el.textContent = (CONFIG.freeDeliveryAbove ? "Free delivery in Bhagalpur above " + money(CONFIG.freeDeliveryAbove) : "Delivery across Bhagalpur") + (CONFIG.codEnabled ? "  ·  Cash on delivery available" : "");
+}
+function offerPillHTML() {
+  if (!OFFER.live) return "";
+  const extra = [offerScarcity(), OFFER.endsText ? "Ends " + OFFER.endsText : ""].filter(Boolean).join(" · ");
+  return `<button type="button" class="offer-pill" data-copycode="${esc(OFFER.code)}" aria-label="Copy the code ${esc(OFFER.code)}"><span class="op-main">${esc(offerShortLine())}</span>${extra ? `<span class="op-sub">${esc(extra)}</span>` : ""}<span class="op-tap">Tap to copy the code</span></button>`;
+}
+/* the code box on the checkout page */
+function offerBoxHTML() {
+  return `<div id="offer-wrap" class="offer-box" ${OFFER.live || APPLIED ? "" : "hidden"}>
+    <label for="f-code">Discount code</label>
+    <div class="code-row"><input id="f-code" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="Enter code" value="${esc(APPLIED)}" ${APPLIED ? "disabled" : ""}><button type="button" class="btn btn-outline" data-code-btn>${APPLIED ? "Remove" : "Apply"}</button></div>
+    <p class="hint" id="offer-text"></p>
+    <p class="hint" id="code-msg" role="status"></p>
+  </div>`;
+}
+function paintCodeState() {
+  const wrap = $("#offer-wrap"); if (!wrap) return;
+  wrap.hidden = !(OFFER.live || APPLIED);
+  const inp = $("#f-code"), btn = wrap.querySelector("[data-code-btn]"), msg = $("#code-msg"), txt = $("#offer-text");
+  inp.disabled = !!APPLIED; if (APPLIED) inp.value = APPLIED;
+  btn.textContent = APPLIED ? "Remove" : "Apply";
+  const sub = cartTotal(), disc = offerDiscount(sub);
+  txt.innerHTML = OFFER.live && !APPLIED ? `${esc(offerTerms())} <button type="button" class="linkbtn" data-code-use="${esc(OFFER.code)}">Use ${esc(OFFER.code)}</button>` : "";
+  if (APPLIED && disc > 0) { msg.style.color = "var(--olive)"; msg.textContent = `Code ${APPLIED} applied. You save ${money(disc)}. We check that this is your first order when you place it.`; }
+  else if (APPLIED) { msg.style.color = "#a33"; msg.textContent = OFFER.minOrder ? `This code needs an order of ${money(OFFER.minOrder)} or more. Add ${money(Math.max(0, OFFER.minOrder - sub))} more.` : "This code can't be used on this order."; }
+  else if (!msg.dataset.keep) msg.textContent = "";
+}
+function applyCodeFromInput(codeArg) {
+  const inp = $("#f-code"), msg = $("#code-msg"); if (!inp) return;
+  const code = cleanCode(codeArg || inp.value);
+  const bad = (t) => { msg.dataset.keep = "1"; msg.style.color = "#a33"; msg.textContent = t; };
+  if (!code) { bad("Type your code first."); return; }
+  if (!OFFER.live) { bad("This offer is not running right now."); return; }
+  if (code !== OFFER.code) { bad("That code is not valid. Please check it."); return; }
+  const sub = cartTotal();
+  if (OFFER.minOrder > 0 && sub < OFFER.minOrder) { bad(`This offer needs an order of ${money(OFFER.minOrder)} or more. Add ${money(OFFER.minOrder - sub)} more.`); return; }
+  delete msg.dataset.keep;
+  APPLIED = code; saveApplied(); paintCodeState(); refreshTotals();
+}
+function removeCode() { APPLIED = ""; saveApplied(); const m = $("#code-msg"); if (m) delete m.dataset.keep; paintCodeState(); refreshTotals(); }
+function refreshOfferUI() {
+  paintAnnounce();
+  if ($("#offer-wrap")) { paintCodeState(); refreshTotals(); }
+}
+
+/* ---------- Delivery time and the free-delivery nudge ---------- */
+const deliveryTimeText = () => `Delivery in Bhagalpur takes ${CONFIG.deliveryDays}.`;
+function deliveryTimeNote() { return areaZone() === "outside" ? "Outside Bhagalpur we'll confirm the delivery time with you on WhatsApp." : deliveryTimeText(); }
+function freeNudgeHTML(sub) {
+  const t = CONFIG.freeDeliveryAbove; if (!t) return "";
+  if (sub >= t) return `<div class="nudge done"><p>You've unlocked <b>free delivery</b> in Bhagalpur ✓</p></div>`;
+  const pct = Math.max(4, Math.round(sub / t * 100));
+  return `<div class="nudge"><p>Add <b>${money(t - sub)}</b> more for <b>free delivery</b> in Bhagalpur</p><div class="nudge-bar" aria-hidden="true"><i style="width:${pct}%"></i></div></div>`;
+}
+
+/* ---------- Instagram ---------- */
+const igUrl = () => CONFIG.instagram ? "https://www.instagram.com/" + encodeURIComponent(CONFIG.instagram) + "/" : "";
+const IG_ICON = `<svg class="ig-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r=".6" fill="currentColor"/></svg>`;
+function contactBlockHTML() {
+  const wa = waDigits(), ig = igUrl();
+  return `${wa ? `<p><a href="https://wa.me/${wa}" target="_blank" rel="noopener" style="color:var(--clay);text-decoration:underline">Message us on WhatsApp</a> (+${wa})</p>` : ""}
+    ${ig ? `<p style="margin-top:6px">Instagram: <a href="${ig}" target="_blank" rel="noopener" style="color:var(--clay);text-decoration:underline">@${esc(CONFIG.instagram)}</a></p>` : ""}
+    ${CONFIG.contactEmail ? `<p style="margin-top:6px">Email: <a href="mailto:${esc(CONFIG.contactEmail)}" style="color:var(--clay);text-decoration:underline">${esc(CONFIG.contactEmail)}</a></p>` : ""}`;
+}
+
+/* ---------- Live order status (My Orders) ---------- */
+const LIVE_KEY = CONFIG.ordersKey + " status";
+let LIVE = {}, liveAt = 0, liveFailed = false;
+try { LIVE = JSON.parse(localStorage.getItem(LIVE_KEY)) || {}; } catch { LIVE = {}; }
+function saveLive() { try { localStorage.setItem(LIVE_KEY, JSON.stringify(LIVE)); } catch {} }
+function updateOrder(id, patch) {
+  try { const list = getOrders(); const o = list.find(x => x.id === id); if (o) { Object.assign(o, patch); localStorage.setItem(CONFIG.ordersKey, JSON.stringify(list)); } } catch {}
+}
+async function trackCall(list) {
+  const r = await fetch(CONFIG.sheetApiUrl, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify({ action: "track", orders: list }) });
+  return await r.json();
+}
+async function refreshStatuses() {
+  if (!SHEET_MODE) return;
+  const list = getOrders().filter(o => o.phone && /^MG\d{3,9}$/.test(o.id)).slice(0, 20).map(o => ({ id: o.id, phone: o.phone }));
+  if (!list.length) return;
+  try {
+    const res = await trackCall(list);
+    if (!res || !res.ok) throw new Error("bad");
+    res.orders.forEach(x => { LIVE[x.id] = { status: x.status, payment: x.payment, reviewed: !!x.reviewed }; });
+    saveLive(); liveAt = Date.now(); liveFailed = false;
+  } catch { liveFailed = true; }
+  if (location.hash === "#/orders") paintOrders();
+}
+const STEPS = ["Received", "Confirmed", "On its way", "Delivered"];
+const STEP_OF = { New: 1, Confirmed: 2, Paid: 2, Shipped: 3, Delivered: 4 };
+function statusNote(o, live) {
+  const cod = o.payment === "cod", paid = /Paid/.test(live.payment) || ["Paid", "Shipped", "Delivered"].includes(live.status);
+  switch (live.status) {
+    case "New": return "We've received your order. We'll confirm it shortly on WhatsApp or email.";
+    case "Confirmed": return cod ? "Your order is confirmed. Please keep the cash ready." : paid ? "Your order is confirmed and paid." : "Your order is confirmed. Please complete your payment below.";
+    case "Paid": return "We have your payment and we're packing your order.";
+    case "Shipped": return "Your order is on its way." + (o.zone === "outside" ? "" : " " + deliveryTimeText());
+    case "Delivered": return "Delivered. We hope you love it!";
+    default: return "";
+  }
+}
+function statusBlockHTML(o, live) {
+  if (!SHEET_MODE) return `<span class="status">Order received</span>`;
+  if (!live) {
+    if (!o.phone) return `<span class="status">Order received</span>
+      <form class="vp" data-vp="${esc(o.id)}"><p class="hint" style="margin:0 0 6px">See this order's live status: type the phone number you used for it.</p>
+        <div class="code-row"><input inputmode="tel" autocomplete="tel" placeholder="Phone number" aria-label="Phone number used for order ${esc(o.id)}"><button class="btn btn-outline" type="submit">Show status</button></div>
+        <p class="hint vp-msg" role="status" style="margin:6px 0 0"></p></form>`;
+    return `<span class="status">Order received</span><p class="hint" style="margin:0 0 10px">${liveFailed ? "Couldn't check the latest status. Please try again in a moment." : "Checking the latest status…"}</p>`;
+  }
+  if (live.status === "Cancelled") return `<span class="status bad">Cancelled</span><p class="hint" style="margin:0 0 10px">We're sorry, this order was cancelled. If you had paid, we will refund the full amount. Please message us on WhatsApp and we'll take care of it.</p>`;
+  const step = STEP_OF[live.status] || 1;
+  const chip = live.status === "Paid" ? "Paid · Confirmed" : live.status === "New" ? "Order received" : live.status === "Shipped" ? "On its way" : live.status;
+  return `<span class="status${live.status === "Delivered" ? " good" : ""}">${esc(chip)}</span>
+    <ol class="steps" aria-label="Order progress">${STEPS.map((s, i) => `<li class="${i + 1 <= step ? "done" : ""}${i + 1 === step ? " now" : ""}"${i + 1 === step ? ' aria-current="step"' : ""}>${s}</li>`).join("")}</ol>
+    <p class="hint" style="margin:0 0 10px">${esc(statusNote(o, live))}</p>`;
+}
+function orderCardHTML(o) {
+  const when = o.date ? new Date(o.date).toLocaleString("en-IN", { day: "numeric", month: "short", year: "numeric", hour: "numeric", minute: "2-digit" }) : "";
+  const link = waLink(o);
+  const live = SHEET_MODE ? LIVE[o.id] : null;
+  const st = live ? live.status : "";
+  const paid = !!live && (/Paid/.test(live.payment) || ["Paid", "Shipped", "Delivered"].includes(st));
+  let pay;
+  if (live && (st === "Cancelled" || st === "Delivered")) pay = "";
+  else if (live && paid && o.payment !== "cod") pay = `<div class="pay-done">Payment received ✓</div>`;
+  else pay = payBoxHTML(o);
+  const review = live && st === "Delivered" ? (live.reviewed ? `<p class="hint" style="margin:10px 0 0">Thank you for your review ✓</p>` : `<a class="btn" href="#/review/${esc(o.id)}">Write a review</a>`) : "";
+  return `<div class="order-card" data-oc="${esc(o.id)}">
+    <div class="order-head"><strong>${esc(o.id)}</strong><span>${esc(when)}</span></div>
+    ${statusBlockHTML(o, live)}
+    ${o.lines.map(l => `<div class="row"><span>${esc(l.name)} × ${l.qty}</span><span>${esc(l.amount)}</span></div>`).join("")}
+    ${orderTotalsHTML(o)}
+    ${pay}
+    ${review}
+    ${link ? `<a class="btn btn-wa" target="_blank" rel="noopener" href="${link}">Ask about this order on WhatsApp</a>` : ""}
+  </div>`;
+}
+function paintOrders() {
+  const box = $("#orders-box"); if (!box) return;
+  const ae = document.activeElement;
+  if (ae && box.contains(ae) && ae.tagName === "INPUT") return;       // don't wipe what the customer is typing
+  box.innerHTML = getOrders().map(orderCardHTML).join("");
+  const u = $("#orders-updated");
+  if (u) u.textContent = liveFailed ? "Couldn't refresh. Showing the last known status." : liveAt ? "Updated just now" : "";
+}
+function renderOrders() {
+  const orders = getOrders();
+  if (!orders.length) {
+    app.innerHTML = `<div class="container empty" style="padding-top:80px"><h2 style="font-size:2.2rem">No orders yet</h2><p style="margin:10px 0 22px">Orders you place on this device will show up here.</p><a class="btn" href="#/">Start Shopping</a></div>`;
+    return;
+  }
+  app.innerHTML = `
+    <div class="container">
+      ${backLink("#/", "Back to shop")}
+      <h2 class="section-title">My Orders</h2>
+      <p class="hint">Orders are saved on this phone/browser only. Clearing your browser data removes them.</p>
+      ${SHEET_MODE ? `<p class="hint"><button type="button" class="linkbtn" data-refresh-status>Refresh status</button> <span id="orders-updated" aria-live="polite"></span></p>` : ""}
+      <div id="orders-box"></div>
+    </div>`;
+  paintOrders();
+  refreshStatuses();
+}
+async function verifyPhone(form) {
+  const id = form.dataset.vp, inp = form.querySelector("input"), msg = form.querySelector(".vp-msg"), btn = form.querySelector("button");
+  const phone = inp.value.trim();
+  if (phone.replace(/\D/g, "").length < 10) { msg.textContent = "Please type your 10-digit phone number."; return; }
+  btn.disabled = true; msg.textContent = "Checking…";
+  try {
+    const res = await trackCall([{ id, phone }]);
+    const x = res && res.ok && res.orders && res.orders[0];
+    if (!x) { msg.textContent = "That phone number doesn't match this order. Please check it."; btn.disabled = false; return; }
+    updateOrder(id, { phone });
+    LIVE[id] = { status: x.status, payment: x.payment, reviewed: !!x.reviewed }; saveLive(); liveAt = Date.now();
+    document.activeElement && document.activeElement.blur && document.activeElement.blur();
+    paintOrders();
+  } catch { msg.textContent = "Couldn't reach the shop. Please try again."; btn.disabled = false; }
+}
+
+/* ---------- Customer reviews ---------- */
+const starsHTML = (n) => { n = Math.max(0, Math.min(5, Math.round(n))); return `<span class="stars" role="img" aria-label="${n} out of 5 stars">${"★".repeat(n)}<i>${"★".repeat(5 - n)}</i></span>`; };
+function reviewCardHTML(r) {
+  return `<figure class="rv-card">${starsHTML(r.r)}
+    ${r.t ? `<blockquote>${esc(r.t)}</blockquote>` : ""}
+    <figcaption><b>${esc(r.n)}</b>${r.p ? `<span>${esc(r.p)}</span>` : ""}${r.d ? `<span>${esc(r.d)}</span>` : ""}</figcaption></figure>`;
+}
+let showAllReviews = false;
+function homeReviewsHTML() {
+  if (!REVIEWS.count) return "";
+  const list = showAllReviews ? REVIEWS.list : REVIEWS.list.slice(0, 6);
+  return `<div class="container" id="reviews"><h2 class="section-title">What customers say</h2>
+    <p class="rv-sum">${starsHTML(REVIEWS.avg)} <b>${Number(REVIEWS.avg).toFixed(1)}</b> out of 5 · ${REVIEWS.count} review${REVIEWS.count > 1 ? "s" : ""}</p>
+    <div class="rv-grid">${list.map(reviewCardHTML).join("")}</div>
+    ${REVIEWS.list.length > 6 && !showAllReviews ? `<p style="text-align:center;margin-top:20px"><button type="button" class="btn btn-outline" data-more-reviews>Show more reviews</button></p>` : ""}
+  </div>`;
+}
+function productReviewsHTML(p) {
+  const name = String(p.name).toLowerCase();
+  const list = (REVIEWS.list || []).filter(r => String(r.p || "").toLowerCase().includes(name)).slice(0, 4);
+  if (!list.length) return "";
+  const avg = list.reduce((s, r) => s + r.r, 0) / list.length;
+  return `<h2 class="section-title">Reviews of this design</h2>
+    <p class="rv-sum">${starsHTML(avg)} <b>${avg.toFixed(1)}</b> · ${list.length} review${list.length > 1 ? "s" : ""}</p>
+    <div class="rv-grid">${list.map(reviewCardHTML).join("")}</div>`;
+}
+let reviewRating = 0;
+function renderReview(id) {
+  if (!/^MG\d{3,9}$/.test(id) || !SHEET_MODE) { app.innerHTML = `<div class="container empty"><h2>This review link is not valid</h2><br><a class="btn" href="#/">Back to shop</a></div>`; return; }
+  const o = getOrders().find(x => x.id === id);
+  reviewRating = 0;
+  app.innerHTML = `<div class="container rv-page">${backLink("#/", "Back to shop")}
+    <h2 class="section-title" style="margin-top:34px">How was your order?</h2>
+    <p class="hint" style="text-align:center">Order <strong>${esc(id)}</strong></p>
+    <form id="rv-form" class="form-card" novalidate>
+      <label id="rv-l">Your rating *</label>
+      <div class="star-pick" role="radiogroup" aria-labelledby="rv-l">${[1, 2, 3, 4, 5].map(n => `<button type="button" role="radio" aria-checked="false" aria-label="${n} star${n > 1 ? "s" : ""}" data-star="${n}">★</button>`).join("")}</div>
+      <label for="rv-text">Your review (optional)</label>
+      <textarea id="rv-text" maxlength="500" placeholder="What did you like? How does it look on you?"></textarea>
+      <label for="rv-phone">Phone number you used for this order *</label>
+      <input id="rv-phone" type="tel" autocomplete="tel" value="${esc(o && o.phone || "")}">
+      <p class="hint" style="margin:8px 0 0">We show your first name and the first letter of your surname with your review. We read every review before it appears on the site.</p>
+      <div class="error" id="rv-err" role="alert"></div>
+      <button class="btn btn-block" type="submit" id="rv-btn" style="margin-top:16px">Send review</button>
+    </form></div>`;
+  window.scrollTo(0, 0);
+}
+function paintStars() { document.querySelectorAll("[data-star]").forEach(b => { const on = Number(b.dataset.star) <= reviewRating; b.classList.toggle("on", on); b.setAttribute("aria-checked", Number(b.dataset.star) === reviewRating ? "true" : "false"); }); }
+async function submitReview(form) {
+  const id = decodeURIComponent((location.hash.split("/")[2] || "")), err = $("#rv-err"), btn = $("#rv-btn");
+  err.textContent = "";
+  const phone = $("#rv-phone").value.trim();
+  if (!reviewRating) { err.textContent = "Please tap the stars to rate your order."; return; }
+  if (phone.replace(/\D/g, "").length < 10) { err.textContent = "Please type the phone number you used for this order."; return; }
+  btn.disabled = true; btn.textContent = "Sending…";
+  try {
+    const r = await fetch(CONFIG.sheetApiUrl, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify({ action: "review", orderId: id, phone, rating: reviewRating, text: $("#rv-text").value.trim() }) });
+    const res = await r.json();
+    if (!res || !res.ok) { err.textContent = (res && res.message) || "Sorry, we couldn't send your review. Please try again."; btn.disabled = false; btn.textContent = "Send review"; return; }
+    updateOrder(id, { phone }); if (LIVE[id]) { LIVE[id].reviewed = true; saveLive(); }
+    form.outerHTML = `<div class="form-card" style="text-align:center"><div class="tick" style="margin:0 auto 14px">✓</div><h3 style="font-size:1.7rem">Thank you!</h3><p class="hint" style="margin:8px 0 18px">Your review has reached us. It will appear on the site once we have read it.</p><a class="btn" href="#/">Back to shop</a></div>`;
+  } catch { err.textContent = "Couldn't reach the shop. Please check your internet and try again."; btn.disabled = false; btn.textContent = "Send review"; }
+}
+
+/* ---------- Sold out: "Notify me" (opens WhatsApp with the message ready) ---------- */
+function notifyHref(p, v) {
+  const wa = waDigits(); if (!wa) return "";
+  return `https://wa.me/${wa}?text=${encodeURIComponent(`Hi ${CONFIG.storeName}, please tell me when ${variantName(p, v)} is back in stock.\n${location.href}`)}`;
+}
+
+/* ---------- FAQ and policy pages ---------- */
+const STATIC_PAGES = ["about", "faq", "privacy", "terms", "returns"];
+const aLink = (href, text, ext) => `<a href="${href}"${ext ? ' target="_blank" rel="noopener"' : ""} style="color:var(--clay);text-decoration:underline">${text}</a>`;
+function helpLinksHTML(except) {
+  const items = [["faq", "FAQs"], ["returns", "Returns &amp; refunds"], ["privacy", "Privacy"], ["terms", "Terms"], ["about", "About us"]].filter(x => x[0] !== except);
+  return `<p class="help-links">${items.map(([k, t]) => `<a href="#/${k}">${t}</a>`).join(" · ")}</p>`;
+}
+function faqData() {
+  const wa = waDigits(), ig = igUrl();
+  const out = CONFIG.outsideFee > 0 ? `Outside Bhagalpur it is ${money(CONFIG.outsideFee)}.` : "Outside Bhagalpur we confirm the charge with you on WhatsApp before we dispatch.";
+  return [
+    ["Ordering and payment", [
+      ["How do I place an order?", "Add what you like to your cart, press Checkout, fill in your details and place your order. We confirm every order personally on WhatsApp or email."],
+      ["How can I pay?", `By UPI: after we confirm your order, pay with Google Pay, PhonePe, Paytm or BHIM from your order page, or send the amount to our UPI ID.${CONFIG.codEnabled ? " In Bhagalpur you can also choose cash on delivery." : ""}`],
+      ["Is paying by UPI safe?", "Yes. You pay from your own UPI app, so we never see your bank details or your UPI PIN."],
+      ["Can I change or cancel my order?", `Message us on WhatsApp as soon as you can, with your order number. If it has not been shipped yet we will help. If we cancel an order, the stock goes back and, if you had paid, we refund the full amount.`],
+      ["I paid, but my order still says 'Order received'.", "Please send us the payment screenshot on WhatsApp (there is a button on your order). We mark payments by hand, so the status changes once we have seen it."]
+    ]],
+    ["Delivery", [
+      ["How long does delivery take?", `Delivery in Bhagalpur takes ${CONFIG.deliveryDays}. For places outside Bhagalpur we confirm the delivery time and charge with you on WhatsApp before we dispatch.`],
+      ["How much does delivery cost?", deliveryRangeNote()],
+      ["How do I follow my order?", "Open " + "<a href=\"#/orders\" style=\"color:var(--clay);text-decoration:underline\">My Orders</a>. It shows where your order is: received, confirmed, on its way, delivered. Orders are saved on the phone you ordered from. On another phone, message us your order number on WhatsApp."]
+    ]],
+    ["Returns and care", [
+      ["What if my jewellery is damaged or not what I ordered?", "Message us within 24 hours of receiving it, with a photo, and we will replace it."],
+      ["How do refunds work?", "If we cancel your order, or we cannot replace an item, we refund the full amount you paid for it. Just message us and we will take care of it. See " + "<a href=\"#/returns\" style=\"color:var(--clay);text-decoration:underline\">Returns &amp; refunds</a>."],
+      ["How do I look after my jewellery?", "Keep it dry. Put it on after perfume, cream and hair spray, and take it off before bathing or swimming. Store it in a pouch or box, away from damp. This keeps any jewellery, including anti tarnish pieces, looking its best for longer."]
+    ]],
+    ["Offers, stock and reviews", [
+      ["How does the first-order discount work?", OFFER.live ? `Enter the code <b>${esc(OFFER.code)}</b> on the checkout page. ${esc(offerTerms())} We check this when you place your order, so it works once per customer.` : "We run offers from time to time. When one is on, you will see it at the top of every page and on the checkout page."],
+      ["Something I like is sold out. Can I be told when it is back?", wa ? "Yes. Open the product and tap <b>Notify me</b>. WhatsApp opens with a message ready to send. We will message you when it is back." : "Yes. Please contact us and we will tell you when it is back."],
+      ["Who writes the reviews?", "Only customers whose order has been delivered can write a review, one per order, using their order number and phone number. We read every review before it appears. We do not change what you wrote."]
+    ]],
+    ["Contact", [
+      ["How can I contact you?", `${wa ? aLink(`https://wa.me/${wa}`, "WhatsApp", true) + " (+" + wa + ")" : ""}${ig ? (wa ? " · " : "") + aLink(ig, "Instagram @" + esc(CONFIG.instagram), true) : ""}${CONFIG.contactEmail ? ((wa || ig) ? " · " : "") + aLink("mailto:" + esc(CONFIG.contactEmail), esc(CONFIG.contactEmail)) : ""}`]
+    ]]
+  ];
+}
+function renderFaq() {
+  app.innerHTML = `<div class="container narrow">${backLink("#/", "Back to shop")}
+    <h2 class="section-title" style="margin-top:34px">Frequently asked questions</h2>
+    ${faqData().map(([group, qs]) => `<h3 class="faq-group">${group}</h3>${qs.map(([q, a]) => `<details class="faq"><summary>${q}</summary><div class="faq-a">${a}</div></details>`).join("")}`).join("")}
+    ${helpLinksHTML("faq")}
+  </div>`;
+  window.scrollTo(0, 0);
+}
+function policyPage(title, blocks, key) {
+  app.innerHTML = `<div class="container narrow">${backLink("#/", "Back to shop")}
+    <h2 class="section-title" style="margin-top:34px">${title}</h2>
+    ${blocks.map(([h, body]) => `<div class="policy"><h3>${h}</h3>${body}</div>`).join("")}
+    ${helpLinksHTML(key)}
+  </div>`;
+  window.scrollTo(0, 0);
+}
+function renderReturns() {
+  const wa = waDigits();
+  policyPage("Returns &amp; refunds", [
+    ["Damaged or wrong item", `<p>If your jewellery arrives damaged, or it is not what you ordered, message us within <b>24 hours</b> of receiving it, with a photo. We will replace it.</p>`],
+    ["How to ask", `<p>1. Take a clear photo of the item and the packing.<br>2. Message us${wa ? ` on ${aLink("https://wa.me/" + wa, "WhatsApp", true)}` : ""} with your order number and the photo.<br>3. Please keep the item and its packing until we reply.</p>`],
+    ["Refunds", `<p>If we cancel your order, or we cannot replace an item, we refund the full amount you paid for it. Message us and we will take care of it. Cash on delivery orders have nothing to refund until you have paid.</p>`],
+    ["Cancelling an order", `<p>Message us on WhatsApp with your order number as soon as you can. If your order has not been shipped yet, we will cancel it for you.</p>`],
+    ["Contact", contactBlockHTML()]
+  ], "returns");
+}
+function renderPrivacy() {
+  policyPage("Privacy", [
+    ["What we collect", `<p>When you order, we collect your name, phone number, email, delivery address, the items you ordered and any note you add. Your phone also keeps your cart, your past orders (for My Orders) and a random number that helps us give the first-order offer once per customer.</p>`],
+    ["Why", `<p>We use it to confirm, pack and deliver your order, to message you about it, to sort out any problem, and to check that a first-order offer is used once.</p>`],
+    ["Where it is kept", `<p>Your order is saved in the shop's private Google Sheet and in our email. Only the shop owner can open it. Payments happen in your own UPI app: we never see your bank login or UPI PIN.</p>`],
+    ["Who sees it", `<p>We do not sell your details and we do not send adverts. We use Google (Sheets and email) to run the shop, and WhatsApp or Instagram when you contact us there. This site loads its fonts from Google Fonts. ${CONFIG.googleAnalyticsId ? "We use Google Analytics to count visits." : "It does not use advertising or tracking cookies."}</p>`],
+    ["Reviews", `<p>If you write a review, we show your first name, the first letter of your surname, the products and your words. We never show your phone number, email, address or order number.</p>`],
+    ["Your choices", `<p>You can ask us to show or delete your details at any time by messaging us. To remove the orders saved on your phone, clear this site's data in your browser.</p>${contactBlockHTML()}`]
+  ], "privacy");
+}
+function renderTerms() {
+  policyPage("Terms of use", [
+    ["Orders", `<p>Placing an order is a request to buy. We confirm every order personally. We may cancel an order if an item is out of stock or something is wrong with it. If you had paid, we refund the full amount.</p>`],
+    ["Prices and stock", `<p>Prices are in rupees. Stock is updated live. If a price or a delivery charge changes while you are ordering, we show you the new amount before you place your order.</p>`],
+    ["Delivery", `<p>${esc(deliveryTimeText())} ${esc(deliveryRangeNote())} Delivery times are our best estimate.</p>`],
+    ["Payment", `<p>You can pay by UPI${CONFIG.codEnabled ? ", or by cash on delivery in Bhagalpur" : ""}.</p>`],
+    ["Returns and refunds", `<p>Please see ${aLink("#/returns", "Returns &amp; refunds")}.</p>`],
+    ["Offers", `<p>${OFFER.live ? `The current offer is: ${esc(offerTerms())} ` : ""}A first-order offer is for a customer's first order only. We check this using the phone number, email, delivery address and device used for earlier orders. Offers cannot be added together. We can end an offer at any time, and we can cancel an order that uses an offer unfairly.</p>`],
+    ["Reviews", `<p>Reviews must be about your own order. We read every review and may leave out one that is abusive or not about the product.</p>`],
+    ["Photos", `<p>Colours can look a little different on different screens.</p>`],
+    ["Contact", contactBlockHTML()]
+  ], "terms");
+}
+
 /* ---------- Router ---------- */
 function route() {
   clearTimeout(successTimer);
   const hash = location.hash || "#/";
   if (hash === "#/" || /^#\/product\//.test(hash)) lastShopHash = hash;
   const parts = hash.replace(/^#\/?/, "").split("/");
-  if (SHEET_MODE && !catalogLoaded && parts[0] !== "about" && parts[0] !== "orders" && parts[0] !== "admin") { renderCatalogWait(); updateBadge(); return; }
+  document.body.classList.toggle("on-admin", parts[0] === "admin");
+  if (SHEET_MODE && !catalogLoaded && !STATIC_PAGES.includes(parts[0]) && parts[0] !== "orders" && parts[0] !== "admin" && parts[0] !== "review") { renderCatalogWait(); updateBadge(); return; }
   if (parts[0] === "product" && parts[1]) renderProduct(decodeURIComponent(parts[1]));
   else if (parts[0] === "cart") renderCart();
   else if (parts[0] === "orders") renderOrders();
   else if (parts[0] === "about") renderAbout();
+  else if (parts[0] === "faq") renderFaq();
+  else if (parts[0] === "privacy") renderPrivacy();
+  else if (parts[0] === "terms") renderTerms();
+  else if (parts[0] === "returns") renderReturns();
+  else if (parts[0] === "review") renderReview(decodeURIComponent(parts[1] || ""));
   else if (parts[0] === "checkout") renderCheckout();
   else if (parts[0] === "admin") renderAdmin();
   else if (parts[0] === "pay") renderPay(decodeURIComponent(parts[1] || ""), parts[2]);
@@ -1762,6 +2322,15 @@ document.addEventListener("click", (e) => {
     loadCatalog().then(() => route());
     return;
   }
+  if (t.closest("[data-code-btn]")) { if (APPLIED) removeCode(); else applyCodeFromInput(); return; }
+  const useCode = t.closest("[data-code-use]");
+  if (useCode) { const i = $("#f-code"); if (i) i.value = useCode.dataset.codeUse; applyCodeFromInput(useCode.dataset.codeUse); return; }
+  const copyCode = t.closest("[data-copycode]");
+  if (copyCode) { const c = copyCode.dataset.copycode; (navigator.clipboard ? navigator.clipboard.writeText(c) : Promise.reject()).then(() => toast("Code " + c + " copied. Use it at checkout.")).catch(() => toast("Your code is " + c)); return; }
+  if (t.closest("[data-refresh-status]")) { liveFailed = false; refreshStatuses().then(() => toast("Status updated")); return; }
+  if (t.closest("[data-more-reviews]")) { showAllReviews = true; const h = $("#reviews"); if (h) { h.outerHTML = homeReviewsHTML(); } return; }
+  const star = t.closest("[data-star]");
+  if (star) { reviewRating = Number(star.dataset.star); paintStars(); return; }
   const add = t.closest("[data-add]");
   if (add) {                       // Add to Cart from card — never navigates
     e.stopPropagation();
@@ -1856,13 +2425,18 @@ document.addEventListener("change", (e) => {
 
 document.addEventListener("submit", (e) => {
   if (e.target.id === "checkout-form") { e.preventDefault(); submitOrder(e.target); }
+  if (e.target.id === "rv-form") { e.preventDefault(); submitReview(e.target); }
+  if (e.target.dataset && e.target.dataset.vp) { e.preventDefault(); verifyPhone(e.target); }
 });
+document.addEventListener("keydown", (e) => { if (e.key === "Enter" && e.target.id === "f-code") { e.preventDefault(); if (!APPLIED) applyCodeFromInput(); } });
+document.addEventListener("visibilitychange", () => { if (!document.hidden && location.hash === "#/orders") refreshStatuses(); });
 
 /* ---------- Init ---------- */
 window.addEventListener("DOMContentLoaded", () => {
   document.title = CONFIG.storeName + " — " + CONFIG.tagline;
   $("#logo-text").textContent = CONFIG.storeName.replace(/^\s*MG\s+/i, "");
-  $("#announce").textContent = (CONFIG.freeDeliveryAbove ? "Free delivery in Bhagalpur above " + money(CONFIG.freeDeliveryAbove) : "Delivery across Bhagalpur") + (CONFIG.codEnabled ? "  ·  Cash on delivery available" : "");
+  paintAnnounce();
+  if (CONFIG.instagram) { const fi = $("#foot-ig"); fi.href = igUrl(); fi.innerHTML = IG_ICON + "Instagram"; fi.title = "@" + CONFIG.instagram; fi.style.display = "block"; fi.style.overflowWrap = "anywhere"; }
   $("#footer-name").textContent = CONFIG.storeName;
   $("#footer-tag").textContent = CONFIG.tagline;
   if (CONFIG.contactEmail) { const fm = $("#foot-mail"); fm.href = "mailto:" + CONFIG.contactEmail; fm.textContent = CONFIG.contactEmail; fm.style.display = "block"; fm.style.fontSize = ".8rem"; fm.style.overflowWrap = "anywhere"; }
@@ -1887,13 +2461,15 @@ window.addEventListener("DOMContentLoaded", () => {
   if (!SHEET_MODE) { CATALOG = staticCatalog(); route(); return; }
   // With the sheet: show the last known catalogue instantly (if any), then refresh stock in the background
   const cached = readCatalogCache();
-  if (cached) { applyFeed(cached); route(); }
+  if (cached) { applyFeed(cached, true); route(); }
   else { catalogLoading = true; route(); }
   loadCatalog().then(ok => {
     if (!ok) { if (!catalogLoaded) route(); return; }
     if (reconcileCart()) toast("Your cart was updated to match what's in stock");
     const h = location.hash || "#/";
-    if (h === "#/" || h === "" || h.startsWith("#/cart") || h.startsWith("#shop")) route(); else if (!cached) route(); else updateBadge();
+    const stat = STATIC_PAGES.some(k => h === "#/" + k);
+    if (h === "#/" || h === "" || h.startsWith("#/cart") || h.startsWith("#shop") || stat) route(); else if (!cached) route(); else updateBadge();
+    refreshOfferUI();
   });
 });
 </script>
