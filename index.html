@@ -267,6 +267,18 @@ footer .logo{color:#f0e6d6;font-size:1.5rem;display:block;margin-bottom:4px}
 .adm-tools{display:flex;align-items:center;gap:10px;margin:0 0 12px;flex-wrap:wrap}
 .adm-tools .adm-sub{margin:0}
 #app{min-height:85vh;min-height:85svh}   /* keeps the footer from flashing at the top, then jumping down, while a page is still loading */
+.stepper{display:flex;align-items:stretch;background:var(--olive);color:#fff;border-radius:10px;overflow:hidden;min-height:44px}
+.stepper button{flex:none;width:48px;background:transparent;border:0;color:#fff;font-size:1.35rem;line-height:1;display:flex;align-items:center;justify-content:center;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.stepper button:hover{background:rgba(255,255,255,.14)}
+.stepper button:active{background:rgba(255,255,255,.26)}
+.stepper button.max{opacity:.4}
+.stepper .sq{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.1;min-width:0}
+.stepper .sq b{font-size:1.05rem;font-weight:700}
+.stepper .sq small{font-size:.58rem;letter-spacing:.16em;text-transform:uppercase;opacity:.85}
+.card .stepper{border-radius:2px}
+.stepper button:focus-visible{outline:2px solid #fff;outline-offset:-5px}
+.card{-webkit-tap-highlight-color:transparent}
+.card [data-open-pick]{white-space:normal;line-height:1.35;padding-left:10px;padding-right:10px}
 .cancel-box{margin:12px 0 0}
 .cancel-box .btn{margin-top:0}
 .cancel-box.ask{padding:14px;border:1.5px solid var(--clay);border-radius:var(--radius);background:var(--sand)}
@@ -817,6 +829,29 @@ function saveCart(cart) {
   updateBadge();
 }
 function inCart(sku) { return getCart().some(i => i.id === sku); }
+const cartQty = (sku) => { const i = getCart().find(x => x.id === sku); return i ? i.qty : 0; };
+const TRASH_SVG = '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12h10l1-12M9 7V4h6v3"/></svg>';
+/** On a product card: the quantity in the cart, with - and + right there (the - is a bin when only one is left). */
+function stepperHTML(v, q) {
+  const atMax = q >= v.stock;
+  return `<div class="stepper" data-stepper role="group" aria-label="Quantity in your cart">
+    <button type="button" data-cardq="-1" data-sku="${esc(v.sku)}" aria-label="${q === 1 ? "Remove from cart" : "One less"}">${q === 1 ? TRASH_SVG : "−"}</button>
+    <span class="sq" aria-live="polite"><b>${q}</b><small>in cart</small></span>
+    <button type="button" data-cardq="1" data-sku="${esc(v.sku)}" aria-label="One more"${atMax ? ' aria-disabled="true" class="max"' : ""}>+</button>
+  </div>`;
+}
+function singleBtnsHTML(v) {
+  const q = cartQty(v.sku);
+  return (q > 0 ? stepperHTML(v, q) : `<button class="btn" data-add="${esc(v.sku)}">Add to Cart</button>`) + `<button class="btn btn-buy" data-buy="${esc(v.sku)}">Buy Now</button>`;
+}
+/** Redraws only the buttons of this one product (never the whole list), then puts the keyboard focus back where it was. */
+function refreshCardBtns(sku, focus) {
+  const f = findVariant(sku); if (!f) return;
+  const sel = `[data-btns="${CSS.escape(sku)}"]`;
+  document.querySelectorAll(sel).forEach(box => { box.innerHTML = singleBtnsHTML(f.variant); });
+  const target = focus === "add" ? `${sel} [data-add]` : `${sel} [data-cardq="${focus === "minus" ? "-1" : "1"}"]`;
+  const b = focus ? document.querySelector(target) : null; if (b) { try { b.focus({ preventScroll: true }); } catch {} }
+}
 function designInCart(p) { return p.variants.some(v => inCart(v.sku)); }
 function addToCart(sku, qty = 1, quiet = false) {
   const f = findVariant(sku);
@@ -1060,8 +1095,8 @@ function cardHTML(p) {
   const colours = p.variants.filter(v => v.colour);
   // one colour: add straight from the card. Several colours: the customer must pick one on the product page.
   const btn = out ? `<button class="btn" disabled>Sold Out</button>`
-    : multi ? `<button class="btn ${added ? "in-cart" : ""}" data-open-pick="${esc(p.id)}">${added ? "In Cart ✓ (choose more)" : "Choose colour"}</button>`
-    : `<div class="card-btns"><button class="btn ${added ? "in-cart" : ""}" data-add="${esc(p.variants[0].sku)}">${added ? "In Cart ✓" : "Add to Cart"}</button><button class="btn btn-buy" data-buy="${esc(p.variants[0].sku)}">Buy Now</button></div>`;
+    : multi ? `<button class="btn ${added ? "in-cart" : ""}" data-open-pick="${esc(p.id)}">${added ? `In Cart: ${p.variants.reduce((n, v) => n + cartQty(v.sku), 0)} ✓ (choose more)` : "Choose colour"}</button>`
+    : `<div class="card-btns" data-btns="${esc(p.variants[0].sku)}">${singleBtnsHTML(p.variants[0])}</div>`;
   return `
   <div class="card" data-open="${esc(p.id)}">
     <div class="card-img">
@@ -2415,16 +2450,28 @@ document.addEventListener("click", (e) => {
   const star = t.closest("[data-star]");
   if (star) { reviewRating = Number(star.dataset.star); paintStars(); return; }
   const add = t.closest("[data-add]");
-  if (add) {                       // Add to Cart from card — never navigates
+  if (add) {                       // Add to Cart from card: never leaves the page. The button turns into  - 1 +  (quantity) right there
     e.stopPropagation();
-    addToCart(add.dataset.add);
-    add.textContent = "In Cart ✓"; add.classList.add("in-cart");
+    const sku = add.dataset.add;
+    if (addToCart(sku, 1, true)) refreshCardBtns(sku, "plus"); else toast("Sorry, this one just sold out");
     return;
   }
-  const buy = t.closest("[data-buy]");
-  if (buy) {                       // Buy Now from a card: put it in the cart and go straight to checkout
+  const cardq = t.closest("[data-cardq]");
+  if (cardq) {                     // - or + on a card
     e.stopPropagation();
-    if (addToCart(buy.dataset.buy, 1, true)) location.hash = "#/checkout";
+    const sku = cardq.dataset.sku, d = Number(cardq.dataset.cardq), cur = cartQty(sku), f = findVariant(sku);
+    if (d > 0 && f && cur >= f.variant.stock) { toast(f.variant.stock === 1 ? "Only 1 available" : `Only ${f.variant.stock} available`); return; }
+    setQty(sku, cur + d);
+    refreshCardBtns(sku, cur + d <= 0 ? "add" : d > 0 ? "plus" : "minus");       // keyboard focus stays on the button that was pressed
+    if (cur + d <= 0) toast("Removed from your cart");
+    return;
+  }
+  if (t.closest("[data-stepper]")) { e.stopPropagation(); return; }       // tapping the number does nothing (it must not open the product page)
+  const buy = t.closest("[data-buy]");
+  if (buy) {                       // Buy Now from a card: straight to checkout. If it is not in the cart yet, one is added; if it is, the cart stays as the customer set it
+    e.stopPropagation();
+    const sku = buy.dataset.buy;
+    if (cartQty(sku) > 0 || addToCart(sku, 1, true)) location.hash = "#/checkout";
     return;
   }
   const colourBtn = t.closest("[data-colour]");
