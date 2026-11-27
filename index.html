@@ -257,7 +257,7 @@ form textarea{resize:vertical;min-height:90px}
 footer a{color:#f0e6d6;text-decoration:underline}
 
 /* Toast */
-#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--cocoa);color:#fff;padding:12px 22px;border-radius:30px;opacity:0;transition:all .35s;z-index:100;font-size:.92rem;pointer-events:none}
+#toast{position:fixed;bottom:24px;left:50%;width:max-content;max-width:calc(100vw - 32px);text-align:center;line-height:1.4;transform:translateX(-50%) translateY(80px);background:var(--cocoa);color:#fff;padding:12px 22px;border-radius:30px;opacity:0;transition:all .35s;z-index:100;font-size:.92rem;pointer-events:none}
 #toast.show{transform:translateX(-50%) translateY(0);opacity:1}
 
 footer{background:var(--cocoa);color:#d9c9b5;text-align:center;padding:28px 20px;font-size:.9rem}
@@ -348,6 +348,12 @@ footer .logo{color:#f0e6d6;font-size:1.5rem;display:block;margin-bottom:4px}
 .adm-sub{font-size:.82rem;color:var(--muted);margin-top:2px}
 .adm-cust{margin:6px 0;font-size:.92rem}
 .adm-items{white-space:pre-wrap;font-family:inherit;font-size:.9rem;background:var(--cream);border-radius:8px;padding:8px 10px;margin:6px 0}
+.adm-lines{background:var(--cream);border-radius:8px;padding:4px 10px;margin:6px 0}
+.adm-line{display:flex;gap:12px;align-items:center;padding:8px 0}
+.adm-line+.adm-line{border-top:1px solid var(--line)}
+.adm-thumb{flex:none;width:56px;height:56px;border-radius:6px;background:var(--sand);overflow:hidden}
+.adm-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.adm-ltext{font-size:.9rem;overflow-wrap:anywhere;min-width:0}
 .adm-total{font-size:.9rem;margin:6px 0}
 .adm-st{font-size:.75rem;font-weight:700;padding:3px 10px;border-radius:20px;background:#eee;color:#444}
 .st-New{background:#fde7c8;color:#8a4b00}.st-Confirmed{background:#dcebff;color:#1b4f8f}.st-Paid{background:#e2f3df;color:#2c6b25}.st-Shipped{background:#e9e0ff;color:#4b2f91}.st-Delivered{background:#d3f0e0;color:#16613a}.st-Cancelled{background:#f6d9d6;color:#9b2c22}
@@ -393,6 +399,16 @@ footer .logo{color:#f0e6d6;font-size:1.5rem;display:block;margin-bottom:4px}
 .adm-bulk-in .adm-btn{padding:10px 14px}
 .adm-bulk-in .adm-btn:disabled{opacity:.55}
 .adm-btn.pulse{box-shadow:0 0 0 3px rgba(45,134,89,.35);font-weight:700}
+.adm-btn.wa.pulse{animation:wa-ring 1.5s ease-out 4}
+@keyframes wa-ring{0%{box-shadow:0 0 0 0 rgba(46,125,79,.55)}100%{box-shadow:0 0 0 12px rgba(46,125,79,0)}}
+.adm-watray{background:#eaf6ee;border:2px solid #2e7d4f;border-radius:14px;padding:12px 14px;margin:0 0 14px}
+.adm-watray-h{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.adm-watray .adm-sub{margin:4px 0 8px}
+.adm-warow{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 0;border-top:1px solid #cfe5d6}
+.adm-warow span{min-width:0;overflow-wrap:anywhere}
+.adm-warow small{display:block;color:#5a6b60}
+.adm-warow .adm-btn{flex:none;text-decoration:none;text-align:center;padding:11px 14px}
+@media (prefers-reduced-motion:reduce){.adm-btn.wa.pulse{animation:none}}
 .adm-ok{color:#2c6b25;font-size:.9rem;margin:6px 0}
 .adm-login label{display:block;font-weight:600;font-size:.85rem;margin-bottom:4px}
 .adm-bar{display:flex;gap:10px;margin-bottom:12px}
@@ -1668,6 +1684,27 @@ const ADM_BULK = { Confirmed: ["New"], Shipped: ["Confirmed", "Paid"], Delivered
 const ADM_BULK_BTN = { Confirmed: "Confirm", Shipped: "Mark shipped", Delivered: "Mark delivered" };
 const ADM_PICKABLE = ["New", "Confirmed", "Paid", "Shipped"];
 const ADM_LABEL = { Confirmed: "Confirm order", Paid: "Paid + confirm", Shipped: "Mark shipped", Delivered: "Mark delivered", Cancelled: "Cancel order" };
+/* ---- free one-tap WhatsApp: after Confirm / Cancel a green button opens WhatsApp with the message already written; the owner only presses Send ---- */
+const WA_KEY = "mg-wa-due", WA_TEXT = { Confirmed: ["Send WhatsApp confirmation", "Send confirmation", "Confirmed"], Cancelled: ["Send WhatsApp cancellation", "Send cancellation", "Cancelled"] };
+ADM.wa = (() => { try { const a = JSON.parse(localStorage.getItem(WA_KEY) || "[]"); return Array.isArray(a) ? a.filter(x => x && x.id && WA_TEXT[x.k] && Date.now() - (x.t || 0) < 3 * 864e5).slice(0, 60) : []; } catch { return []; } })();
+const waSave = () => { try { localStorage.setItem(WA_KEY, JSON.stringify(ADM.wa)); } catch {} };
+function waDue(id) { const o = ADM.orders.find(x => x.id === id); return o && o.wa && ADM.wa.find(x => x.id === id && x.s === o.status) || null; }
+function waAdd(o, was) {          // o already holds its new status; "was" is the status before the change
+  const k = o.status === "Confirmed" || (o.status === "Paid" && was === "New") ? "Confirmed" : o.status === "Cancelled" && o.by !== "customer" ? "Cancelled" : "";
+  if (!k || !o.wa) return false;
+  ADM.wa = [{ id: o.id, k, s: o.status, t: Date.now() }].concat(ADM.wa.filter(x => x.id !== o.id)).slice(0, 60); waSave(); return true;
+}
+function waPrune() {              // forget messages for orders that have moved on, vanished, or are old
+  const keep = ADM.wa.filter(x => { const o = ADM.orders.find(y => y.id === x.id); return o && o.status === x.s && Date.now() - x.t < 3 * 864e5; });
+  if (keep.length !== ADM.wa.length) { ADM.wa = keep; waSave(); }
+}
+function admWaTray() {
+  const rows = ADM.wa.map(x => ({ x, o: ADM.orders.find(y => y.id === x.id) })).filter(r => r.o && r.o.wa && r.o.status === r.x.s);
+  if (!rows.length) return "";
+  return `<div class="adm-watray"><div class="adm-watray-h"><b>Tell your customer on WhatsApp</b><button class="adm-btn" data-a="waclear">Clear</button></div>
+    <p class="adm-sub">Tap the green button. WhatsApp opens with the message already written. Just press Send.</p>
+    ${rows.map(({ x, o }) => `<div class="adm-warow"><span><b>${esc(o.id)}</b> · ${esc(o.name)}<small>${WA_TEXT[x.k][2]}</small></span><a class="adm-btn wa pulse" data-a="wasent" data-id="${esc(o.id)}" href="${esc(o.wa)}" target="_blank" rel="noopener">${WA_TEXT[x.k][1]}</a></div>`).join("")}</div>`;
+}
 async function admCall(body) {
   try {
     const r = await fetch(CONFIG.sheetApiUrl, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify({ action: "admin", password: ADM.pw, ...body }) });
@@ -1733,7 +1770,7 @@ async function admLoad(quiet) {
     if (quiet) { toast(ADM.err); return false; }
     renderAdmin(); return false;
   }
-  ADM.products = r.products; ADM.orders = r.orders; ADM.emailsLeft = r.emailsLeft; ADM.reviews = r.reviews || []; ADM.offer = r.offer || null; ADM.loaded = true; ADM.err = "";
+  ADM.products = r.products; ADM.orders = r.orders; ADM.emailsLeft = r.emailsLeft; ADM.reviews = r.reviews || []; ADM.offer = r.offer || null; ADM.loaded = true; ADM.err = ""; waPrune();
   try { sessionStorage.setItem("mg-admin", ADM.pw); } catch {}
   if (quiet) { admPaint(); return true; }
   renderAdmin(); return true;
@@ -1809,7 +1846,7 @@ function admOrdersHTML() {
   const left = ADM.emailsLeft; const lowMail = typeof left === "number" ? `<p class="adm-sub" style="margin:0 0 8px">Emails left today: <b>${left}</b>${left < 10 ? " · running low, customers will get WhatsApp links instead of emails" : ""}</p>` : "";
   const pick = list.filter(o => ADM_PICKABLE.includes(o.status));
   const tools = pick.length > 1 ? `<div class="adm-tools"><button class="adm-btn" data-a="selall">Select all ${pick.length}</button><span class="adm-sub">Tick orders to update many at once.</span></div>` : "";
-  return lowMail + `<div class="filters">${chips.map(([k, l]) => `<button class="chip ${f === k ? "active" : ""}" data-a="ofilter" data-v="${k}">${l}${["new", "toship", "way"].includes(k) && n(k) ? " (" + n(k) + ")" : ""}</button>`).join("")}</div>` + tools +
+  return lowMail + admWaTray() + `<div class="filters">${chips.map(([k, l]) => `<button class="chip ${f === k ? "active" : ""}" data-a="ofilter" data-v="${k}">${l}${["new", "toship", "way"].includes(k) && n(k) ? " (" + n(k) + ")" : ""}</button>`).join("")}</div>` + tools +
     (list.length ? list.map(admOrderCard).join("") : `<div class="empty">No orders here.</div>`) + `<div id="adm-bulk" class="adm-bulk"></div>`;
 }
 /* ---- update many orders at once ---- */
@@ -1844,7 +1881,7 @@ async function admBulk(status) {
   if (!ids.length) return;
   const verb = { Confirmed: "Confirm", Shipped: "Mark as shipped", Delivered: "Mark as delivered" }[status];
   if (!confirm(`${verb}: ${ids.length} order${ids.length > 1 ? "s" : ""}?\nEach customer gets an email.`)) return;
-  let ok = 0, skipped = 0, failed = 0, mailed = 0, lowMail = 0, stop = "";
+  let ok = 0, skipped = 0, failed = 0, mailed = 0, lowMail = 0, waNew = 0, stop = "";
   for (let i = 0; i < ids.length; i += 6) {
     ADM.busy = `Updating ${Math.min(i + 6, ids.length)} of ${ids.length}…`; admBulkBar();
     const chunk = ids.slice(i, i + 6);
@@ -1852,14 +1889,20 @@ async function admBulk(status) {
     if (!r.ok) { stop = admError(r.error, r.message); failed += ids.length - i; break; }
     for (const x of r.results || []) {
       const o = ADM.orders.find(y => y.id === x.id);
-      if (x.ok) { ok++; ADM.sel.delete(x.id); if (o) { o.status = x.status; o.notified = x.notified; o.wa = x.wa; } if (/^SKIPPED/.test(x.notified || "")) lowMail++; else if (x.notified && !/FAILED|no email/i.test(x.notified)) mailed++; }
+      if (x.ok) { ok++; ADM.sel.delete(x.id); if (o) { const was = o.status; o.status = x.status; o.notified = x.notified; o.wa = x.wa; if (waAdd(o, was)) waNew++; } if (/^SKIPPED/.test(x.notified || "")) lowMail++; else if (x.notified && !/FAILED|no email/i.test(x.notified)) mailed++; }
       else if (x.error === "skipped") { skipped++; ADM.sel.delete(x.id); if (o && x.status) o.status = x.status; }
       else failed++;
     }
   }
   ADM.busy = ""; admPaint();
-  toast(stop || `${ok} order${ok === 1 ? "" : "s"} marked ${status.toLowerCase()}.` + (mailed ? ` ${mailed} customer${mailed === 1 ? "" : "s"} emailed.` : "") + (lowMail ? ` Email limit is low for ${lowMail}: open them and tap Send WhatsApp.` : "") + (skipped ? ` ${skipped} skipped (already moved on).` : "") + (failed ? ` ${failed} failed, please refresh.` : ""), 7000);
+  toast(stop || `${ok} order${ok === 1 ? "" : "s"} marked ${status.toLowerCase()}.` + (mailed ? ` ${mailed} customer${mailed === 1 ? "" : "s"} emailed.` : "") + (waNew ? ` Tap the green WhatsApp buttons at the top to message ${waNew === 1 ? "the customer" : "your customers"}.` : lowMail ? ` Email limit is low for ${lowMail}: open them and tap Send WhatsApp.` : "") + (skipped ? ` ${skipped} skipped (already moved on).` : "") + (failed ? ` ${failed} failed, please refresh.` : ""), 7000);
   if (skipped || failed || stop) admLoad(true);
+}
+/* Each item with its photo, so you can tell the orders apart at a glance. Photos load only when scrolled to, and Drive photos use a small copy. Older orders (no item data) show the plain text list. */
+function admLinesHTML(o) {
+  const texts = String(o.items || "").split("\n"), ls = Array.isArray(o.lines) ? o.lines : [];
+  if (!ls.length || ls.length !== texts.length) return "";
+  return `<div class="adm-lines">${ls.map((l, i) => `<div class="adm-line"><span class="adm-thumb">${l.photo ? imgTag(sized(l.photo, 160), "", 'loading="lazy" decoding="async"') : ""}</span><span class="adm-ltext">${esc(texts[i])}</span></div>`).join("")}</div>`;
 }
 function admOrderCard(o) {
   let next = ADM_NEXT[o.status] || [];
@@ -1869,14 +1912,14 @@ function admOrderCard(o) {
     <div class="adm-row">${ADM_PICKABLE.includes(o.status) ? `<label class="adm-pick"><input type="checkbox" data-a="sel" data-id="${esc(o.id)}"${ADM.sel.has(o.id) ? " checked" : ""} aria-label="Select order ${esc(o.id)}"><strong>${esc(o.id)}</strong></label>` : `<strong>${esc(o.id)}</strong>`}<span class="adm-st st-${esc(o.status)}">${esc(o.status)}</span></div>
     <div class="adm-sub">${esc(o.when)}</div>
     <div class="adm-cust"><b>${esc(o.name)}</b> · <a href="tel:${esc(o.phone.replace(/[^\d+]/g, ""))}">${esc(o.phone)}</a>${o.email ? ` · <a href="mailto:${esc(o.email)}">${esc(o.email)}</a>` : ""}</div>
-    <pre class="adm-items">${esc(o.items)}</pre>
+    ${admLinesHTML(o) || `<pre class="adm-items">${esc(o.items)}</pre>`}
     <div class="adm-sub">Payment: <b>${esc(o.payment || "UPI")}</b></div>
     ${o.by === "customer" ? `<div class="adm-err" style="margin:6px 0">Cancelled by the customer.${o.payment === "UPI - Paid" ? ` You marked this order as paid: please refund ${money(o.total)}.` : o.payment === "Cash on delivery" ? " Cash on delivery: nothing to refund." : " Check your UPI app in case they paid, and refund if so."}</div>` : ""}
     <div class="adm-total">Subtotal ${money(o.subtotal)}${o.discount ? ` · Discount ${esc(o.code)} −${money(o.discount)}` : ""} · Delivery ${esc(o.delivery)} · <b>Total ${money(o.total)}${o.delivery === "To confirm" ? " + delivery" : ""}</b></div>
     <div class="adm-sub">${esc(o.address)}<br>${esc(o.area)}${o.notes ? `<br>Note: ${esc(o.notes)}` : ""}</div>
     <div class="adm-acts">
       ${next.map(s => `<button class="adm-btn ${s === "Cancelled" ? "danger" : "main"}" data-a="status" data-id="${esc(o.id)}" data-v="${s}">${s === "Paid" && o.status !== "New" ? "Mark paid" : ADM_LABEL[s]}</button>`).join("")}
-      ${o.wa ? `<a class="adm-btn wa${/^SKIPPED/.test(o.notified || "") ? " pulse" : ""}" href="${esc(o.wa)}" target="_blank" rel="noopener">${/^SKIPPED/.test(o.notified || "") ? "Send WhatsApp confirmation" : "WhatsApp customer"}</a>` : ""}
+      ${o.wa ? (() => { const due = waDue(o.id), skip = /^SKIPPED/.test(o.notified || ""); return `<a class="adm-btn wa${due || skip ? " pulse" : ""}" data-a="wasent" data-id="${esc(o.id)}" href="${esc(o.wa)}" target="_blank" rel="noopener">${due ? WA_TEXT[due.k][0] : skip ? "Send WhatsApp confirmation" : "WhatsApp customer"}</a>`; })() : ""}
     </div>
     ${/^SKIPPED/.test(o.notified || "") ? `<div class="adm-err">Email limit is low, so the customer was not emailed. Tap "Send WhatsApp confirmation" above.</div>` : ""}
     ${o.notified && o.notified !== "(no email sent)" && !/^FAILED|^SKIPPED/.test(o.notified) ? `<div class="adm-sub">Customer emailed: ${esc(o.notified)}</div>` : (/^FAILED/.test(o.notified) ? `<div class="adm-err">Customer email failed: ${esc(o.notified)}</div>` : "")}
@@ -1887,8 +1930,10 @@ async function admSetStatus(id, status, btn) {
   if (btn) { btn.disabled = true; btn.textContent = "Please wait…"; }
   const r = await admCall({ op: "setStatus", id, status });
   if (!r.ok) { toast(admError(r.error, r.message)); admPaint(); return; }
-  const o = ADM.orders.find(x => x.id === id); if (o) { o.status = r.status; o.notified = r.notified; o.wa = r.wa; }
+  const o = ADM.orders.find(x => x.id === id), was = o && o.status; if (o) { o.status = r.status; o.notified = r.notified; o.wa = r.wa; }
+  const wa = o && waAdd(o, was);
   if (status === "Cancelled") admLoad(true); else admPaint();
+  if (wa) { toast((status === "Cancelled" ? "Order cancelled, stock returned." : "Order confirmed.") + " Tap the green WhatsApp button above.", 5000); window.scrollTo({ top: 0, behavior: "smooth" }); return; }
   toast(status === "Cancelled" ? "Order cancelled, stock returned" : /^SKIPPED/.test(r.notified || "") ? "Email limit is low. Tap Send WhatsApp confirmation." : "Done. " + (r.notified && !/FAILED|no email/.test(r.notified) ? "Customer emailed." : ""));
 }
 /* ---- products ---- */
@@ -2015,6 +2060,8 @@ document.addEventListener("click", (e) => {
   else if (k === "rv") admReviewStatus(a);
   else if (k === "ofilter") { ADM.filter = a.dataset.v; ADM.sel.clear(); admPaint(); }
   else if (k === "status") admSetStatus(a.dataset.id, a.dataset.v, a);
+  else if (k === "wasent") { const id = a.dataset.id; if (ADM.wa.some(x => x.id === id)) setTimeout(() => { ADM.wa = ADM.wa.filter(x => x.id !== id); waSave(); if (ADM.tab === "orders") admPaint(); }, 600); }   // the link opens WhatsApp first; the button is tidied away a moment later
+  else if (k === "waclear") { ADM.wa = []; waSave(); admPaint(); }
   else if (k === "refresh") { toast("Refreshing…"); ADM.sel.clear(); admLoad(true); }
   else if (k === "logout") admLogout();
   else if (k === "stock") admStock(Number(a.dataset.row), Number(a.dataset.d));
