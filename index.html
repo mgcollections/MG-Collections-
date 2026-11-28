@@ -752,6 +752,161 @@ footer .foot-grid a:hover{color:#fff}
   #shop .filters{flex-wrap:nowrap;overflow-x:auto;justify-content:flex-start;gap:8px;margin:0 -20px 16px;padding:0 20px 2px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
   #shop .filters .chip{flex:none;padding:8px 14px}
 }
+
+/* ===== v3: new header, slider, wishlist ===== */
+.nav-inner{grid-template-columns:auto minmax(0,1fr) auto;gap:20px}
+.nav-inner .brand{order:0;justify-content:flex-start}
+.nav-inner .nav-left{order:0;min-width:0;display:flex;gap:clamp(16px,2.2vw,32px);align-items:center;overflow-x:auto;scrollbar-width:none;font-size:.72rem;letter-spacing:.12em;white-space:nowrap}
+.nav-inner .nav-left::-webkit-scrollbar{display:none}
+.nav-left a{padding:8px 0;position:relative;font-weight:600;flex:none}
+.nav-left a:first-child{margin-left:auto}
+.nav-left a:last-child{margin-right:auto}
+.nav-left a:hover::after{content:"";position:absolute;left:0;right:0;bottom:2px;height:2px;background:var(--gold)}
+.nav-inner .nav-links{order:0;gap:6px}
+.icon-link{position:relative;display:flex;align-items:center;justify-content:center;width:44px;height:44px;border:0;background:transparent;color:var(--cocoa);padding:0}
+.icon-link svg{width:25px;height:25px}
+.icon-link:hover{color:var(--gold)}
+.icon-link .badge{position:absolute;top:3px;right:1px;pointer-events:none}
+.wish-link .badge{background:var(--clay)}
+.nav-strip{display:none}
+.on-admin .nav-strip{display:none!important}
+#shop{scroll-margin-top:84px}
+@media(max-width:900px){
+  .nav-inner .nav-left{display:none}
+  .nav-strip{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding:9px 14px;background:var(--white);border-bottom:1px solid var(--line);font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;font-weight:600;white-space:nowrap}
+  .nav-strip::-webkit-scrollbar{display:none}
+  .nav-strip a{flex:none;padding:8px 14px;border:1px solid var(--line);border-radius:30px;background:var(--cream)}
+  .nav-strip a:hover{border-color:var(--gold);color:var(--gold-dark)}
+}
+@media(max-width:480px){
+  .nav-inner{grid-template-columns:minmax(0,1fr) auto;gap:6px}
+  .nav-inner .brand{order:0}
+  .nav-inner .nav-links{order:0;gap:0}
+  .icon-link{width:42px;height:44px}
+  .icon-link svg{width:24px;height:24px}
+  .container.nav-inner{padding:0 8px 0 14px}
+}
+/* hearts */
+.wish{position:absolute;top:8px;right:8px;z-index:3;width:40px;height:40px;border:0;border-radius:50%;background:rgba(255,253,249,.94);color:var(--cocoa);display:flex;align-items:center;justify-content:center;padding:0;box-shadow:0 1px 4px rgba(59,42,32,.18);-webkit-tap-highlight-color:transparent}
+.wish svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linejoin:round;transition:transform .2s}
+.wish:hover{color:var(--clay)}
+.wish.on{color:var(--clay)}
+.wish.on svg{fill:currentColor}
+.wish:active svg{transform:scale(.85)}
+.gal-col{position:relative}
+.gal-col .wish{top:12px;right:12px;width:44px;height:44px}
+.wish-empty{text-align:center;padding:70px 0 40px}
+.wish-empty h2{font-size:2.2rem}
+.wish-empty p{margin:10px 0 22px;color:var(--muted)}
+/* slider */
+.slider{position:relative;background:var(--cocoa);overflow:hidden}
+.sl-track{display:flex;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch}
+.sl-track::-webkit-scrollbar{display:none}
+.sl-slide{flex:0 0 100%;min-width:0;scroll-snap-align:start;scroll-snap-stop:always;display:flex;height:540px;background:var(--sl-bg,#3b2a20);color:var(--sl-fg,#fffdf9);-webkit-tap-highlight-color:transparent;-webkit-user-drag:none}
+.sl-text{flex:0 0 46%;min-width:0;box-sizing:border-box;padding:0 40px 0 max(32px,calc((100% - 1150px)/2 + 20px));display:flex;flex-direction:column;justify-content:center;align-items:flex-start}
+.sl-eyebrow{font-size:.74rem;font-weight:600;letter-spacing:.3em;text-transform:uppercase;color:var(--sl-eb,#dcc592)}
+.sl-text h2{margin:16px 0 0;font-family:var(--hf,"Cormorant Garamond",Georgia,serif);font-weight:var(--hw,600);font-size:calc(clamp(2.6rem,5.6vw,5.4rem)*var(--hm,1));line-height:var(--hl,.98);color:inherit;overflow-wrap:break-word;max-width:100%}
+.sl-rule{display:block;width:64px;height:2px;background:var(--sl-rule,#a67a35);margin:26px 0}
+.sl-text p{margin:0 0 30px;font-size:1.1rem;max-width:400px;color:inherit;opacity:.92}
+.sl-code{display:inline-block;border:1.5px dashed currentColor;padding:8px 18px;margin:-8px 0 26px;font-weight:700;letter-spacing:.16em;font-size:1.05rem}
+.sl-cta{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:0 30px;font-size:.78rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;transition:filter .2s;background:var(--sl-btn,#fffdf9);color:var(--sl-btnfg,#3b2a20)}
+.sl-slide:hover .sl-cta{filter:brightness(.93)}
+.sl-media{flex:1;min-width:0;display:flex;gap:10px}
+.sl-media img{flex:1 1 0;width:0;min-width:0;height:100%;object-fit:cover;background:var(--sand)}
+.sl-media.empty{align-items:center;justify-content:center;background:rgba(127,127,127,.12);background:color-mix(in srgb,var(--sl-fg,#fff) 9%,transparent)}
+.sl-mono{width:46%;max-width:300px;height:auto;--lg-ink:var(--sl-fg,#f2e8d5);--lg-gold:var(--sl-eb,#d9b873);opacity:.9}
+/* Admin: Banners tab */
+.adm-tabs{overflow-x:auto;scrollbar-width:none}
+.adm-tabs::-webkit-scrollbar{display:none}
+.adm-tabs button{flex:1 0 auto;padding:12px 14px;white-space:nowrap}
+@media(max-width:480px){.adm-tabs{gap:6px}.adm-tabs button{padding:12px 9px;font-size:.84rem}}
+.adm-sl{display:grid;grid-template-columns:72px minmax(0,1fr);gap:10px 12px;background:var(--white);border:1px solid var(--line);border-radius:var(--radius);padding:14px;margin-bottom:12px;box-shadow:var(--shadow)}
+.adm-sl.is-off{opacity:.8}
+.adm-sl .adm-thumb{width:72px;height:90px}
+.adm-sl-info b{display:block;font-family:'Cormorant Garamond',Georgia,serif;font-size:1.35rem;line-height:1.15;overflow-wrap:anywhere}
+.adm-sl-acts{grid-column:1/-1;display:flex;gap:8px;flex-wrap:wrap}
+.adm-sl-acts .adm-btn:disabled{opacity:.45}
+.adm-chip{display:inline-block;margin-top:7px;font-size:.74rem;font-weight:700;padding:3px 10px;border-radius:20px;background:#eee;color:#555}
+.adm-chip.c-on{background:#dff1e3;color:#1f6b3a}
+.adm-chip.c-wait{background:#fdf0d5;color:#8a5a00}
+.adm-sl-offer{background:#fdf6e6;border:1px solid #ecd9a8;border-radius:10px;padding:10px 12px;margin:0 0 12px;font-size:.88rem}
+.adm-form select,.adm-form input[type=date]{width:100%;padding:11px 12px;border:1.5px solid var(--line);border-radius:10px;font-family:inherit;font-size:.95rem;background:var(--white);color:var(--cocoa);min-height:46px}
+.adm-two>div{min-width:0}
+.adm-form input[type=date]{min-width:0;max-width:100%}
+.adm-slp{display:flex;border-radius:10px;overflow:hidden;min-height:150px;margin:6px 0 4px;background:var(--sl-bg,#3b2a20);color:var(--sl-fg,#fffdf9)}
+.adm-slp-t{flex:1 1 55%;min-width:0;padding:14px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:6px}
+.adm-slp .sl-eyebrow{font-size:.58rem;letter-spacing:.22em}
+.adm-slp-h{font-family:var(--hf,'Cormorant Garamond',Georgia,serif);font-size:calc(1.55rem*var(--hm,1));line-height:var(--hl,1);font-weight:var(--hw,600);overflow-wrap:anywhere}
+.adm-slp-m{font-size:.76rem;opacity:.92;overflow-wrap:anywhere}
+.adm-slp .sl-cta{min-height:32px;padding:0 14px;font-size:.6rem;margin-top:4px}
+.adm-slp-p{flex:1 1 45%;min-width:0;display:flex;gap:3px;background:rgba(255,255,255,.07)}
+.adm-slp-p img{flex:1 1 0;width:0;min-width:0;height:100%;object-fit:cover}
+
+.adm-slp-none{margin:auto;font-size:.7rem;opacity:.75;padding:8px;text-align:center}
+.adm-sw{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.adm-form label.adm-swatch{position:relative;display:block;margin:0;cursor:pointer;min-width:0}
+.adm-swatch input[type=radio]{position:absolute;opacity:0;pointer-events:none}
+.adm-swatch .sw{display:flex;align-items:center;justify-content:center;gap:6px;text-align:center;min-height:48px;padding:4px 6px;border-radius:10px;border:2px solid var(--line);font-size:.76rem;font-weight:600;line-height:1.15;background:var(--sl-bg,#3b2a20);color:var(--sl-fg,#fffdf9);overflow-wrap:anywhere}
+.adm-swatch .sw-custom{background:var(--sl-bg,#f0e6d6)}
+.adm-swatch input[type=color]{flex:none;width:30px;height:30px;padding:0;border:2px solid currentColor;border-radius:50%;background:none;cursor:pointer;overflow:hidden}
+.adm-swatch input[type=color]::-webkit-color-swatch-wrapper{padding:0}
+.adm-swatch input[type=color]::-webkit-color-swatch{border:0;border-radius:50%}
+.adm-swatch input[type=color]::-moz-color-swatch{border:0;border-radius:50%}
+.adm-swatch input:checked+.sw{border-color:var(--gold);box-shadow:0 0 0 2px var(--gold)}
+.adm-swatch input:focus-visible+.sw{outline:2px solid var(--cocoa);outline-offset:3px}
+.adm-fonts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.adm-form label.adm-fontopt{position:relative;display:block;margin:0;cursor:pointer;min-width:0}
+.adm-fontopt input{position:absolute;opacity:0;pointer-events:none}
+.adm-fontopt .fo{display:flex;flex-direction:column;justify-content:center;min-height:70px;padding:8px 10px;border:2px solid var(--line);border-radius:10px;background:var(--white)}
+.adm-fontopt .fo b{font-family:var(--hf);font-weight:var(--hw,600);font-size:calc(1.4rem*var(--hm,1));line-height:var(--hl,1.1);color:var(--cocoa);overflow-wrap:anywhere}
+.adm-fontopt .fo small{font-size:.72rem;font-weight:600;color:var(--muted);margin-top:2px}
+.adm-fontopt input:checked+.fo{border-color:var(--gold);box-shadow:0 0 0 2px var(--gold)}
+.adm-fontopt input:focus-visible+.fo{outline:2px solid var(--cocoa);outline-offset:3px}
+/* slide colours: each one only sets the colour variables the slide, the small preview and the swatches use */
+.sl-dark{--sl-bg:#3b2a20;--sl-fg:#fffdf9;--sl-eb:#dcc592;--sl-rule:#a67a35;--sl-btn:#fffdf9;--sl-btnfg:#3b2a20}
+.sl-cream{--sl-bg:#f0e6d6;--sl-fg:#3b2a20;--sl-eb:#845c22;--sl-rule:#a67a35;--sl-btn:#a8532f;--sl-btnfg:#fff}
+.sl-clay{--sl-bg:#a8532f;--sl-fg:#fff;--sl-eb:#fff;--sl-rule:#fff;--sl-btn:#fffdf9;--sl-btnfg:#3b2a20}
+.sl-wine{--sl-bg:#5c1f2e;--sl-fg:#fff7f0;--sl-eb:#e8c98a;--sl-rule:#e8c98a;--sl-btn:#fff7f0;--sl-btnfg:#5c1f2e}
+.sl-forest{--sl-bg:#25402f;--sl-fg:#fbf6ea;--sl-eb:#dcc592;--sl-rule:#dcc592;--sl-btn:#fbf6ea;--sl-btnfg:#25402f}
+.sl-navy{--sl-bg:#1e2d4a;--sl-fg:#fbf6ea;--sl-eb:#dcc592;--sl-rule:#dcc592;--sl-btn:#fbf6ea;--sl-btnfg:#1e2d4a}
+.sl-black{--sl-bg:#171210;--sl-fg:#fffdf9;--sl-eb:#dcc592;--sl-rule:#a67a35;--sl-btn:#dcc592;--sl-btnfg:#171210}
+.sl-gold{--sl-bg:#c99a4b;--sl-fg:#2e1f16;--sl-eb:#2e1f16;--sl-rule:#2e1f16;--sl-btn:#2e1f16;--sl-btnfg:#fffdf9}
+.sl-blush{--sl-bg:#f3d8d2;--sl-fg:#4d2228;--sl-eb:#8a3f48;--sl-rule:#8a3f48;--sl-btn:#5c1f2e;--sl-btnfg:#fff}
+.sl-sage{--sl-bg:#dde5d3;--sl-fg:#24392c;--sl-eb:#4d6b4f;--sl-rule:#4d6b4f;--sl-btn:#25402f;--sl-btnfg:#fff}
+.sl-white{--sl-bg:#fffdf9;--sl-fg:#3b2a20;--sl-eb:#845c22;--sl-rule:#a67a35;--sl-btn:#3b2a20;--sl-btnfg:#fffdf9}
+/* heading fonts: each sets the font and a size/line-height adjustment so every font fits the same space */
+.slf-elegant{--hf:"Cormorant Garamond",Georgia,serif;--hw:600;--hm:1;--hl:.98}
+.slf-classic{--hf:"Playfair Display",Georgia,serif;--hw:600;--hm:.82;--hl:1.05}
+.slf-modern{--hf:"Jost","Inter",system-ui,sans-serif;--hw:500;--hm:.82;--hl:1.05}
+.slf-clean{--hf:"Inter",system-ui,sans-serif;--hw:600;--hm:.78;--hl:1.08}
+.slf-script{--hf:"Dancing Script","Brush Script MT",cursive;--hw:700;--hm:1;--hl:1.1}
+.slf-caps{--hf:"Cinzel",Georgia,serif;--hw:600;--hm:.7;--hl:1.1}
+.slf-hindi{--hf:"Noto Serif Devanagari","Mukta",Georgia,serif;--hw:600;--hm:.78;--hl:1.25}
+.sl-arrow{position:absolute;top:50%;margin-top:-26px;width:52px;height:52px;display:flex;align-items:center;justify-content:center;background:var(--white);border:0;color:var(--cocoa);z-index:2}
+.sl-arrow:hover{background:var(--sand)}
+.sl-arrow svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.sl-prev{left:0}.sl-next{right:0}
+.sl-bar{position:absolute;left:50%;bottom:16px;transform:translateX(-50%);display:flex;align-items:center;background:rgba(59,42,32,.66);padding:2px 8px;border-radius:22px;z-index:2}
+.sl-bar button{border:0;background:transparent;width:24px;height:30px;padding:0;display:flex;align-items:center;justify-content:center;color:#fff}
+.sl-dot::before{content:"";display:block;height:9px;width:9px;border-radius:5px;background:rgba(255,255,255,.55);transition:width .3s,background .3s}
+.sl-dot.on::before{width:26px;background:#fff}
+.sl-dot.on{width:40px}
+.sl-pp{margin-left:4px;border-left:1px solid rgba(255,255,255,.3)!important;width:30px!important}
+.sl-pp svg{width:14px;height:14px;fill:currentColor}
+.sl-pp .i-play{display:none}.sl-pp.paused .i-play{display:block}.sl-pp.paused .i-pause{display:none}
+.slider :focus-visible{outline:2px solid var(--gold-soft);outline-offset:-4px}
+@media(hover:none),(max-width:900px){.sl-arrow{display:none}}
+@media(max-width:900px){
+  .sl-slide{flex-direction:column;height:auto}
+  .sl-media{order:-1;flex:none;height:230px;gap:4px}
+  .sl-text{flex:none;padding:20px 22px 62px}
+  .sl-text h2{font-size:calc(clamp(1.95rem,8.6vw,2.7rem)*var(--hm,1));margin-top:8px}
+  .sl-rule{margin:14px 0}
+  .sl-text p{font-size:1rem;margin-bottom:18px}
+  .sl-code{margin:-6px 0 16px;padding:6px 14px;font-size:.95rem}
+  .slider.one .sl-text{padding-bottom:30px}
+}
+@media(prefers-reduced-motion:reduce){.sl-dot::before{transition:none}}
 </style>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' rx='40' fill='%233b2a20'/%3E%3Cg transform='translate(0.52 22.70) scale(0.3568)'%3E%3Cpath d='M73.3 267.33 75.73 151.23Q66.28 134.49 51.7 134.49Q50.89 134.49 50.89 132.87Q50.89 131.25 51.7 131.25Q56.83 131.25 62.63 131.52Q68.44 131.79 72.49 131.79Q78.43 131.79 83.16 131.52Q87.88 131.25 90.58 131.25Q94.36 131.25 96.38 133.81Q98.41 136.38 103 145.29L162.4 261.66L216.13 138Q217.75 134.49 219.64 132.87Q221.53 131.25 224.23 131.25Q226.66 131.25 229.5 131.52Q232.33 131.79 236.38 131.79Q244.48 131.79 250.15 131.52Q255.82 131.25 261.22 131.25Q262.03 131.25 262.03 132.87Q262.03 134.49 261.22 134.49Q248.8 134.49 242.86 139.08Q236.92 143.67 237.46 154.74L243.4 278.13Q243.94 285.96 245.43 290.01Q246.91 294.06 251.37 295.41Q255.82 296.76 264.46 296.76Q265 296.76 265 298.38Q265 300 264.46 300Q257.44 300 248.8 299.73Q240.16 299.46 230.71 299.46Q221.26 299.46 213.03 299.73Q204.79 300 198.04 300Q197.5 300 197.5 298.38Q197.5 296.76 198.04 296.76Q211 296.76 214.78 293.25Q218.56 289.74 217.75 278.13L212.35 163.11L154.84 298.11Q154.57 299.19 152.68 299.19Q150.79 299.19 150.25 298.11L82.75 164.73L80.32 267.33Q80.05 281.64 85.85 289.2Q91.66 296.76 103.27 296.76Q104.08 296.76 104.08 298.38Q104.08 300 103.27 300Q97.33 300 91.12 299.73Q84.91 299.46 77.08 299.46Q68.98 299.46 62.37 299.73Q55.75 300 49.81 300Q49 300 49 298.38Q49 296.76 49.81 296.76Q60.88 296.76 66.95 289.2Q73.03 281.64 73.3 267.33Z M434.36 303.24Q410.87 303.24 392.38 296.36Q373.88 289.47 361.05 277.46Q348.23 265.44 341.62 249.78Q335 234.12 335 216.03Q335 196.32 342.83 180.25Q350.66 164.19 364.7 152.58Q378.74 140.97 397.64 134.62Q416.54 128.28 438.95 128.28Q452.18 128.28 465 130.44Q477.83 132.6 485.93 136.65Q488.63 137.73 489.03 138.4Q489.44 139.08 489.71 142.86L493.22 178.23Q493.22 179.04 491.87 179.31Q490.52 179.58 489.98 178.77Q487.82 172.02 483.1 164.19Q478.37 156.36 471.08 149.47Q463.79 142.59 453.66 138Q443.54 133.41 430.31 133.41Q411.68 133.41 396.56 142.86Q381.44 152.31 372.53 169.59Q363.62 186.87 363.62 210.9Q363.62 229.53 369.02 245.32Q374.42 261.12 384.54 273.27Q394.67 285.42 408.98 292.17Q423.29 298.92 441.11 298.92Q452.18 298.92 458.93 296.22Q465.68 293.52 468.65 286.37Q471.62 279.21 471.62 265.98Q471.62 253.02 470.13 246.94Q468.65 240.87 462.71 238.98Q456.77 237.09 443.54 237.09Q441.92 237.09 441.92 234.93Q441.92 232.77 443.27 232.77Q461.63 233.85 476.35 233.99Q491.06 234.12 507.26 233.31Q508.34 233.31 508.61 235.2Q508.61 236.55 508.07 236.82Q507.8 237.09 507.26 237.09Q502.13 236.82 499.7 238.84Q497.27 240.87 496.59 247.62Q495.92 254.37 495.92 268.68Q495.92 277.59 496.46 281.91Q497 286.23 497.4 288.25Q497.81 290.28 497.81 292.44Q497.81 294.06 497.27 294.6Q496.73 295.14 494.84 295.68Q480.53 298.92 464.6 301.08Q448.67 303.24 434.36 303.24Z' fill='%23f2e8d5'/%3E%3Cpath d='M300.0,115.2 L300.0,318.0' stroke='%23d9b873' stroke-width='8.97' fill='none'/%3E%3C/g%3E%3C/svg%3E">
 </head>
@@ -765,16 +920,24 @@ footer .foot-grid a:hover{color:#fff}
 <div class="announce" id="announce"></div>
 <nav>
   <div class="container nav-inner">
-    <div class="nav-left"><a href="#/">Shop</a><a href="#/orders">Orders</a></div>
     <a href="#/" class="brand" aria-label="MG Collections home"><svg class="mark" viewBox="0 0 459.6 208.8" aria-hidden="true"><use href="#mg-mono"/></svg><span class="logo" id="logo-text"></span></a>
+    <div class="nav-left" id="nav-links"><a href="#/" data-cat="all">Shop all</a><a href="#/orders">Orders</a></div>
     <div class="nav-links">
-      <a href="#/cart" class="cart-link" aria-label="Cart">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"/></svg>
+      <button type="button" class="icon-link" data-search aria-label="Search products">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.6-3.6"/></svg>
+      </button>
+      <a href="#/wishlist" class="icon-link wish-link" id="wish-link" aria-label="Wishlist">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.5-9.3C1.2 8.4 3.2 5 6.6 5c2 0 3.6 1.1 5.4 3.3C13.8 6.1 15.4 5 17.4 5c3.4 0 5.4 3.4 4.1 6.7C19.5 16.4 12 21 12 21z"/></svg>
+        <span class="badge" id="wish-count" hidden>0</span>
+      </a>
+      <a href="#/cart" class="icon-link cart-link" aria-label="Cart">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"/></svg>
         <span class="badge" id="cart-count">0</span>
       </a>
     </div>
   </div>
 </nav>
+<div class="nav-strip" id="nav-strip"><a href="#/" data-cat="all">Shop all</a><a href="#/orders">Orders</a></div>
 
 <main id="app"></main>
 
@@ -788,6 +951,7 @@ footer .foot-grid a:hover{color:#fff}
     <div>
       <h4>Shop</h4>
       <a href="#/">All jewellery</a>
+      <a href="#/wishlist">Your wishlist</a>
       <a href="#/orders">Your orders</a>
       <a href="#/cart">Your cart</a>
     </div>
@@ -1164,6 +1328,7 @@ function cardHTML(p) {
   return `
   <div class="card" data-open="${esc(p.id)}">
     <div class="card-img">
+      ${wishBtnHTML(p)}
       ${imgTag(sized(pic, 500), p.name, 'loading="lazy" decoding="async"')}
       ${(p.images[1] && p.images[1] !== pic) ? imgTag(sized(p.images[1], 500), "", 'class="alt" loading="lazy" decoding="async"') : ""}
       ${out ? '<span class="tag">Sold out</span>' : (p.stock <= 3 ? `<span class="tag">Only ${p.stock} left</span>` : "")}
@@ -1206,9 +1371,8 @@ function heroPicHTML() {
   if (CONFIG.heroImage) return imgTag(CONFIG.heroImage, CONFIG.storeName, 'decoding="async"');
   return `<div class="hero-logo" role="img" aria-label="${esc(CONFIG.storeName)} logo"><svg class="hl-lockup" viewBox="0 0 454.5 279.5" aria-hidden="true"><use href="#mg-lockup"/></svg></div>`;
 }
-function renderHome() {
-  const cats = ["all", ...new Set(CATALOG.map(p => p.category))];
-  app.innerHTML = `
+function brandHeroHTML() {
+  return `
     <section class="hero">
       <div class="container hero-grid">
         <div class="hero-copy">
@@ -1220,7 +1384,14 @@ function renderHome() {
         </div>
         <div class="hero-pic">${heroPicHTML()}</div>
       </div>
-    </section>
+    </section>`;
+}
+function renderHome() {
+  const cats = ["all", ...new Set(CATALOG.map(p => p.category))];
+  const live = liveSlides();
+  slLoadFonts([...new Set(live.map(x => x.font))]);
+  app.innerHTML = `
+    ${live.length ? sliderHTML(live) : brandHeroHTML()}
     <div class="container home-block">
       <div class="trust">
         <div><svg viewBox="0 0 24 24"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7z"/><circle cx="7" cy="18" r="1.6"/><circle cx="17" cy="18" r="1.6"/></svg><span><b>Delivery in Bhagalpur</b>${esc(CONFIG.deliveryDays)} · from ${money(CONFIG.nearAreaFee)}${CONFIG.freeDeliveryAbove ? `, free above ${money(CONFIG.freeDeliveryAbove)}` : ""}</span></div>
@@ -1246,7 +1417,271 @@ function renderHome() {
       <div id="grid-wrap">${gridHTML()}</div>
     </div>
     ${homeReviewsHTML()}`;
+  slInit();
 }
+
+/* =====================================================
+   v3: wishlist, home slider, header links
+   ===================================================== */
+
+/* ---------- Wishlist (saved on this phone only, nothing is sent anywhere) ---------- */
+const WISH_KEY = "mg-wish";
+let WISH = [];
+try { const a = JSON.parse(localStorage.getItem(WISH_KEY)); if (Array.isArray(a)) WISH = a.filter(x => typeof x === "string" && x).slice(0, 200); } catch {}
+function wishSave() { try { localStorage.setItem(WISH_KEY, JSON.stringify(WISH)); } catch {} }
+const isWished = (id) => WISH.includes(id);
+const wishProducts = () => WISH.map(findProduct).filter(Boolean);
+const HEART = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.5-9.3C1.2 8.4 3.2 5 6.6 5c2 0 3.6 1.1 5.4 3.3C13.8 6.1 15.4 5 17.4 5c3.4 0 5.4 3.4 4.1 6.7C19.5 16.4 12 21 12 21z"/></svg>';
+const wishLabel = (id, on) => (on ? "Remove from wishlist: " : "Save to wishlist: ") + ((findProduct(id) || {}).name || "");
+function wishBtnHTML(p) {
+  const on = isWished(p.id);
+  return `<button type="button" class="wish${on ? " on" : ""}" data-wish="${esc(p.id)}" aria-pressed="${on}" aria-label="${esc(wishLabel(p.id, on))}">${HEART}</button>`;
+}
+function wishPaint() {                   // the number in the header and every heart on the page
+  const n = catalogLoaded ? wishProducts().length : WISH.length;
+  const b = $("#wish-count"); if (b) { b.textContent = n; b.hidden = !n; }
+  const l = $("#wish-link"); if (l) l.setAttribute("aria-label", "Wishlist, " + n + " saved");
+  document.querySelectorAll("[data-wish]").forEach(el => {
+    const on = isWished(el.dataset.wish);
+    el.classList.toggle("on", on); el.setAttribute("aria-pressed", on); el.setAttribute("aria-label", wishLabel(el.dataset.wish, on));
+  });
+}
+function wishToggle(id) {
+  const i = WISH.indexOf(id);
+  if (i >= 0) WISH.splice(i, 1); else WISH.unshift(id);
+  wishSave(); wishPaint();
+  toast(i >= 0 ? "Removed from your wishlist" : "Saved to your wishlist");
+  if (location.hash === "#/wishlist") renderWishlist();         // the saved page drops the piece straight away
+}
+function wishPrune() {                   // forget pieces that were deleted from the sheet (only when fresh data arrived)
+  if (!CATALOG.length) return;
+  const keep = WISH.filter(id => findProduct(id));
+  if (keep.length !== WISH.length) { WISH = keep; wishSave(); }
+}
+function renderWishlist() {
+  const list = wishProducts();
+  app.innerHTML = `
+    <div class="container">
+      ${backLink(lastShopHash, "Continue shopping")}
+      <h2 class="section-title">Your Wishlist</h2>
+      ${list.length
+        ? `<p class="hint" style="text-align:center;margin:-14px 0 26px">Saved on this phone. Tap the heart again to remove a piece.</p><div class="grid">${list.map(cardHTML).join("")}</div>`
+        : `<div class="wish-empty"><h2>Nothing saved yet</h2><p>Tap the heart on any piece to keep it here for later.</p><a class="btn" href="#/">Browse jewellery</a></div>`}
+    </div>`;
+}
+
+/* ---------- Header links: Shop all, the categories, Orders ---------- */
+let navKey = "";
+function paintNavLinks() {
+  const cats = [...new Set(CATALOG.map(p => p.category))];
+  const key = cats.join("|");
+  if (key === navKey) return;
+  navKey = key;
+  const link = (c) => `<a href="#/" data-cat="${esc(c)}">${esc(c)}</a>`;
+  const all = `<a href="#/" data-cat="all">Shop all</a>`, orders = `<a href="#/orders">Orders</a>`;
+  const d = $("#nav-links"), m = $("#nav-strip");
+  if (d) d.innerHTML = all + cats.slice(0, 6).map(link).join("") + orders;
+  if (m) m.innerHTML = all + cats.map(link).join("") + orders;
+}
+
+/* ---------- Going to the shop part of the home page, from any page ---------- */
+let afterHome = null;                    // something to do once the home page is on screen
+function scrollToShop() { const s = document.getElementById("shop"); if (s) s.scrollIntoView(); }
+function focusSearch() {
+  const s = $("#search"); if (!s) return;
+  s.scrollIntoView({ block: "center" });
+  try { s.focus({ preventScroll: true }); } catch { s.focus(); }
+}
+function paintShop() {                   // refresh only the chips and the grid, so the slider does not restart
+  const g = $("#grid-wrap"); if (!g) return false;
+  g.innerHTML = gridHTML();
+  document.querySelectorAll("#shop .chip").forEach(c => c.classList.toggle("active", c.dataset.cat === activeCategory));
+  return true;
+}
+function goHome(then) {
+  afterHome = then;
+  if ((location.hash || "#/") === "#/") route(); else location.hash = "#/";
+}
+function showCategory(c) {
+  activeCategory = c;
+  if ((location.hash || "#/") === "#/" && paintShop()) { scrollToShop(); return; }
+  goHome(scrollToShop);
+}
+function goSearch() {
+  if ((location.hash || "#/") === "#/" && $("#search")) { focusSearch(); return; }
+  goHome(focusSearch);
+}
+
+/* ---------- Home slider ----------
+   The slides come from the Slides tab of the sheet (the Banners page in Admin). A slide hides itself when its
+   dates have passed, or when the product or category it opens is sold out. While the first-order offer is live
+   it gets the first slide. The slide itself is one link, so tapping anywhere on it opens the product or category.
+   The sliding is the browser's own scroll-snap, so swiping is native and nothing heavy runs in the background. */
+let SLIDES = [];
+const SLIDE_MAX = 5;
+const SLIDE_MAX_PHOTOS = 3;                                            // photos on one slide (1 or 2 looks best)
+const SL_THEMES = ["dark", "cream", "clay", "wine", "forest", "navy", "black", "gold", "blush", "sage", "white"];
+const SL_FONTS = ["elegant", "classic", "modern", "clean", "script", "caps", "hindi"];
+const SL_FONT_FILES = { classic: "Playfair+Display:wght@600", script: "Dancing+Script:wght@700", caps: "Cinzel:wght@600", hindi: "Noto+Serif+Devanagari:wght@600" };   // the others are already on the page
+const slHex = (t) => /^#[0-9a-f]{6}$/.test(t);
+const slThemeOk = (t) => SL_THEMES.includes(t) || slHex(t);
+function slLum(h) {                        // how light a colour is (0 = black, 1 = white)
+  const c = [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16) / 255).map(v => v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4));
+  return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2];
+}
+function slThemeAttrs(t) {                 // a named colour is a CSS class; the owner's own colour sets the same variables, with whichever text colour reads best
+  if (SL_THEMES.includes(t)) return { cls: "sl-" + t, css: "", style: "" };
+  if (!slHex(t)) return { cls: "sl-dark", css: "", style: "" };
+  const L = slLum(t), light = "#fffdf9", dark = "#2b1d14";
+  const cw = 1.03 / (L + 0.05), cd = (L + 0.05) / 0.065;
+  const fg = Math.max(cw, cd) < 4.5 ? (cw >= (L + 0.05) / 0.05 ? "#ffffff" : "#000000") : (cw >= cd ? light : dark);   // a middle grey needs pure white or black to stay easy to read
+  const css = `--sl-bg:${t};--sl-fg:${fg};--sl-eb:${fg};--sl-rule:${fg};--sl-btn:${fg};--sl-btnfg:${t}`;
+  return { cls: "sl-custom", css, style: ` style="${css}"` };
+}
+const SL_LOADED = new Set();
+function slLoadFonts(list) {               // an extra heading font is fetched from Google Fonts only when a slide (or the editor) uses it
+  [].concat(list).forEach(f => {
+    const q = SL_FONT_FILES[f]; if (!q || SL_LOADED.has(f)) return;
+    SL_LOADED.add(f);
+    const l = document.createElement("link"); l.rel = "stylesheet"; l.href = "https://fonts.googleapis.com/css2?family=" + q + "&display=swap";
+    document.head.appendChild(l);
+  });
+}
+const istToday = () => new Date(Date.now() + 330 * 60000).toISOString().slice(0, 10);   // today's date in India
+const prodPic = (p) => firstAvailable(p).photo || p.images[0] || "";
+const newestInStock = (list, n) => list.filter(p => p.stock > 0).slice(-n).reverse();    // the sheet lists new designs last
+function liveSlides() {
+  const today = istToday(), out = [];
+  if (OFFER.live) {
+    out.push({
+      theme: "cream", font: "elegant", eyebrow: "First order offer", headline: `${OFFER.pct}% off your first order`,
+      msg: (OFFER.maxOff ? `Up to ${money(OFFER.maxOff)} off. ` : "") + (OFFER.minOrder ? `On orders of ${money(OFFER.minOrder)} or more. ` : "") + "Enter the code at checkout.",
+      cta: "Start shopping", href: "", cat: "all", code: OFFER.code,
+      pics: newestInStock(CATALOG, 2).map(prodPic).filter(Boolean)
+    });
+  }
+  for (const s of SLIDES) {
+    if (out.length >= SLIDE_MAX) break;
+    if (!s || !s.headline) continue;
+    if (s.from && today < s.from) continue;
+    if (s.until && today > s.until) continue;
+    let pics = (Array.isArray(s.photos) ? s.photos : []).filter(Boolean).slice(0, SLIDE_MAX_PHOTOS), href = "", cat = "all";
+    if (s.opens === "product") {
+      const p = findProduct(String(s.target || ""));
+      if (!p || p.stock < 1) continue;                             // sold out or removed: the slide hides itself
+      href = "#/product/" + encodeURIComponent(p.id);
+      if (!pics.length) pics = p.images.filter(Boolean).slice(0, 3);
+    } else if (s.opens === "category") {
+      const want = String(s.target || "").trim().toLowerCase();
+      const items = CATALOG.filter(p => p.category.toLowerCase() === want);
+      if (!items.some(p => p.stock > 0)) continue;
+      cat = items[0].category;
+      if (!pics.length) pics = newestInStock(items, 3).map(prodPic).filter(Boolean);
+    } else if (!pics.length) pics = newestInStock(CATALOG, 3).map(prodPic).filter(Boolean);
+    out.push({
+      theme: slThemeOk(s.theme) ? s.theme : "dark", font: SL_FONTS.includes(s.font) ? s.font : "elegant", eyebrow: s.eyebrow || "", headline: s.headline,
+      msg: s.msg || "", cta: s.cta || "Shop now", href, cat, code: "", pics
+    });
+  }
+  return out;
+}
+function slideHTML(s, i, n) {
+  const k = s.pics.length, th = slThemeAttrs(s.theme);
+  const media = k
+    ? `<div class="sl-media">${s.pics.map((src, j) => imgTag(sized(src, k === 1 ? 900 : 600), j ? "" : s.headline, (i === 0 && j === 0 ? 'fetchpriority="high"' : 'loading="lazy"') + ' decoding="async" draggable="false"')).join("")}</div>`
+    : `<div class="sl-media empty"><svg class="sl-mono" viewBox="0 0 459.6 208.8" aria-hidden="true"><use href="#mg-mono"/></svg></div>`;
+  const go = s.href ? `href="${esc(s.href)}"` : `href="#/" data-cat="${esc(s.cat)}"`;
+  return `<a class="sl-slide ${th.cls} slf-${s.font || "elegant"}"${th.style} ${go} draggable="false" aria-label="${esc(`${s.headline}. ${s.cta}. Slide ${i + 1} of ${n}`)}">
+    <div class="sl-text">
+      ${s.eyebrow ? `<span class="sl-eyebrow">${esc(s.eyebrow)}</span>` : ""}
+      <h2>${esc(s.headline)}</h2>
+      <span class="sl-rule"></span>
+      ${s.msg ? `<p>${esc(s.msg)}</p>` : ""}
+      ${s.code ? `<span class="sl-code">${esc(s.code)}</span>` : ""}
+      <span class="sl-cta">${esc(s.cta)}</span>
+    </div>
+    ${media}
+  </a>`;
+}
+function sliderHTML(list) {
+  const n = list.length;
+  return `<section class="slider${n > 1 ? "" : " one"}" id="slider" aria-roledescription="carousel" aria-label="What's new">
+    <div class="sl-track" id="sl-track">${list.map((s, i) => slideHTML(s, i, n)).join("")}</div>
+    ${n > 1 ? `<button type="button" class="sl-arrow sl-prev" data-sl="-1" aria-label="Previous slide"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+    <button type="button" class="sl-arrow sl-next" data-sl="1" aria-label="Next slide"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
+    <div class="sl-bar">${list.map((s, i) => `<button type="button" class="sl-dot${i ? "" : " on"}" data-sl-go="${i}" aria-label="Go to slide ${i + 1}"${i ? "" : ' aria-current="true"'}></button>`).join("")}<button type="button" class="sl-pp" data-sl-pp aria-label="Pause slideshow"><svg class="i-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg><svg class="i-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button></div>` : ""}
+  </section>`;
+}
+const SL = { track: null, n: 0, i: 0, timer: 0, raf: 0, rs: 0, held: false, paused: false, visible: true, io: null };
+const SL_EVERY = 5500;                                                // milliseconds on each slide
+const slReduced = () => !!(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches);
+function slStop() {
+  clearTimeout(SL.timer); cancelAnimationFrame(SL.raf); SL.raf = 0;
+  if (SL.io) { SL.io.disconnect(); SL.io = null; }
+  SL.track = null; SL.n = 0;
+}
+const slWidth = () => (SL.track ? SL.track.clientWidth : 0);
+function slIndex() { const w = slWidth(); return w ? Math.max(0, Math.min(SL.n - 1, Math.round(SL.track.scrollLeft / w))) : 0; }
+function slPaint() {
+  SL.i = slIndex();
+  document.querySelectorAll("#slider .sl-dot").forEach((d, k) => {
+    d.classList.toggle("on", k === SL.i);
+    if (k === SL.i) d.setAttribute("aria-current", "true"); else d.removeAttribute("aria-current");
+  });
+}
+function slGo(k, instant) {
+  if (!SL.track || !SL.n) return;
+  k = ((k % SL.n) + SL.n) % SL.n;
+  SL.track.scrollTo({ left: k * slWidth(), behavior: instant || slReduced() ? "auto" : "smooth" });
+}
+function slStep(d) {                     // past the last slide it jumps back to the first instead of sweeping through them all
+  const k = slIndex() + d;
+  slGo(k, k < 0 || k >= SL.n);
+}
+const slCanPlay = () => !!SL.track && SL.n > 1 && !SL.paused && !SL.held && SL.visible && !document.hidden && !slReduced();
+function slSchedule() {                  // (re)start the wait for the next slide; does nothing while playing is not allowed
+  clearTimeout(SL.timer);
+  if (slCanPlay()) SL.timer = setTimeout(() => { slStep(1); slSchedule(); }, SL_EVERY);
+}
+function slTogglePause() {
+  SL.paused = !SL.paused;
+  const b = $("[data-sl-pp]");
+  if (b) { b.classList.toggle("paused", SL.paused); b.setAttribute("aria-label", SL.paused ? "Play slideshow" : "Pause slideshow"); }
+  slSchedule();
+}
+function slInit() {
+  slStop();
+  const track = $("#sl-track"), box = $("#slider");
+  if (!track || !box) return;
+  SL.track = track; SL.n = track.children.length; SL.i = 0; SL.held = false; SL.visible = true;
+  if (SL.n < 2) return;
+  if (SL.paused) { const b = $("[data-sl-pp]"); if (b) { b.classList.add("paused"); b.setAttribute("aria-label", "Play slideshow"); } }
+  track.addEventListener("scroll", () => {      // update the dots at most once per frame; any movement restarts the wait
+    if (SL.raf) return;
+    SL.raf = requestAnimationFrame(() => { SL.raf = 0; if (SL.track !== track) return; slPaint(); slSchedule(); });
+  }, { passive: true });
+  const hold = () => { SL.held = true; clearTimeout(SL.timer); }, free = () => { SL.held = false; slSchedule(); };
+  box.addEventListener("pointerenter", (e) => { if (e.pointerType === "mouse") hold(); });
+  box.addEventListener("pointerleave", (e) => { if (e.pointerType === "mouse") free(); });
+  track.addEventListener("touchstart", hold, { passive: true });
+  track.addEventListener("touchend", free, { passive: true });
+  track.addEventListener("touchcancel", free, { passive: true });
+  box.addEventListener("focusin", (e) => { if (e.target.matches && e.target.matches(":focus-visible")) hold(); });   // keyboard users only
+  box.addEventListener("focusout", free);
+  if ("IntersectionObserver" in window) {       // never moves while it is off screen
+    SL.io = new IntersectionObserver((es) => { SL.visible = es[es.length - 1].isIntersecting; slSchedule(); }, { threshold: 0.2 });
+    SL.io.observe(box);
+  }
+  setTimeout(() => {                            // the other slides' photos start loading once the first screen has settled
+    if (SL.track === track) track.querySelectorAll('img[loading="lazy"]').forEach(im => { if (im.offsetParent) im.loading = "eager"; });
+  }, 2500);
+  slSchedule();
+}
+document.addEventListener("visibilitychange", slSchedule);
+window.addEventListener("resize", () => {
+  clearTimeout(SL.rs);
+  SL.rs = setTimeout(() => { if (SL.track) SL.track.scrollLeft = SL.i * slWidth(); }, 150);
+}, { passive: true });
 
 let galleryIndex = 0, productQty = 1, selectedSku = "";
 function currentProduct() { return findProduct(decodeURIComponent((location.hash.split("/")[2] || ""))); }
@@ -1290,7 +1725,8 @@ function renderProduct(id) {
     <div class="container">
       <div class="crumb"><a href="#/">Home</a> / <span style="text-transform:capitalize">${esc(p.category)}</span> / ${esc(p.name)}</div>
       <div class="product">
-        <div>
+        <div class="gal-col">
+          ${wishBtnHTML(p)}
           <div class="gallery-main" id="gallery-main">${imgTag(v0.photo || p.images[0], p.name)}</div>
           ${p.images.length > 1 ? `<div class="thumbs">${p.images.map((im, i) => imgTag(sized(im, 200), p.name + " " + (i + 1), `data-thumb="${i}" class="${im === v0.photo ? "active" : ""}"`)).join("")}</div>` : ""}
         </div>
@@ -1622,6 +2058,8 @@ let lastAttempt = null, cartNotice = "";
 let catalogLoaded = false, catalogLoading = false;
 function applyFeed(feed, fromCache) {
   CATALOG = buildCatalog(feed.products || []);
+  SLIDES = Array.isArray(feed.slides) ? feed.slides : [];
+  if (!fromCache) wishPrune();
   REVIEWS = feed.reviews && Array.isArray(feed.reviews.list) ? feed.reviews : { count: 0, avg: 0, list: [] };
   if (!fromCache) {                       // the offer is only trusted when it arrives live from the sheet
     OFFER = feed.offer && feed.offer.live ? feed.offer : { live: false };
@@ -1635,11 +2073,12 @@ function applyFeed(feed, fromCache) {
   ["cancelLocalHrs", "cancelOutsideHrs"].forEach(k => { if (s[k] !== undefined && s[k] !== null && s[k] !== "" && Number.isFinite(Number(s[k])) && Number(s[k]) >= 0) CONFIG[k] = Number(s[k]); });
   if (Array.isArray(feed.areas) && feed.areas.length) DELIVERY_AREAS.splice(0, DELIVERY_AREAS.length, ...feed.areas);
   catalogLoaded = true;
+  paintNavLinks(); wishPaint();
 }
 function catalogAsFeed() {
   const rows = [];
   CATALOG.forEach(p => p.variants.forEach(v => rows.push({ sku: v.sku, code: p.id, name: p.name, category: p.category, colour: v.colour, price: v.price, stock: v.stock, photo: v.photo, description: p.description })));
-  return { ok: true, products: rows, settings: { nearAreaFee: CONFIG.nearAreaFee, otherBhagalpurFee: CONFIG.otherBhagalpurFee, outsideFee: CONFIG.outsideFee, freeDeliveryAbove: CONFIG.freeDeliveryAbove, bhagalpurPinPrefixes: CONFIG.bhagalpurPinPrefixes, nearAreaPins: CONFIG.nearAreaPins, cod: CONFIG.codEnabled, cancelLocalHrs: CONFIG.cancelLocalHrs, cancelOutsideHrs: CONFIG.cancelOutsideHrs }, areas: DELIVERY_AREAS.slice(), reviews: REVIEWS };
+  return { ok: true, products: rows, settings: { nearAreaFee: CONFIG.nearAreaFee, otherBhagalpurFee: CONFIG.otherBhagalpurFee, outsideFee: CONFIG.outsideFee, freeDeliveryAbove: CONFIG.freeDeliveryAbove, bhagalpurPinPrefixes: CONFIG.bhagalpurPinPrefixes, nearAreaPins: CONFIG.nearAreaPins, cod: CONFIG.codEnabled, cancelLocalHrs: CONFIG.cancelLocalHrs, cancelOutsideHrs: CONFIG.cancelOutsideHrs }, areas: DELIVERY_AREAS.slice(), reviews: REVIEWS, slides: SLIDES };
 }
 function saveCatalogCache() {
   if (!SHEET_MODE || !CATALOG.length) return;
@@ -1677,7 +2116,7 @@ function renderCatalogWait() {
 }
 
 /* ---------- Owner Admin page (#/admin): products, stock and orders, no need to open the sheet ---------- */
-const ADM = { photos: [], pw: "", loaded: false, tab: "orders", filter: "active", q: "", products: [], orders: [], err: "", timers: {}, sel: new Set(), busy: "" };
+const ADM = { photos: [], slPhotos: [], slides: [], pw: "", loaded: false, tab: "orders", filter: "active", q: "", products: [], orders: [], err: "", timers: {}, sel: new Set(), busy: "" };
 try { ADM.pw = sessionStorage.getItem("mg-admin") || ""; } catch {}
 const ADM_NEXT = { New: ["Confirmed", "Cancelled"], Confirmed: ["Paid", "Shipped", "Cancelled"], Paid: ["Shipped", "Cancelled"], Shipped: ["Delivered", "Cancelled"], Delivered: [], Cancelled: [] };
 const ADM_BULK = { Confirmed: ["New"], Shipped: ["Confirmed", "Paid"], Delivered: ["Shipped"] };      // which orders each bulk button can move (same rule as the server)
@@ -1770,7 +2209,7 @@ async function admLoad(quiet) {
     if (quiet) { toast(ADM.err); return false; }
     renderAdmin(); return false;
   }
-  ADM.products = r.products; ADM.orders = r.orders; ADM.emailsLeft = r.emailsLeft; ADM.reviews = r.reviews || []; ADM.offer = r.offer || null; ADM.loaded = true; ADM.err = ""; waPrune();
+  ADM.products = r.products; ADM.orders = r.orders; ADM.emailsLeft = r.emailsLeft; ADM.reviews = r.reviews || []; ADM.slides = r.slides || []; ADM.offer = r.offer || null; ADM.loaded = true; ADM.err = ""; waPrune();
   try { sessionStorage.setItem("mg-admin", ADM.pw); } catch {}
   if (quiet) { admPaint(); return true; }
   renderAdmin(); return true;
@@ -1791,7 +2230,8 @@ function renderAdmin() {
     <div id="adm-offer"></div>
     <div class="adm-tabs"><button class="${ADM.tab === "orders" ? "on" : ""}" data-a="tab" data-v="orders">Orders${admNewCount() ? ` <span class="adm-dot">${admNewCount()}</span>` : ""}</button>
     <button class="${ADM.tab === "products" ? "on" : ""}" data-a="tab" data-v="products">Products</button>
-    <button class="${ADM.tab === "reviews" ? "on" : ""}" data-a="tab" data-v="reviews">Reviews${admPendingReviews() ? ` <span class="adm-dot">${admPendingReviews()}</span>` : ""}</button></div>
+    <button class="${ADM.tab === "reviews" ? "on" : ""}" data-a="tab" data-v="reviews">Reviews${admPendingReviews() ? ` <span class="adm-dot">${admPendingReviews()}</span>` : ""}</button>
+    <button class="${ADM.tab === "banners" ? "on" : ""}" data-a="tab" data-v="banners">Banners</button></div>
     <div id="adm-body"></div></div>`;
   admPaint();
 }
@@ -1802,7 +2242,7 @@ function admPaint() {
   const nc = admNewCount(); const ob = document.querySelector('.adm-tabs [data-v="orders"]'); if (ob) ob.innerHTML = "Orders" + (nc ? ` <span class="adm-dot">${nc}</span>` : "");
   const pr = admPendingReviews(); const rb = document.querySelector('.adm-tabs [data-v="reviews"]'); if (rb) rb.innerHTML = "Reviews" + (pr ? ` <span class="adm-dot">${pr}</span>` : "");
   const of = $("#adm-offer"); if (of) of.innerHTML = admOfferHTML();
-  body.innerHTML = ADM.tab === "orders" ? admOrdersHTML() : ADM.tab === "reviews" ? admReviewsHTML() : admProductsHTML();
+  body.innerHTML = ADM.tab === "orders" ? admOrdersHTML() : ADM.tab === "reviews" ? admReviewsHTML() : ADM.tab === "banners" ? admBannersHTML() : admProductsHTML();
   if (ADM.tab === "orders") admBulkBar();
 }
 const admPendingReviews = () => (ADM.reviews || []).filter(r => r.status === "Pending").length;
@@ -2049,6 +2489,201 @@ async function admDelete(row) {
   if (!r.ok) { toast(admError(r.error, r.message)); admLoad(true); return; }
   toast("Deleted"); await admLoad(true); loadCatalog();
 }
+/* ---------- Banners: the slides at the top of the home page ---------- */
+const SL_THEME_LABEL = { dark: "Dark brown", cream: "Cream", clay: "Terracotta", wine: "Wine", forest: "Forest green", navy: "Navy blue", black: "Black", gold: "Gold", blush: "Blush pink", sage: "Sage green", white: "White" };
+const SL_FONT_INFO = { elegant: ["Elegant", "Bracelet Watches"], classic: ["Classic", "Bracelet Watches"], modern: ["Modern", "Bracelet Watches"], clean: ["Clean", "Bracelet Watches"], script: ["Handwritten", "Bracelet Watches"], caps: ["Capitals", "Bracelet Watches"], hindi: ["Hindi (देवनागरी)", "ब्रेसलेट घड़ी"] };
+const SL_OWN_COLOUR = "#7b4b3a";                // what the colour picker starts at
+const SL_OPEN_LABEL = { all: "All jewellery", category: "One category", product: "One product" };
+const admDay = (iso) => { try { return new Date(iso + "T00:00:00Z").toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" }); } catch { return iso; } };
+function admGroups() {                    // the sheet has one row per colour; the slides work with whole designs
+  const m = new Map();
+  ADM.products.forEach(p => {
+    if (!m.has(p.code)) m.set(p.code, { code: p.code, name: p.name, category: p.category, stock: 0, shown: false, photo: "" });
+    const g = m.get(p.code);
+    if (p.visible) { g.shown = true; g.stock += p.stock; }
+    if (!g.photo) g.photo = String(p.photo || "").split("|")[0].trim();
+  });
+  return [...m.values()];
+}
+function admSlideStatus(s, shownSoFar) {
+  const today = istToday(), g = admGroups();
+  if (!s.on) return { t: "Switched off", c: "off" };
+  if (s.from && today < s.from) return { t: "Starts " + admDay(s.from), c: "wait" };
+  if (s.until && today > s.until) return { t: "Ended " + admDay(s.until), c: "off" };
+  if (s.opens === "product") {
+    const p = g.find(x => x.code === s.target);
+    if (!p || !p.shown) return { t: "Hidden: this product is not on the website", c: "off" };
+    if (p.stock < 1) return { t: "Hidden: this product is sold out", c: "off" };
+  } else if (s.opens === "category") {
+    const want = String(s.target).trim().toLowerCase();
+    if (!g.some(x => x.shown && x.stock > 0 && String(x.category).toLowerCase() === want)) return { t: "Hidden: nothing in stock in this category", c: "off" };
+  }
+  if (shownSoFar >= SLIDE_MAX) return { t: `Waiting: the website shows ${SLIDE_MAX} slides at most`, c: "wait" };
+  return { t: "Showing on the website", c: "on" };
+}
+function admSlideThumb(s) {
+  if (s.photos && s.photos[0]) return s.photos[0];
+  const g = admGroups();
+  if (s.opens === "product") { const p = g.find(x => x.code === s.target); if (p) return p.photo; }
+  if (s.opens === "category") { const want = String(s.target).trim().toLowerCase(); const p = g.filter(x => x.shown && String(x.category).toLowerCase() === want).pop(); if (p) return p.photo; }
+  const p = g.filter(x => x.shown).pop(); return p ? p.photo : "";
+}
+function admSlideOpensText(s) {
+  if (s.opens === "product") { const p = admGroups().find(x => x.code === s.target); return "Opens: " + (p ? p.name : s.target) + " (product)"; }
+  if (s.opens === "category") return "Opens: " + s.target + " (category)";
+  return "Opens: all jewellery";
+}
+function admBannersHTML() {
+  const list = ADM.slides || [];
+  const offerOn = !!(ADM.offer && ADM.offer.live);
+  let shown = offerOn ? 1 : 0;
+  const cards = list.map((s, i) => {
+    const st = admSlideStatus(s, shown); if (st.c === "on") shown++;
+    const dates = s.from || s.until ? `<div class="adm-sub">${s.from ? "From " + admDay(s.from) : ""}${s.from && s.until ? " · " : ""}${s.until ? "Until " + admDay(s.until) : ""}</div>` : "";
+    return `<div class="adm-sl ${s.on ? "" : "is-off"}">
+      <div class="adm-thumb">${imgTag(sized(admSlideThumb(s), 200), s.headline, 'loading="lazy" decoding="async"')}</div>
+      <div class="adm-sl-info">
+        <div class="adm-sub">Slide ${i + 1}${s.eyebrow ? " · " + esc(s.eyebrow) : ""}</div>
+        <b>${esc(s.headline)}</b>
+        <div class="adm-sub">${esc(admSlideOpensText(s))}</div>${dates}
+        <span class="adm-chip c-${st.c}">${esc(st.t)}</span>
+      </div>
+      <div class="adm-sl-acts">
+        <button class="adm-btn" data-a="slmove" data-row="${s.row}" data-id="${esc(s.id)}" data-dir="-1" aria-label="Move earlier" ${i === 0 ? "disabled" : ""}>↑ Earlier</button>
+        <button class="adm-btn" data-a="slmove" data-row="${s.row}" data-id="${esc(s.id)}" data-dir="1" aria-label="Move later" ${i === list.length - 1 ? "disabled" : ""}>↓ Later</button>
+        <button class="adm-btn" data-a="slon" data-row="${s.row}">${s.on ? "Switch off" : "Switch on"}</button>
+        <button class="adm-btn main" data-a="sledit" data-row="${s.row}">Edit</button>
+      </div>
+    </div>`;
+  }).join("");
+  return `<p class="adm-sub" style="margin:0 0 10px">These are the big pictures at the top of your home page. The website shows the first ${SLIDE_MAX}, in this order. A slide hides itself when its dates are over, or when the product or category it opens is sold out.</p>
+    ${offerOn ? `<div class="adm-sl-offer">The first-order offer slide (${esc(ADM.offer.code)}) shows first by itself while the offer is live.</div>` : ""}
+    <div class="adm-bar"><button class="btn" data-a="slnew">+ Add slide</button></div>` +
+    (cards || `<div class="empty">No slides yet. Tap "+ Add slide" to make your first one.</div>`);
+}
+function admTargetOptions(opens, cur) {
+  const cur0 = String(cur || ""), low = cur0.toLowerCase();
+  let opts = [];
+  if (opens === "category") opts = [...new Set(ADM.products.map(p => p.category).filter(Boolean))].map(c => ({ v: c, t: c, on: c.toLowerCase() === low }));
+  else if (opens === "product") opts = admGroups().map(g => ({ v: g.code, t: g.name + " (" + g.code + ")", on: g.code === cur0 }));
+  if (cur0 && !opts.some(o => o.on)) opts.unshift({ v: cur0, t: cur0 + " (not found)", on: true });
+  return `<option value="">Choose…</option>` + opts.map(o => `<option value="${esc(o.v)}" ${o.on ? "selected" : ""}>${esc(o.t)}</option>`).join("");
+}
+function admSlideForm(s) {
+  const e = s || { on: true, theme: "dark", font: "elegant", eyebrow: "", headline: "", msg: "", cta: "", opens: "all", target: "", photos: [], from: "", until: "" };
+  ADM.slPhotos = (e.photos || []).slice(0, SLIDE_MAX_PHOTOS);
+  const own = slHex(e.theme), ownHex = own ? e.theme : SL_OWN_COLOUR, ownTh = slThemeAttrs(ownHex), font = SL_FONTS.includes(e.font) ? e.font : "elegant";
+  slLoadFonts(Object.keys(SL_FONT_FILES));
+  const m = document.createElement("div"); m.className = "adm-modal"; m.id = "adm-modal";
+  m.innerHTML = `<form class="adm-form" id="sl-form" novalidate>
+    <h3>${s ? "Edit slide" : "Add slide"}</h3>
+    <input type="hidden" id="sl-row" value="${s ? s.row : ""}"><input type="hidden" id="sl-id" value="${s ? esc(s.id) : ""}">
+    <div class="adm-slp" id="sl-preview" aria-hidden="true"></div>
+    <div class="adm-sub">This is a small preview. It changes as you type.</div>
+    <label>Colour</label>
+    <div class="adm-sw">${SL_THEMES.map(t => `<label class="adm-swatch"><input type="radio" name="sl-theme" value="${t}" ${e.theme === t ? "checked" : ""}><span class="sw sl-${t}">${SL_THEME_LABEL[t]}</span></label>`).join("")}<label class="adm-swatch"><input type="radio" name="sl-theme" value="custom" ${own ? "checked" : ""}><span class="sw sw-custom" id="sl-own-sw"${ownTh.style}><input type="color" id="sl-color" value="${ownHex}" aria-label="Pick your own colour"><span>Your own</span></span></label></div>
+    <label>Heading style</label>
+    <div class="adm-fonts">${SL_FONTS.map(f => `<label class="adm-fontopt slf-${f}"><input type="radio" name="sl-font" value="${f}" ${font === f ? "checked" : ""}><span class="fo"><b>${esc(SL_FONT_INFO[f][1])}</b><small>${esc(SL_FONT_INFO[f][0])}</small></span></label>`).join("")}</div>
+    <label for="sl-eyebrow">Small heading <span class="adm-sub">(optional, above the big heading)</span></label><input id="sl-eyebrow" maxlength="40" value="${esc(e.eyebrow)}" placeholder="e.g. New arrivals">
+    <label for="sl-headline">Big heading *</label><input id="sl-headline" maxlength="60" value="${esc(e.headline)}" placeholder="e.g. Bracelet Watches">
+    <label for="sl-msg">Message <span class="adm-sub">(optional)</span></label><textarea id="sl-msg" rows="2" maxlength="160" placeholder="e.g. Fresh pieces, added just for you.">${esc(e.msg)}</textarea>
+    <label for="sl-cta">Button words</label><input id="sl-cta" maxlength="24" value="${esc(e.cta)}" placeholder="Shop now">
+    <label for="sl-opens">When a customer taps the slide, open</label>
+    <select id="sl-opens">${["all", "category", "product"].map(o => `<option value="${o}" ${e.opens === o ? "selected" : ""}>${SL_OPEN_LABEL[o]}</option>`).join("")}</select>
+    <div id="sl-target-wrap" ${e.opens === "all" ? "hidden" : ""}><label for="sl-target" id="sl-target-lbl">${e.opens === "product" ? "Which product" : "Which category"}</label><select id="sl-target">${admTargetOptions(e.opens, e.target)}</select>
+    <div class="adm-sub" id="sl-simi">${e.opens === "product" ? "The product page also shows similar pieces below it." : ""}</div></div>
+    <label>Photos <span class="adm-sub">(1 or 2 look best, up to ${SLIDE_MAX_PHOTOS})</span></label>
+    <div class="adm-strip" id="sl-strip"></div>
+    <label class="btn btn-outline adm-upl">Add photos<input type="file" accept="image/*" multiple id="sl-file" hidden></label>
+    <div class="adm-sub" id="sl-upmsg">No photos? The website picks photos of the product or newest pieces by itself.</div>
+    <div class="adm-two" style="align-items:end"><div><label for="sl-from">Show from <span class="adm-sub">(optional)</span></label><input type="date" id="sl-from" value="${esc(e.from)}"></div>
+    <div><label for="sl-until">Last day shown <span class="adm-sub">(optional)</span></label><input type="date" id="sl-until" value="${esc(e.until)}"></div></div>
+    <label class="adm-check"><input type="checkbox" id="sl-on" ${e.on ? "checked" : ""}> Show this slide on the website</label>
+    <p class="adm-err" id="sl-err"></p>
+    <div class="adm-acts"><button class="btn" type="submit" id="sl-save">Save</button><button class="btn btn-outline" type="button" data-a="closeform">Cancel</button></div>
+    ${s ? `<div class="adm-acts"><button type="button" class="adm-btn danger" data-a="sldel" data-row="${s.row}" data-id="${esc(s.id)}">Delete this slide</button></div>` : ""}
+  </form>`;
+  document.body.appendChild(m);
+  document.body.style.overflow = "hidden";
+  admPaintSlPhotos();
+}
+function admSlideRead() {
+  const v = (id) => { const el = $("#" + id); return el ? el.value.trim() : ""; };
+  const th = document.querySelector('input[name="sl-theme"]:checked'), fo = document.querySelector('input[name="sl-font"]:checked'), col = $("#sl-color");
+  const opens = v("sl-opens") || "all";
+  const theme = th ? (th.value === "custom" ? ((col && slHex(col.value.toLowerCase())) ? col.value.toLowerCase() : "dark") : th.value) : "dark";
+  return { theme, font: fo ? fo.value : "elegant", eyebrow: v("sl-eyebrow"), headline: v("sl-headline"), msg: v("sl-msg"), cta: v("sl-cta"), opens, target: opens === "all" ? "" : v("sl-target"),
+    from: v("sl-from"), until: v("sl-until"), on: !!($("#sl-on") && $("#sl-on").checked), photos: (ADM.slPhotos || []).slice() };
+}
+function admSlidePreview() {
+  const box = $("#sl-preview"); if (!box) return;
+  const d = admSlideRead(), th = slThemeAttrs(d.theme);
+  box.className = "adm-slp " + th.cls + " slf-" + d.font;
+  box.style.cssText = th.css;
+  const sw = $("#sl-own-sw"), col = $("#sl-color");
+  if (sw && col && slHex(col.value.toLowerCase())) sw.style.cssText = slThemeAttrs(col.value.toLowerCase()).css;
+  box.innerHTML = `<div class="adm-slp-t">${d.eyebrow ? `<span class="sl-eyebrow">${esc(d.eyebrow)}</span>` : ""}<b class="adm-slp-h">${esc(d.headline || "Your big heading")}</b>${d.msg ? `<span class="adm-slp-m">${esc(d.msg)}</span>` : ""}<span class="sl-cta">${esc(d.cta || "Shop now")}</span></div>
+    <div class="adm-slp-p">${d.photos.length ? d.photos.map(u => imgTag(sized(u, 300), "")).join("") : `<span class="adm-slp-none">Photos are picked for you</span>`}</div>`;
+}
+function admPaintSlPhotos() {
+  const el = $("#sl-strip"); if (!el) return;
+  el.innerHTML = ADM.slPhotos.length ? ADM.slPhotos.map((u, i) => `<div class="adm-ph"><div class="adm-thumb">${imgTag(sized(u, 200), "photo " + (i + 1))}</div>
+    ${i === 0 ? '<span class="adm-main">First</span>' : `<button type="button" class="adm-btn" data-a="slphmain" data-i="${i}">Make first</button>`}
+    <button type="button" class="adm-btn danger" data-a="slphdel" data-i="${i}">Remove</button></div>`).join("") : '<div class="adm-sub">No photos added.</div>';
+  admSlidePreview();
+}
+async function admSlidePick(files) {
+  const msg = $("#sl-upmsg"); if (!files || !files.length) return;
+  const room = SLIDE_MAX_PHOTOS - ADM.slPhotos.length;
+  if (room <= 0) { msg.textContent = `A slide can have up to ${SLIDE_MAX_PHOTOS} photos. Remove one first.`; return; }
+  const list = [...files].slice(0, room);
+  let done = 0;
+  for (const file of list) {
+    msg.textContent = "Uploading " + (done + 1) + " of " + list.length + "…";
+    try {
+      const data = await admCompress(file);
+      const r = await admCall({ op: "uploadPhoto", name: "slide-" + (($("#sl-headline") && $("#sl-headline").value) || "photo"), mime: "image/jpeg", data });
+      if (!r.ok) { msg.textContent = admError(r.error, r.message); admPaintSlPhotos(); return; }
+      ADM.slPhotos.push(r.url); done++; admPaintSlPhotos();
+    } catch { msg.textContent = "Could not read " + file.name + ". Try a JPG or PNG."; return; }
+  }
+  msg.textContent = done + " photo" + (done > 1 ? "s" : "") + " added ✓" + (files.length > list.length ? ` (the limit is ${SLIDE_MAX_PHOTOS} photos)` : "");
+  const f = $("#sl-file"); if (f) f.value = "";
+}
+async function admSaveSlide() {
+  const d = admSlideRead(), err = $("#sl-err"); err.textContent = "";
+  if (!d.headline) { err.textContent = "Please type the big heading."; return; }
+  if (d.opens !== "all" && !d.target) { err.textContent = d.opens === "product" ? "Choose which product the slide opens." : "Choose which category the slide opens."; return; }
+  if (d.from && d.until && d.until < d.from) { err.textContent = "'Last day shown' is before 'Show from'."; return; }
+  const btn = $("#sl-save"); btn.disabled = true; btn.textContent = "Saving…";
+  const r = await admCall({ op: "saveSlide", slide: { ...d, row: Number($("#sl-row").value) || 0, id: $("#sl-id").value } });
+  btn.disabled = false; btn.textContent = "Save";
+  if (!r.ok) { err.textContent = admError(r.error, r.message); return; }
+  admCloseForm(); toast(d.on ? "Saved. Your home page shows it now." : "Saved. It is switched off, so it is not shown.");
+  await admLoad(true); loadCatalog();
+}
+async function admSlideToggle(row, btn) {
+  const s = (ADM.slides || []).find(x => x.row === row); if (!s) return;
+  btn.disabled = true; btn.textContent = "Please wait…";
+  const r = await admCall({ op: "saveSlide", slide: { ...s, on: !s.on } });
+  if (!r.ok) { toast(admError(r.error, r.message)); admPaint(); return; }
+  toast(s.on ? "Slide switched off" : "Slide switched on");
+  await admLoad(true); loadCatalog();
+}
+async function admSlideMove(row, id, dir, btn) {
+  btn.disabled = true;
+  const r = await admCall({ op: "moveSlide", row, id, dir });
+  if (!r.ok) { toast(admError(r.error, r.message)); admLoad(true); return; }
+  await admLoad(true); loadCatalog();
+}
+async function admSlideDelete(row, id) {
+  const s = (ADM.slides || []).find(x => x.row === row); if (!s) return;
+  if (!confirm(`Delete the slide "${s.headline}"?\n\nThis removes it for good. To keep it but stop showing it, switch it off instead.`)) return;
+  const r = await admCall({ op: "deleteSlide", row, id });
+  if (!r.ok) { toast(admError(r.error, r.message)); admLoad(true); return; }
+  admCloseForm(); toast("Slide deleted");
+  await admLoad(true); loadCatalog();
+}
 document.addEventListener("click", (e) => {
   const a = e.target.closest("[data-a]"); if (!a) return;
   const k = a.dataset.a;
@@ -2069,6 +2704,13 @@ document.addEventListener("click", (e) => {
   else if (k === "edit") admForm(ADM.products.find(x => x.row === Number(a.dataset.row)));
   else if (k === "del") admDelete(Number(a.dataset.row));
   else if (k === "closeform") admCloseForm();
+  else if (k === "slnew") admSlideForm(null);
+  else if (k === "sledit") admSlideForm((ADM.slides || []).find(x => x.row === Number(a.dataset.row)));
+  else if (k === "slon") admSlideToggle(Number(a.dataset.row), a);
+  else if (k === "slmove") admSlideMove(Number(a.dataset.row), a.dataset.id, Number(a.dataset.dir), a);
+  else if (k === "sldel") admSlideDelete(Number(a.dataset.row), a.dataset.id);
+  else if (k === "slphdel") { ADM.slPhotos.splice(Number(a.dataset.i), 1); admPaintSlPhotos(); }
+  else if (k === "slphmain") { const i = Number(a.dataset.i); ADM.slPhotos.unshift(ADM.slPhotos.splice(i, 1)[0]); admPaintSlPhotos(); }
   else if (k === "phdel") { ADM.photos.splice(Number(a.dataset.i), 1); admPaintPhotos(); }
   else if (k === "phmain") { const i = Number(a.dataset.i); ADM.photos.unshift(ADM.photos.splice(i, 1)[0]); admPaintPhotos(); }
   else if (k === "phadd") {
@@ -2088,10 +2730,23 @@ document.addEventListener("submit", async (e) => {
     await admLoad(false);
   }
   if (e.target.id === "adm-form") { e.preventDefault(); admSaveForm(); }
+  if (e.target.id === "sl-form") { e.preventDefault(); admSaveSlide(); }
   if (e.target.id === "adm-reset") { e.preventDefault(); admDoReset(e.target); }
 });
 document.addEventListener("input", (e) => { if (e.target.id === "adm-q") { ADM.q = e.target.value; const p = $("#adm-body"); const pos = e.target.selectionStart; admPaint(); const q = $("#adm-q"); if (q) { q.focus(); q.setSelectionRange(pos, pos); } } });
-document.addEventListener("change", (e) => { if (e.target.id === "pf-file") admPickPhotos(e.target.files); });
+document.addEventListener("change", (e) => {
+  if (e.target.id === "pf-file") admPickPhotos(e.target.files);
+  if (e.target.id === "sl-file") admSlidePick(e.target.files);
+  if (e.target.id === "sl-opens") {                 // the second list follows the first: categories, or products
+    const o = e.target.value, w = $("#sl-target-wrap");
+    if (w) { w.hidden = o === "all"; $("#sl-target").innerHTML = admTargetOptions(o, ""); $("#sl-target-lbl").textContent = o === "product" ? "Which product" : "Which category"; $("#sl-simi").textContent = o === "product" ? "The product page also shows similar pieces below it." : ""; }
+  }
+  if (e.target.closest && e.target.closest("#sl-form")) admSlidePreview();
+});
+document.addEventListener("input", (e) => {
+  if (e.target.id === "sl-color") { const r = document.querySelector('input[name="sl-theme"][value="custom"]'); if (r) r.checked = true; }
+  if (e.target.closest && e.target.closest("#sl-form")) admSlidePreview();
+});
 
 /* =====================================================
    v2 features: first-order offer, live order status, reviews, FAQ and policy pages, sold-out alerts
@@ -2564,6 +3219,7 @@ function warmServer() {                 // a tiny request so the Google server i
 }
 function route() {
   clearTimeout(successTimer);
+  slStop();
   const hash = location.hash || "#/";
   if (hash === "#/" || /^#\/product\//.test(hash)) lastShopHash = hash;
   const parts = hash.replace(/^#\/?/, "").split("/");
@@ -2579,10 +3235,13 @@ function route() {
   else if (parts[0] === "returns") renderReturns();
   else if (parts[0] === "review") renderReview(decodeURIComponent(parts[1] || ""));
   else if (parts[0] === "checkout") { renderCheckout(); warmServer(); }
+  else if (parts[0] === "wishlist") renderWishlist();
   else if (parts[0] === "admin") renderAdmin();
   else if (parts[0] === "pay") renderPay(decodeURIComponent(parts[1] || ""), parts[2]);
   else renderHome();
   updateBadge();
+  const todo = afterHome;
+  if (todo && !parts[0] && (catalogLoaded || !SHEET_MODE)) { afterHome = null; todo(); return; }       // e.g. "go to the shop part" or "focus the search box"
   if (parts[0] !== "product" && parts[0] !== "checkout") window.scrollTo(0, 0);
 }
 window.addEventListener("hashchange", route);
@@ -2687,7 +3346,15 @@ document.addEventListener("click", (e) => {
   if (rm) { setQty(rm.dataset.remove, 0); renderCart(); return; }
 
   const cat = t.closest("[data-cat]");
-  if (cat) { activeCategory = cat.dataset.cat; renderHome(); document.getElementById("shop").scrollIntoView(); return; }
+  if (cat) { e.preventDefault(); showCategory(cat.dataset.cat); return; }
+  const wishBtn = t.closest("[data-wish]");
+  if (wishBtn) { e.preventDefault(); e.stopPropagation(); wishToggle(wishBtn.dataset.wish); return; }
+  if (t.closest("[data-search]")) { goSearch(); return; }
+  const slBtn = t.closest("[data-sl]");
+  if (slBtn) { slStep(Number(slBtn.dataset.sl)); return; }
+  const slDot = t.closest("[data-sl-go]");
+  if (slDot) { slGo(Number(slDot.dataset.slGo)); return; }
+  if (t.closest("[data-sl-pp]")) { slTogglePause(); return; }
 
   if (t.closest("[data-scroll]")) {
     e.preventDefault();
@@ -2725,6 +3392,7 @@ window.addEventListener("DOMContentLoaded", () => {
   document.title = CONFIG.storeName + " — " + CONFIG.tagline;
   $("#logo-text").textContent = CONFIG.storeName.replace(/^\s*MG\s+/i, "");
   paintAnnounce();
+  wishPaint();
   if (CONFIG.instagram) { const fi = $("#foot-ig"); fi.href = igUrl(); fi.innerHTML = IG_ICON + "Instagram"; fi.title = "@" + CONFIG.instagram; fi.style.display = "block"; fi.style.overflowWrap = "anywhere"; }
   $("#footer-name").textContent = CONFIG.storeName;
   $("#footer-tag").textContent = CONFIG.tagline;
@@ -2747,7 +3415,7 @@ window.addEventListener("DOMContentLoaded", () => {
     gtag("js", new Date());
     gtag("config", CONFIG.googleAnalyticsId);
   }
-  if (!SHEET_MODE) { CATALOG = staticCatalog(); route(); return; }
+  if (!SHEET_MODE) { CATALOG = staticCatalog(); paintNavLinks(); route(); return; }
   // With the sheet: show the last known catalogue instantly (if any), then refresh stock in the background
   const cached = readCatalogCache();
   if (cached) { applyFeed(cached, true); route(); }
